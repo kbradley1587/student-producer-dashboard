@@ -1286,6 +1286,18 @@ body {
   /* Kanban stacks */
   .kanban { grid-template-columns: 1fr; }
 
+  /* Dash-grid cards must constrain width so inner tables can scroll
+     (without this, wide tables inside grid children expand the grid itself
+     instead of allowing inner scroll) */
+  .dash-grid {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+  .dash-grid > .dash-card {
+    min-width: 0;
+    overflow: hidden;
+  }
+
   /* Wide tables get horizontal scroll so all columns remain accessible */
   .dash-card {
     padding: 1rem;
@@ -1802,7 +1814,7 @@ body {
             <tr><th>Channel</th><th class="num">Tickets</th><th class="num">Revenue</th><th class="num">Avg Price</th><th>Share</th></tr>
           </thead>
           <tbody>
-            <tr><td>Online (Seat Yourself platform)</td><td class="num">318</td><td class="num">$6,360</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 77%"></span></span>77%</td></tr>
+            <tr><td>Online (Ludus platform)</td><td class="num">318</td><td class="num">$6,360</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 77%"></span></span>77%</td></tr>
             <tr><td>Cash / At the door (pre-sale)</td><td class="num">42</td><td class="num">$840</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 10%"></span></span>10%</td></tr>
             <tr><td>Student discount tickets</td><td class="num">38</td><td class="num">$570</td><td class="num">$15.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 9%"></span></span>9%</td></tr>
             <tr><td>Comps (sponsor, press)</td><td class="num">14</td><td class="num">$0</td><td class="num">$0.00</td><td><span class="mini-bar"><span class="mini-bar-fill green" style="width: 4%"></span></span>4%</td></tr>
@@ -1921,7 +1933,7 @@ body {
         <div class="kpi-tile ink">
           <div class="kpi-label">Ticket Link Clicks</div>
           <div class="kpi-value" id="mkClicks">284</div>
-          <div class="kpi-context">Driving to the Seat Yourself page</div>
+          <div class="kpi-context">Driving to the Ludus page</div>
         </div>
       </div>
 
