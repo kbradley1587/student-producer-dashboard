@@ -1153,6 +1153,488 @@ body {
   font-weight: 500;
 }
 
+/* ============ RESOURCES ============ */
+.resources-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 2rem;
+  gap: 0;
+}
+
+.res-tab {
+  background: transparent;
+  border: none;
+  padding: 0.85rem 1.5rem 0.85rem 0;
+  margin-right: 2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-mute);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.res-tab:hover {
+  color: var(--ink);
+}
+
+.res-tab.active {
+  color: var(--red);
+}
+
+.res-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 2rem;
+  height: 2px;
+  background: var(--red);
+}
+
+.res-panel {
+  display: none;
+}
+
+.res-panel.active {
+  display: block;
+}
+
+/* Role cards (job descriptions) */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.role-card-resource {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--red);
+  padding: 1.5rem 1.6rem;
+  border-radius: 3px;
+  transition: box-shadow 0.2s ease;
+}
+
+.role-card-resource:hover {
+  box-shadow: 0 4px 16px -4px rgba(26, 20, 16, 0.1);
+}
+
+.role-card-resource.gold { border-left-color: var(--gold); }
+.role-card-resource.ink { border-left-color: var(--ink); }
+
+.role-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+  gap: 1rem;
+}
+
+.role-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.role-number-small {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+.role-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+
+.role-current {
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+.role-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.role-meta-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+}
+
+.role-meta-value {
+  font-family: 'Fraunces', serif;
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+.role-summary {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-bottom: 1rem;
+}
+
+.role-section {
+  margin-bottom: 0.85rem;
+}
+
+.role-section:last-child {
+  margin-bottom: 0;
+}
+
+.role-section-title {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 0.45rem;
+}
+
+.role-section-list {
+  list-style: none;
+  padding: 0;
+  font-size: 0.84rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.role-section-list li {
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.25rem;
+}
+
+.role-section-list li::before {
+  content: "·";
+  position: absolute;
+  left: 0.25rem;
+  color: var(--red);
+  font-weight: 700;
+  font-size: 1.1em;
+  top: -0.1em;
+}
+
+/* Team Directory */
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.directory-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 1.25rem;
+  border-radius: 3px;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+}
+
+.directory-card:hover {
+  border-color: var(--red);
+  transform: translateY(-1px);
+}
+
+.directory-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+
+.directory-avatar.gold { background: var(--gold); }
+.directory-avatar.ink { background: var(--ink); }
+.directory-avatar.green { background: var(--green); }
+
+.directory-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.directory-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.directory-role {
+  font-size: 0.72rem;
+  color: var(--red);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-top: 0.15rem;
+  margin-bottom: 0.6rem;
+}
+
+.directory-contact {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.directory-contact a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--rule);
+  transition: color 0.15s ease;
+}
+
+.directory-contact a:hover {
+  color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.directory-contact div {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.contact-icon {
+  font-size: 0.65rem;
+  color: var(--gold);
+  font-weight: 700;
+  width: 14px;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+
+/* Training Library */
+.training-filter {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.training-filter-btn {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-mute);
+  cursor: pointer;
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+}
+
+.training-filter-btn:hover {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+}
+
+.training-filter-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+}
+
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.training-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.training-card:hover {
+  border-color: var(--ink-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px -4px rgba(26, 20, 16, 0.12);
+}
+
+.training-thumb {
+  height: 100px;
+  background: var(--cream-deep);
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.training-thumb.video {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+}
+
+.training-thumb.video::before {
+  content: "▶";
+  font-size: 2rem;
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+.training-thumb.doc {
+  background: linear-gradient(135deg, var(--cream-deep) 0%, var(--cream) 100%);
+}
+
+.training-thumb.doc::before {
+  content: "";
+  position: absolute;
+  width: 42px;
+  height: 56px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 2px 2px 4px 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.training-thumb.doc::after {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 2px;
+  background: var(--rule);
+  box-shadow: 0 6px 0 var(--rule), 0 12px 0 var(--rule);
+  left: 50%;
+  top: calc(50% - 6px);
+  transform: translateX(-50%);
+}
+
+.training-thumb.template {
+  background: linear-gradient(135deg, var(--gold) 0%, #c9ac74 100%);
+}
+
+.training-thumb.template::before {
+  content: "✦";
+  color: var(--paper);
+  font-size: 2.5rem;
+  opacity: 0.9;
+}
+
+.training-meta {
+  padding: 1rem 1.1rem 1.1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.training-type-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+  gap: 0.5rem;
+}
+
+.training-type {
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+}
+
+.training-status {
+  font-size: 0.6rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.training-status.available {
+  background: rgba(45, 106, 63, 0.12);
+  color: var(--green);
+}
+
+.training-status.dev {
+  background: rgba(168, 135, 74, 0.15);
+  color: var(--gold);
+}
+
+.training-status.soon {
+  background: var(--cream-deep);
+  color: var(--ink-mute);
+}
+
+.training-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin-bottom: 0.45rem;
+}
+
+.training-desc {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.training-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  font-style: italic;
+}
+
+/* ============ RESPONSIVE — Resources ============ */
+@media (max-width: 1100px) {
+  .role-grid { grid-template-columns: 1fr; }
+  .directory-grid { grid-template-columns: 1fr 1fr; }
+  .training-grid { grid-template-columns: 1fr 1fr; }
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
   .kpi-row { grid-template-columns: 1fr 1fr; }
@@ -1370,6 +1852,25 @@ body {
 
   /* Chart containers don't overflow */
   .chart-container { height: 180px; }
+
+  /* Resources section mobile */
+  .role-grid { grid-template-columns: 1fr; }
+  .directory-grid { grid-template-columns: 1fr; }
+  .training-grid { grid-template-columns: 1fr; }
+  .resources-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .res-tab {
+    padding: 0.75rem 0;
+    margin-right: 1.25rem;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .res-tab.active::after { right: 1.25rem; }
+  .role-header { flex-direction: column; gap: 0.5rem; }
+  .role-meta { text-align: left; }
 }
 
 @media (max-width: 480px) {
@@ -1463,6 +1964,13 @@ body {
       </div>
       <div class="nav-item" data-view="actions">
         <div class="nav-label">Action Items</div>
+        <div class="nav-status green"></div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-header">Program</div>
+      <div class="nav-item" data-view="resources">
+        <div class="nav-label">Resources</div>
         <div class="nav-status green"></div>
       </div>
     </div>
@@ -2158,6 +2666,679 @@ body {
       </div>
     </div>
 
+    <!-- ============ RESOURCES ============ -->
+    <div class="view" id="view-resources">
+      <div class="content-header">
+        <div class="content-title-block">
+          <div class="content-eyebrow">Program</div>
+          <h1 class="content-title"><em>Resources</em></h1>
+          <div class="content-sub">Roles, team directory, and training library for The Student Producer Program</div>
+        </div>
+      </div>
+
+      <div class="resources-tabs">
+        <button class="res-tab active" data-tab="roles">Roles &amp; Job Descriptions</button>
+        <button class="res-tab" data-tab="directory">Team Directory</button>
+        <button class="res-tab" data-tab="training">Training &amp; Updates</button>
+      </div>
+
+      <!-- ============ ROLES PANEL ============ -->
+      <div class="res-panel active" id="res-roles">
+        <div class="dept-header-note" style="margin-bottom: 2rem;">
+          Each role is defined with its core responsibilities, weekly time commitment, success criteria, and credential deliverables. These descriptions double as recruiting material for next year's team.
+        </div>
+
+        <div class="role-grid">
+
+          <!-- Student Producer -->
+          <div class="role-card-resource">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">01</div>
+                <div class="role-title">Student Producer</div>
+                <div class="role-current">Current: Maya Richards</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">6–10 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Single point of accountability for the business side of the production. Owns the team, the timeline, and the relationship with the director.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Run weekly all-hands standup and producer meeting</li>
+                <li>Own the master production timeline</li>
+                <li>Approve budget allocations and major marketing decisions</li>
+                <li>Serve as liaison to director, advisor, and school administration</li>
+                <li>Write the closing report and deliver the final presentation</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Closing report with quantified season outcomes</li>
+                <li>Executive summary for the school administration</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Assistant Producer -->
+          <div class="role-card-resource">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">02</div>
+                <div class="role-title">Assistant Producer</div>
+                <div class="role-current">Current: Dev Patel</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">4–7 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Operational backbone of the team. Keeps the schedule, fills gaps, and serves as the natural succession plan for the producer role the following year.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Own the action item board and deadline tracking</li>
+                <li>Support any department lead in execution as needed</li>
+                <li>Run standups in the producer's absence</li>
+                <li>Shadow the producer in preparation for next season</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Season-long action tracker with completion metrics</li>
+                <li>Succession handoff document</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Marketing Director -->
+          <div class="role-card-resource gold">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">03</div>
+                <div class="role-title">Marketing Director</div>
+                <div class="role-current">Current: Priya Nair</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">5–8 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Owns the overall marketing strategy and campaign calendar. Supervises the Social Media Lead and Design Team. Sets messaging and defines audience segments.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Build and execute the multi-week campaign calendar</li>
+                <li>Define audience segments and messaging for each</li>
+                <li>Supervise social media and design team output</li>
+                <li>Adjust strategy based on ticket sales data</li>
+                <li>Coordinate press outreach and community partnerships</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Full campaign recap with analytics and outcomes</li>
+                <li>Marketing strategy memo for next year's team</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sponsorship Director -->
+          <div class="role-card-resource">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">04</div>
+                <div class="role-title">Sponsorship Director</div>
+                <div class="role-current">Current: Eli Watson</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">5–8 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Owns all non-ticket revenue. Builds the deck, identifies prospects, makes asks, closes agreements, and ensures sponsor recognition is delivered as promised.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Build prospect list and outreach cadence</li>
+                <li>Develop and maintain the sponsorship deck</li>
+                <li>Close sponsor agreements and collect commitments</li>
+                <li>Coordinate recognition deliverables (ads, social posts)</li>
+                <li>Send thank-you packets at close of run</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Closed sponsor portfolio with total dollars raised</li>
+                <li>Thank-you packet samples and recognition proof-of-delivery</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Finance Lead -->
+          <div class="role-card-resource gold">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">05</div>
+                <div class="role-title">Finance Lead</div>
+                <div class="role-current">Current: Jordan Park</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">3–5 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Owns the production budget. Tracks expenses against plan, reconciles ticket revenue and sponsorship income, produces the weekly financial snapshot.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Build opening budget with director in Week 1</li>
+                <li>Run weekly budget-vs-actual reconciliation</li>
+                <li>Track ticket revenue and sponsorship income daily</li>
+                <li>Produce the closing P&amp;L and variance report</li>
+                <li>Present financial snapshot at Monday standup</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Final reconciled P&amp;L with variance analysis</li>
+                <li>Weekly budget snapshots compiled as season archive</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Box Office Manager -->
+          <div class="role-card-resource">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">06</div>
+                <div class="role-title">Box Office Manager</div>
+                <div class="role-current">Current: Aaliyah Chen</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">3–6 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Owns ticket sales operations. Manages the ticketing platform, runs pre-sale and at-the-door, reconciles nightly, distributes the daily sales report.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Configure and maintain the ticketing platform</li>
+                <li>Test the purchase flow and at-the-door backup</li>
+                <li>Distribute daily sales reports during sales window</li>
+                <li>Run nightly reconciliation during the show run</li>
+                <li>Track per-performance inventory and pacing</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Complete sales log with channel breakdown</li>
+                <li>Per-performance fill rate analysis</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Guest Services Lead -->
+          <div class="role-card-resource ink">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">07</div>
+                <div class="role-title">Guest Services Lead</div>
+                <div class="role-current">Current: Zara Thompson</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">3–6 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Owns the audience experience from arrival through exit. Ushers, concessions, program distribution, VIP hospitality, and lobby flow.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Recruit and schedule ushers across all performances</li>
+                <li>Plan lobby layout, signage, and VIP check-in</li>
+                <li>Coordinate concession volunteers and inventory</li>
+                <li>Manage VIP and press guest list</li>
+                <li>Own front-of-house readiness by opening night</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Front-of-house operations manual</li>
+                <li>Post-show hospitality recap and VIP feedback</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Social Media Lead -->
+          <div class="role-card-resource gold">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">08</div>
+                <div class="role-title">Social Media Lead</div>
+                <div class="role-current">Current: Marcus Lee</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">4–7 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Reports to the Marketing Director. Owns daily posting across chosen platforms, responds to comments, tracks engagement metrics, produces content with the Design Team.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Post daily across Instagram, TikTok, and Facebook</li>
+                <li>Respond to comments and DMs in a timely way</li>
+                <li>Capture behind-the-scenes content at rehearsals</li>
+                <li>Track reach, engagement, and ticket-link clicks</li>
+                <li>Coordinate with Design on visual assets</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Campaign analytics report with top-performing posts</li>
+                <li>Content library handed to next year's team</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Design Team -->
+          <div class="role-card-resource ink">
+            <div class="role-header">
+              <div class="role-title-block">
+                <div class="role-number-small">09</div>
+                <div class="role-title">Design Team</div>
+                <div class="role-current">Current: Alex Lin &amp; Jamie Stone</div>
+              </div>
+              <div class="role-meta">
+                <div class="role-meta-label">Commitment</div>
+                <div class="role-meta-value">3–6 hrs/wk</div>
+              </div>
+            </div>
+            <div class="role-summary">
+              Reports to the Marketing Director. Produces posters, social graphics, program design, sponsor recognition assets, and all print and digital marketing collateral.
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Responsibilities</div>
+              <ul class="role-section-list">
+                <li>Design the primary show poster and marketing visuals</li>
+                <li>Produce sponsor ads for playbill and program</li>
+                <li>Create social graphics and countdown assets</li>
+                <li>Design lobby signage and front-of-house materials</li>
+                <li>Maintain brand consistency across all assets</li>
+              </ul>
+            </div>
+            <div class="role-section">
+              <div class="role-section-title">Credential Deliverable</div>
+              <ul class="role-section-list">
+                <li>Complete design portfolio from the production</li>
+                <li>Brand guide and template library for next year</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============ DIRECTORY PANEL ============ -->
+      <div class="res-panel" id="res-directory">
+        <div class="dept-header-note" style="margin-bottom: 2rem;">
+          Contact information for the current production team. Everyone should know how to reach each other quickly — especially in the final weeks before opening.
+        </div>
+
+        <div class="directory-grid">
+
+          <div class="directory-card">
+            <div class="directory-avatar">MR</div>
+            <div class="directory-info">
+              <div class="directory-name">Maya Richards</div>
+              <div class="directory-role">Student Producer</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:maya.richards@cmwhs.example">maya.richards@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550142">(410) 555-0142</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar gold">DP</div>
+            <div class="directory-info">
+              <div class="directory-name">Dev Patel</div>
+              <div class="directory-role">Assistant Producer</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:dev.patel@cmwhs.example">dev.patel@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550187">(410) 555-0187</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar">PN</div>
+            <div class="directory-info">
+              <div class="directory-name">Priya Nair</div>
+              <div class="directory-role">Marketing Director</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:priya.nair@cmwhs.example">priya.nair@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550216">(410) 555-0216</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar">EW</div>
+            <div class="directory-info">
+              <div class="directory-name">Eli Watson</div>
+              <div class="directory-role">Sponsorship Director</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:eli.watson@cmwhs.example">eli.watson@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550173">(410) 555-0173</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar gold">JP</div>
+            <div class="directory-info">
+              <div class="directory-name">Jordan Park</div>
+              <div class="directory-role">Finance Lead</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:jordan.park@cmwhs.example">jordan.park@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550119">(410) 555-0119</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar">AC</div>
+            <div class="directory-info">
+              <div class="directory-name">Aaliyah Chen</div>
+              <div class="directory-role">Box Office Manager</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:aaliyah.chen@cmwhs.example">aaliyah.chen@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550164">(410) 555-0164</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar ink">ZT</div>
+            <div class="directory-info">
+              <div class="directory-name">Zara Thompson</div>
+              <div class="directory-role">Guest Services Lead</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:zara.thompson@cmwhs.example">zara.thompson@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550209">(410) 555-0209</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar gold">ML</div>
+            <div class="directory-info">
+              <div class="directory-name">Marcus Lee</div>
+              <div class="directory-role">Social Media Lead</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:marcus.lee@cmwhs.example">marcus.lee@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550238">(410) 555-0238</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar ink">AL</div>
+            <div class="directory-info">
+              <div class="directory-name">Alex Lin</div>
+              <div class="directory-role">Design Team</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:alex.lin@cmwhs.example">alex.lin@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550195">(410) 555-0195</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar ink">JS</div>
+            <div class="directory-info">
+              <div class="directory-name">Jamie Stone</div>
+              <div class="directory-role">Design Team</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:jamie.stone@cmwhs.example">jamie.stone@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550256">(410) 555-0256</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar green">KB</div>
+            <div class="directory-info">
+              <div class="directory-name">Ms. K. Bennett</div>
+              <div class="directory-role">Faculty Advisor</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:kbennett@cmwhs.example">kbennett@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550101">(410) 555-0101</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="directory-avatar green">TD</div>
+            <div class="directory-info">
+              <div class="directory-name">Mr. T. Daniels</div>
+              <div class="directory-role">Theater Director</div>
+              <div class="directory-contact">
+                <div><span class="contact-icon">✉</span><a href="mailto:tdaniels@cmwhs.example">tdaniels@cmwhs.example</a></div>
+                <div><span class="contact-icon">☎</span><a href="tel:4105550102">(410) 555-0102</a></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============ TRAINING PANEL ============ -->
+      <div class="res-panel" id="res-training">
+        <div class="dept-header-note" style="margin-bottom: 1.5rem;">
+          The SP² training library. Onboarding modules, role-specific guides, templates, and program updates. New content is added each season.
+        </div>
+
+        <div class="training-filter">
+          <button class="training-filter-btn active">All</button>
+          <button class="training-filter-btn">Onboarding</button>
+          <button class="training-filter-btn">Role Training</button>
+          <button class="training-filter-btn">Templates</button>
+          <button class="training-filter-btn">Updates</button>
+        </div>
+
+        <div class="training-grid">
+
+          <div class="training-card">
+            <div class="training-thumb video"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Onboarding · Video</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Welcome to SP²</div>
+              <div class="training-desc">12-minute overview of the program, the team structure, and what a season looks like. Every new team member watches this first.</div>
+              <div class="training-footer">12:04 · Updated Jan 2026</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb video"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Onboarding · Video</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Running Your First Standup</div>
+              <div class="training-desc">How to facilitate the Monday all-hands meeting. Agenda structure, how to manage time, how to drive decisions.</div>
+              <div class="training-footer">8:22 · For Student Producers</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb template"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Template · Slides</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Sponsorship Deck Template</div>
+              <div class="training-desc">10-slide deck with editable placeholders. Includes show description, audience demographics, recognition packages, and pricing tiers.</div>
+              <div class="training-footer">Google Slides · 10 slides</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb template"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Template · Spreadsheet</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Budget &amp; P&amp;L Workbook</div>
+              <div class="training-desc">Four-tab Google Sheet: budget vs. actual, ticket sales log, sponsorship pipeline, and auto-calculating closing P&amp;L.</div>
+              <div class="training-footer">Google Sheets · Finance Lead</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb doc"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Role Training · Guide</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Sponsorship Outreach Playbook</div>
+              <div class="training-desc">How to build a prospect list, write the first outreach email, handle objections, and close the ask. Includes scripts.</div>
+              <div class="training-footer">PDF · 14 pages · Sponsorship Director</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb video"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Role Training · Video</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Social That Sells Tickets</div>
+              <div class="training-desc">What actually drives ticket link clicks on Instagram and TikTok. Post types, cadence, and how to capture rehearsal content.</div>
+              <div class="training-footer">18:40 · Social Media Lead</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb template"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Template · Calendar</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">16-Week Campaign Calendar</div>
+              <div class="training-desc">Phase-by-phase marketing calendar with content types, channels, and handoff points pre-filled for the production cycle.</div>
+              <div class="training-footer">Google Sheets · Marketing Director</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb doc"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Role Training · Guide</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">Front-of-House Operations</div>
+              <div class="training-desc">Lobby setup, usher orientation, VIP check-in, concession flow, and emergency protocols. Printable pre-show checklist included.</div>
+              <div class="training-footer">PDF · 9 pages · Guest Services</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb video"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Role Training · Video</div>
+                <div class="training-status dev">In Development</div>
+              </div>
+              <div class="training-title">Ticket Pricing Strategy</div>
+              <div class="training-desc">How to set prices, when to offer discounts, and what to do if sales are lagging. Case studies from pilot programs.</div>
+              <div class="training-footer">Est. release: Feb 2026</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb doc"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Role Training · Guide</div>
+                <div class="training-status dev">In Development</div>
+              </div>
+              <div class="training-title">Closing Report Handbook</div>
+              <div class="training-desc">Structure, metrics to include, and sample closing reports from past pilots. Template for the Student Producer's end-of-season deliverable.</div>
+              <div class="training-footer">Est. release: Mar 2026</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb template"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Template · Press</div>
+                <div class="training-status soon">Coming Soon</div>
+              </div>
+              <div class="training-title">Press Release Template</div>
+              <div class="training-desc">Editable press release with local-media distribution list and contact protocol. Pairs with the Marketing campaign calendar.</div>
+              <div class="training-footer">Planned for Spring 2026 cycle</div>
+            </div>
+          </div>
+
+          <div class="training-card">
+            <div class="training-thumb doc"></div>
+            <div class="training-meta">
+              <div class="training-type-row">
+                <div class="training-type">Update · Release Notes</div>
+                <div class="training-status available">Available</div>
+              </div>
+              <div class="training-title">SP² v1.2 Release Notes</div>
+              <div class="training-desc">New mobile dashboard, expanded sponsorship CRM, updated role credentials framework. Published Jan 2026.</div>
+              <div class="training-footer">Latest · Read in 3 min</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
   </main>
 </div>
 
@@ -2737,6 +3918,26 @@ document.addEventListener("click", (e) => {
     e.target.classList.toggle("done");
     e.target.closest(".action-item")?.classList.toggle("done");
   }
+});
+
+// Resources internal tab switching
+document.querySelectorAll(".res-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll(".res-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".res-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    const panel = document.getElementById("res-" + target);
+    if (panel) panel.classList.add("active");
+  });
+});
+
+// Training filter buttons (visual-only in demo)
+document.querySelectorAll(".training-filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".training-filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  });
 });
 
 // Initial render
