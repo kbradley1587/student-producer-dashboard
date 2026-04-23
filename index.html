@@ -1068,6 +1068,12 @@ body {
   width: 100px;
 }
 
+/* Table scroll wrapper — transparent on desktop, activates on mobile */
+.table-scroll {
+  width: 100%;
+  overflow-x: visible;
+}
+
 .pl-table tr.total td, .budget-table tr.total td {
   font-weight: 700;
   border-top: 1.5px solid var(--ink);
@@ -1289,23 +1295,44 @@ body {
     align-items: flex-start;
     gap: 0.35rem;
   }
-  .budget-table,
-  .pl-table,
-  .data-table {
-    min-width: 520px;
-  }
-  /* Wrap tables in a horizontal scroll container via the card itself */
-  .dash-card table {
-    display: block;
+
+  /* Horizontal scroll wrapper for tables on mobile */
+  .table-scroll {
     overflow-x: auto;
-    white-space: nowrap;
     -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    /* Subtle fade gradient on right edge as a hint that content scrolls */
+    background:
+      linear-gradient(to right, var(--paper) 30%, rgba(253,250,243,0)) left center / 20px 100% no-repeat,
+      linear-gradient(to right, rgba(253,250,243,0), var(--paper) 70%) right center / 20px 100% no-repeat,
+      linear-gradient(to right, rgba(26,20,16,0.08), rgba(26,20,16,0)) left center / 10px 100% no-repeat,
+      linear-gradient(to left, rgba(26,20,16,0.08), rgba(26,20,16,0)) right center / 10px 100% no-repeat;
+    background-attachment: local, local, scroll, scroll;
   }
-  .dash-card table thead,
-  .dash-card table tbody {
-    display: table;
-    width: 100%;
-    min-width: 520px;
+  .table-scroll table {
+    min-width: 620px;
+  }
+
+  /* Reset fixed column widths on mobile — the scroll wrapper handles overflow */
+  .budget-table th.num,
+  .budget-table td.num,
+  .budget-table th:last-child,
+  .budget-table td:last-child,
+  .pl-table th.num,
+  .pl-table td.num,
+  .data-table th.num,
+  .data-table td.num {
+    width: auto;
+    min-width: 90px;
+    padding: 0.6rem 0.75rem;
+  }
+  .budget-table th:last-child,
+  .budget-table td:last-child {
+    min-width: 110px;
+  }
+  .pl-table th.num,
+  .pl-table td.num {
+    min-width: 140px;
   }
 
   /* Gantt chart - label column narrower, bars remain */
@@ -1642,12 +1669,16 @@ body {
             <div class="dash-card-sub">Updated weekly · reconciled Monday mornings</div>
           </div>
         </div>
-        <table class="budget-table">
+        <div class="table-scroll">
+
+          <table class="budget-table">
           <thead>
             <tr><th>Category</th><th class="num">Budget</th><th class="num">Actual</th><th class="num">Variance</th><th>% Used</th></tr>
           </thead>
           <tbody id="budgetBody"></tbody>
         </table>
+
+        </div>
       </div>
 
       <div class="dash-card full">
@@ -1657,7 +1688,9 @@ body {
             <div class="dash-card-sub">Projection at end of run · updated weekly</div>
           </div>
         </div>
-        <table class="pl-table">
+        <div class="table-scroll">
+
+          <table class="pl-table">
           <thead>
             <tr><th>Line</th><th class="num">Amount</th></tr>
           </thead>
@@ -1679,6 +1712,8 @@ body {
             <tr class="total"><td>Projected Net</td><td class="num variance-pos">$13,510</td></tr>
           </tbody>
         </table>
+
+        </div>
       </div>
     </div>
 
@@ -1737,7 +1772,9 @@ body {
             <div class="dash-card-title">Sales by Performance Night</div>
             <div class="dash-card-sub">200-seat house · 4 nights</div>
           </div>
-          <table class="data-table" style="margin-top: 0.5rem;">
+          <div class="table-scroll">
+
+            <table class="data-table" style="margin-top: 0.5rem;">
             <thead>
               <tr><th>Performance</th><th class="num">Sold</th><th class="num">Remaining</th><th>Fill</th></tr>
             </thead>
@@ -1748,6 +1785,8 @@ body {
               <tr><td>Sat Evening · Closing</td><td class="num">54</td><td class="num">146</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 27%"></span></span>27%</td></tr>
             </tbody>
           </table>
+
+          </div>
         </div>
       </div>
 
@@ -1756,17 +1795,21 @@ body {
           <div class="dash-card-title">Sales Channel Breakdown</div>
           <div class="dash-card-sub">Where tickets are coming from</div>
         </div>
-        <table class="data-table">
+        <div class="table-scroll">
+
+          <table class="data-table">
           <thead>
             <tr><th>Channel</th><th class="num">Tickets</th><th class="num">Revenue</th><th class="num">Avg Price</th><th>Share</th></tr>
           </thead>
           <tbody>
-            <tr><td>Online (Seat Yourself platform)</td><td class="num">318</td><td class="num">$6,360</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 77%"></span></span>77%</td></tr>
+            <tr><td>Online (Ludus platform)</td><td class="num">318</td><td class="num">$6,360</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 77%"></span></span>77%</td></tr>
             <tr><td>Cash / At the door (pre-sale)</td><td class="num">42</td><td class="num">$840</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 10%"></span></span>10%</td></tr>
             <tr><td>Student discount tickets</td><td class="num">38</td><td class="num">$570</td><td class="num">$15.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 9%"></span></span>9%</td></tr>
             <tr><td>Comps (sponsor, press)</td><td class="num">14</td><td class="num">$0</td><td class="num">$0.00</td><td><span class="mini-bar"><span class="mini-bar-fill green" style="width: 4%"></span></span>4%</td></tr>
           </tbody>
         </table>
+
+        </div>
       </div>
     </div>
 
@@ -1823,7 +1866,9 @@ body {
           <div class="dash-card-title">Closed Sponsor Recognition Status</div>
           <div class="dash-card-sub">Ensuring every sponsor is thanked</div>
         </div>
-        <table class="data-table">
+        <div class="table-scroll">
+
+          <table class="data-table">
           <thead>
             <tr><th>Sponsor</th><th class="num">Amount</th><th>Package</th><th>Ad Delivered</th><th>Social Post</th><th>Thank-You</th></tr>
           </thead>
@@ -1835,6 +1880,8 @@ body {
             <tr><td><strong>Harford Honda</strong></td><td class="num">$500</td><td>Program listing</td><td><span class="pill green">✓ Approved</span></td><td><span class="pill gray">Scheduled</span></td><td><span class="pill gold">Pending</span></td></tr>
           </tbody>
         </table>
+
+        </div>
       </div>
     </div>
 
@@ -1883,7 +1930,9 @@ body {
           <div class="dash-card-title">Recent Posts Performance</div>
           <div class="dash-card-sub">Last 7 days across all platforms</div>
         </div>
-        <table class="data-table">
+        <div class="table-scroll">
+
+          <table class="data-table">
           <thead>
             <tr><th>Post</th><th>Platform</th><th>Type</th><th class="num">Reach</th><th class="num">Engagement</th><th class="num">Link Clicks</th></tr>
           </thead>
@@ -1896,6 +1945,8 @@ body {
             <tr><td>Sponsor spotlight: Mountain Branch</td><td>Instagram</td><td>Post</td><td class="num">1,520</td><td class="num">4.3%</td><td class="num">21</td></tr>
           </tbody>
         </table>
+
+        </div>
       </div>
 
       <div class="dash-grid">
@@ -1904,7 +1955,9 @@ body {
             <div class="dash-card-title">Campaign Calendar</div>
             <div class="dash-card-sub">Next 10 days</div>
           </div>
-          <table class="data-table">
+          <div class="table-scroll">
+
+            <table class="data-table">
             <thead><tr><th>Date</th><th>Platform</th><th>Content</th></tr></thead>
             <tbody>
               <tr><td>Wed</td><td>Instagram</td><td>Poster reveal with Design Team</td></tr>
@@ -1916,13 +1969,17 @@ body {
               <tr><td>Wed</td><td>TikTok</td><td>"A day in the life of tech week"</td></tr>
             </tbody>
           </table>
+
+          </div>
         </div>
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">Design Queue</div>
             <div class="dash-card-sub">Active assets in production</div>
           </div>
-          <table class="data-table">
+          <div class="table-scroll">
+
+            <table class="data-table">
             <thead><tr><th>Asset</th><th>Owner</th><th>Status</th></tr></thead>
             <tbody>
               <tr><td>Show poster (final)</td><td>Alex L.</td><td><span class="pill green">✓ Approved</span></td></tr>
@@ -1933,6 +1990,8 @@ body {
               <tr><td>Thank-you sponsor cards</td><td>Jamie S.</td><td><span class="pill gray">Queued</span></td></tr>
             </tbody>
           </table>
+
+          </div>
         </div>
       </div>
     </div>
@@ -1982,7 +2041,9 @@ body {
           <div class="dash-card-title">Usher Schedule</div>
           <div class="dash-card-sub">Per performance · 6 ushers per night</div>
         </div>
-        <table class="data-table">
+        <div class="table-scroll">
+
+          <table class="data-table">
           <thead>
             <tr><th>Performance</th><th>Confirmed</th><th>Pending</th><th>Open</th><th>Lead Usher</th></tr>
           </thead>
@@ -1993,6 +2054,8 @@ body {
             <tr><td>Sat Evening · Closing</td><td>3 of 6</td><td>—</td><td>3</td><td>Open</td></tr>
           </tbody>
         </table>
+
+        </div>
       </div>
 
       <div class="dash-grid">
@@ -2001,7 +2064,9 @@ body {
             <div class="dash-card-title">VIP &amp; Press List</div>
             <div class="dash-card-sub">Reserved seating &amp; special welcome</div>
           </div>
-          <table class="data-table">
+          <div class="table-scroll">
+
+            <table class="data-table">
             <thead><tr><th>Guest</th><th>Organization</th><th>Night</th></tr></thead>
             <tbody>
               <tr><td>Jim Harper</td><td>The Aegis (reviewer)</td><td>Opening</td></tr>
@@ -2012,6 +2077,8 @@ body {
               <tr><td>Tower Realty (2)</td><td>Sponsor</td><td>Friday</td></tr>
             </tbody>
           </table>
+
+          </div>
         </div>
         <div class="dash-card">
           <div class="dash-card-header">
