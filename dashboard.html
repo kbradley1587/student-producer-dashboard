@@ -66,6 +66,18 @@ body {
   align-items: baseline;
   gap: 0.75rem;
   flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.brand:hover .brand-mark sup {
+  color: var(--cream);
 }
 
 .brand-mark {
@@ -1887,10 +1899,10 @@ body {
 
 <!-- ============ TOP BAR ============ -->
 <header class="topbar">
-  <div class="brand">
+  <a class="brand" href="index.html" title="Back to The Student Producer Program">
     <div class="brand-mark">SP<sup>2</sup></div>
     <div class="brand-sub">Dashboard</div>
-  </div>
+  </a>
   <div class="topbar-divider"></div>
   <div class="show-info">
     <div class="show-info-label">Current Production</div>
