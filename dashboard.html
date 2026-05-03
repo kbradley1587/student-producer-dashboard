@@ -3956,59 +3956,71 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
 renderDashboard(11);
 </script>
 <script>
-// ============ SP² LIVE DATA WIRING - PROOF OF CONCEPT ============
+// ============ SP² LIVE DATA WIRING ============
 // Fetches Box Office data from CMW's published Google Sheet
-// and populates the Tickets Sold KPI tile with live data.
+// and populates Tickets Sold and Revenue to Date KPIs.
 
-(async function loadLiveTickets() {
+(async function loadLiveBoxOffice() {
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
 
+  // Helper: parse a single CSV row, respecting quoted commas
+  function parseRow(row) {
+    const cells = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < row.length; i++) {
+      const char = row[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        cells.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    cells.push(current.trim());
+    return cells;
+  }
+
+  // Helper: strip currency formatting ($1,624.00 -> 1624)
+  function parseMoney(str) {
+    if (!str) return 0;
+    const cleaned = str.replace(/[$,\s"]/g, '');
+    return parseFloat(cleaned) || 0;
+  }
+
   try {
-    // Fetch the CSV from Google Sheets
     const response = await fetch(BOX_OFFICE_CSV);
     if (!response.ok) throw new Error('Failed to fetch CSV: ' + response.status);
     const csvText = await response.text();
 
-    // Parse CSV into rows
-    const rows = csvText.trim().split('\n').map(row => {
-      // Simple CSV parser - splits on commas not inside quotes
-      const cells = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < row.length; i++) {
-        const char = row[i];
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          cells.push(current.trim());
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-      cells.push(current.trim());
-      return cells;
-    });
-
-    // Get header row to find column indexes
+    const rows = csvText.trim().split('\n').map(parseRow);
     const headers = rows[0];
+
     const adultIdx = headers.indexOf('Adult Tickets');
     const studentIdx = headers.indexOf('Student Tickets');
+    const totalRevIdx = headers.indexOf('Total Revenue');
 
     if (adultIdx === -1 || studentIdx === -1) {
       console.error('SP² Live Data: Could not find Adult/Student Tickets columns');
-      return;
+    }
+    if (totalRevIdx === -1) {
+      console.error('SP² Live Data: Could not find Total Revenue column');
     }
 
-    // Sum tickets across all performance rows (skip header)
     let totalTickets = 0;
+    let totalRevenue = 0;
+
     for (let i = 1; i < rows.length; i++) {
       const adult = parseInt(rows[i][adultIdx], 10) || 0;
       const student = parseInt(rows[i][studentIdx], 10) || 0;
       totalTickets += adult + student;
+
+      totalRevenue += parseMoney(rows[i][totalRevIdx]);
     }
 
-    // Update the dashboard
+    // Update Tickets Sold
     const ticketsEl = document.getElementById('kpiTickets');
     if (ticketsEl) {
       ticketsEl.textContent = totalTickets.toLocaleString();
@@ -4016,9 +4028,20 @@ renderDashboard(11);
     } else {
       console.error('SP² Live Data: Could not find kpiTickets element');
     }
+
+    // Update Revenue to Date
+    const revenueEl = document.getElementById('kpiRevenue');
+    if (revenueEl) {
+      revenueEl.textContent = '$' + totalRevenue.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+      console.log('SP² Live Data: Revenue updated to $' + totalRevenue);
+    } else {
+      console.error('SP² Live Data: Could not find kpiRevenue element');
+    }
   } catch (error) {
-    console.error('SP² Live Data: Error loading tickets', error);
-    // Leave the existing demo value in place if fetch fails
+    console.error('SP² Live Data: Error loading box office data', error);
   }
 })();
 </script>
