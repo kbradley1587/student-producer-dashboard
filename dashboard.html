@@ -3957,13 +3957,14 @@ renderDashboard(11);
 </script>
 <script>
 // ============ SP² LIVE DATA WIRING ============
-// Fetches Box Office and Sponsorship data from CMW's published Google Sheets
-// and populates Tickets Sold, Revenue to Date, and Sponsorship Closed KPIs.
+// Fetches SP² Dashboard, Box Office, and Sponsorship data from CMW's
+// published Google Sheets and populates Tickets Sold, Revenue to Date,
+// and Sponsorship Closed KPIs (with dynamic goal from Dashboard tab).
 
 (async function loadLiveData() {
+  const DASHBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=0&single=true&output=csv';
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
   const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
-  const SPONSORSHIP_TARGET = 6000;
 
   // Helper: parse a single CSV row, respecting quoted commas
   function parseRow(row) {
@@ -4003,6 +4004,27 @@ renderDashboard(11);
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     });
+  }
+
+  // ============ SP² DASHBOARD METADATA ============
+  // Fetched first because other calculations depend on its values
+  let metadata = {};
+  try {
+    const response = await fetch(DASHBOARD_CSV);
+    if (!response.ok) throw new Error('Failed to fetch Dashboard CSV: ' + response.status);
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    const headers = rows[0];
+    const values = rows[1];
+
+    // Build a lookup object: { "School Name": "C. Milton Wright High School", ... }
+    for (let i = 0; i < headers.length; i++) {
+      metadata[headers[i]] = values[i];
+    }
+
+    console.log('SP² Live Data: Dashboard metadata loaded', metadata);
+  } catch (error) {
+    console.error('SP² Live Data: Error loading Dashboard metadata', error);
   }
 
   // ============ BOX OFFICE DATA ============
@@ -4075,10 +4097,18 @@ renderDashboard(11);
       console.log('SP² Live Data: Sponsorship Closed updated to ' + formatMoney(totalClosed) + ' (' + closedCount + ' sponsors)');
     }
 
+    // Pull the Sponsorship Goal from the Dashboard metadata (live, not hardcoded)
+    const sponsorshipGoal = parseMoney(metadata['Sponsorship Goal']) || 0;
     const sponsorCtxEl = document.getElementById('kpiSponsorCtx');
     if (sponsorCtxEl) {
-      const percentOfTarget = Math.round((totalClosed / SPONSORSHIP_TARGET) * 100);
-      sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(SPONSORSHIP_TARGET) + ' target';
+      if (sponsorshipGoal > 0) {
+        const percentOfTarget = Math.round((totalClosed / sponsorshipGoal) * 100);
+        sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(sponsorshipGoal) + ' target';
+        console.log('SP² Live Data: Sponsorship target updated to ' + formatMoney(sponsorshipGoal) + ' (goal from Dashboard tab)');
+      } else {
+        sponsorCtxEl.textContent = 'No goal set';
+        console.warn('SP² Live Data: Sponsorship Goal not found in Dashboard metadata');
+      }
     }
   } catch (error) {
     console.error('SP² Live Data: Error loading Sponsorship', error);
