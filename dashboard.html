@@ -3955,6 +3955,72 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
 // Initial render
 renderDashboard(11);
 </script>
+<script>
+// ============ SP² LIVE DATA WIRING - PROOF OF CONCEPT ============
+// Fetches Box Office data from CMW's published Google Sheet
+// and populates the Tickets Sold KPI tile with live data.
 
+(async function loadLiveTickets() {
+  const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
+
+  try {
+    // Fetch the CSV from Google Sheets
+    const response = await fetch(BOX_OFFICE_CSV);
+    if (!response.ok) throw new Error('Failed to fetch CSV: ' + response.status);
+    const csvText = await response.text();
+
+    // Parse CSV into rows
+    const rows = csvText.trim().split('\n').map(row => {
+      // Simple CSV parser - splits on commas not inside quotes
+      const cells = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          cells.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      cells.push(current.trim());
+      return cells;
+    });
+
+    // Get header row to find column indexes
+    const headers = rows[0];
+    const adultIdx = headers.indexOf('Adult Tickets');
+    const studentIdx = headers.indexOf('Student Tickets');
+
+    if (adultIdx === -1 || studentIdx === -1) {
+      console.error('SP² Live Data: Could not find Adult/Student Tickets columns');
+      return;
+    }
+
+    // Sum tickets across all performance rows (skip header)
+    let totalTickets = 0;
+    for (let i = 1; i < rows.length; i++) {
+      const adult = parseInt(rows[i][adultIdx], 10) || 0;
+      const student = parseInt(rows[i][studentIdx], 10) || 0;
+      totalTickets += adult + student;
+    }
+
+    // Update the dashboard
+    const ticketsEl = document.getElementById('kpiTickets');
+    if (ticketsEl) {
+      ticketsEl.textContent = totalTickets.toLocaleString();
+      console.log('SP² Live Data: Tickets Sold updated to ' + totalTickets);
+    } else {
+      console.error('SP² Live Data: Could not find kpiTickets element');
+    }
+  } catch (error) {
+    console.error('SP² Live Data: Error loading tickets', error);
+    // Leave the existing demo value in place if fetch fails
+  }
+})();
+</script>
 </body>
 </html>
