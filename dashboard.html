@@ -2006,27 +2006,27 @@ body {
       </div>
 
       <div class="kpi-row">
-        <div class="kpi-tile" data-goto="boxoffice">
-          <div class="kpi-label">Tickets Sold <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiTickets">412</div>
-          <div class="kpi-context"><span class="kpi-delta" id="kpiTicketsDelta">↑ 68%</span> vs. same week last year</div>
-        </div>
-        <div class="kpi-tile gold" data-goto="finance">
-          <div class="kpi-label">Revenue to Date <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiRevenue">$8,240</div>
-          <div class="kpi-context" id="kpiRevenueCtx"><span class="kpi-delta">↑ $3,110</span> vs. prior year</div>
-        </div>
-        <div class="kpi-tile" data-goto="sponsorship">
-          <div class="kpi-label">Sponsorship Closed <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiSponsor">$4,750</div>
-          <div class="kpi-context" id="kpiSponsorCtx">79% of $6,000 target</div>
-        </div>
-        <div class="kpi-tile ink">
-          <div class="kpi-label">Director Hours Recovered</div>
-          <div class="kpi-value" id="kpiHours">47</div>
-          <div class="kpi-context" id="kpiHoursCtx">Weeks 1 through 11</div>
-        </div>
-      </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">Tickets Sold</div>
+    <div class="kpi-value" id="boxSold">412</div>
+    <div class="kpi-context" id="boxSoldCtx">51% of 800 capacity</div>
+  </div>
+  <div class="kpi-tile gold">
+    <div class="kpi-label">Ticket Revenue</div>
+    <div class="kpi-value" id="boxRev">$8,240</div>
+    <div class="kpi-context" id="boxRevCtx">Avg $20.00 per ticket</div>
+  </div>
+  <div class="kpi-tile green">
+    <div class="kpi-label">Pace vs. Target</div>
+    <div class="kpi-value" id="boxPace">+12%</div>
+    <div class="kpi-context" id="boxPaceCtx">Ahead of linear pace to 800</div>
+  </div>
+  <div class="kpi-tile ink">
+    <div class="kpi-label">Remaining Inventory</div>
+    <div class="kpi-value" id="boxInventory">388</div>
+    <div class="kpi-context" id="boxInventoryCtx">4 show performances</div>
+  </div>
+</div>
 
       <div class="dash-card full">
         <div class="dash-card-header">
@@ -2302,21 +2302,21 @@ body {
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">Sales by Performance Night</div>
-            <div class="dash-card-sub">200-seat house · 4 nights</div>
+            <div class="dash-card-sub" id="performanceTableSub">200-seat house · 4 nights</div>
           </div>
           <div class="table-scroll">
 
             <table class="data-table" style="margin-top: 0.5rem;">
-            <thead>
-              <tr><th>Performance</th><th class="num">Sold</th><th class="num">Remaining</th><th>Fill</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Thu · Opening Night</td><td class="num">164</td><td class="num">36</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 82%"></span></span>82%</td></tr>
-              <tr><td>Fri · Second Night</td><td class="num">118</td><td class="num">82</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 59%"></span></span>59%</td></tr>
-              <tr><td>Sat Matinee</td><td class="num">76</td><td class="num">124</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 38%"></span></span>38%</td></tr>
-              <tr><td>Sat Evening · Closing</td><td class="num">54</td><td class="num">146</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 27%"></span></span>27%</td></tr>
-            </tbody>
-          </table>
+  <thead>
+    <tr><th>Performance</th><th class="num">Sold</th><th class="num">Remaining</th><th>Fill</th></tr>
+  </thead>
+  <tbody id="performanceTableBody">
+    <tr><td>Thu · Opening Night</td><td class="num">164</td><td class="num">36</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 82%"></span></span>82%</td></tr>
+    <tr><td>Fri · Second Night</td><td class="num">118</td><td class="num">82</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 59%"></span></span>59%</td></tr>
+    <tr><td>Sat Matinee</td><td class="num">76</td><td class="num">124</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 38%"></span></span>38%</td></tr>
+    <tr><td>Sat Evening · Closing</td><td class="num">54</td><td class="num">146</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 27%"></span></span>27%</td></tr>
+  </tbody>
+</table>
 
           </div>
         </div>
@@ -2333,7 +2333,7 @@ body {
           <thead>
             <tr><th>Channel</th><th class="num">Tickets</th><th class="num">Revenue</th><th class="num">Avg Price</th><th>Share</th></tr>
           </thead>
-          <tbody>
+          <tbody id="channelTableBody">
             <tr><td>Online (Ludus platform)</td><td class="num">318</td><td class="num">$6,360</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: 77%"></span></span>77%</td></tr>
             <tr><td>Cash / At the door (pre-sale)</td><td class="num">42</td><td class="num">$840</td><td class="num">$20.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 10%"></span></span>10%</td></tr>
             <tr><td>Student discount tickets</td><td class="num">38</td><td class="num">$570</td><td class="num">$15.00</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 9%"></span></span>9%</td></tr>
@@ -3957,30 +3957,32 @@ renderDashboard(11);
 </script>
 <script>
 // ============ SP² LIVE DATA WIRING ============
-// Fetches SP² Dashboard metadata, Box Office, and Sponsorship data
-// from CMW's published Google Sheets and populates KPIs, header,
-// countdown, and user chip with live data.
+// Fetches once, caches the parsed data, then re-applies on every render
+// to ensure the scrubber doesn't overwrite live values.
 
-(async function loadLiveData() {
+(function () {
   const DASHBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=0&single=true&output=csv';
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
   const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
 
-  // Helper: parse a single CSV row, respecting quoted commas
+  // Cache: holds parsed data after first fetch so we don't re-hit Google on every scrubber move
+  const cache = {
+    metadata: null,
+    boxOfficeRows: null,
+    sponsorshipRows: null,
+    loaded: false
+  };
+
+  // ===== Helper functions =====
   function parseRow(row) {
     const cells = [];
     let current = '';
     let inQuotes = false;
     for (let i = 0; i < row.length; i++) {
       const char = row[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        cells.push(current.trim());
-        current = '';
-      } else {
-        current += char;
-      }
+      if (char === '"') inQuotes = !inQuotes;
+      else if (char === ',' && !inQuotes) { cells.push(current.trim()); current = ''; }
+      else current += char;
     }
     cells.push(current.trim());
     return cells;
@@ -3997,13 +3999,9 @@ renderDashboard(11);
   }
 
   function formatMoney(num) {
-    return '$' + num.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    });
+    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  // Helper: extract initials from a full name
   function getInitials(fullName) {
     if (!fullName) return '';
     const parts = fullName.trim().split(/\s+/);
@@ -4011,7 +4009,6 @@ renderDashboard(11);
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
-  // Helper: parse a date string (YYYY-MM-DD or M/D/YYYY) into a Date object
   function parseDate(str) {
     if (!str) return null;
     const cleaned = str.trim().replace(/"/g, '');
@@ -4019,166 +4016,273 @@ renderDashboard(11);
     return isNaN(date.getTime()) ? null : date;
   }
 
-  // Helper: calculate days between today and a target date
   function daysBetween(targetDate) {
     if (!targetDate) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     targetDate.setHours(0, 0, 0, 0);
-    const msPerDay = 1000 * 60 * 60 * 24;
-    return Math.round((targetDate - today) / msPerDay);
+    return Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
   }
 
-  // ============ SP² DASHBOARD METADATA ============
-  let metadata = {};
-  try {
-    const response = await fetch(DASHBOARD_CSV);
-    if (!response.ok) throw new Error('Failed to fetch Dashboard CSV: ' + response.status);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-    const headers = rows[0];
-    const values = rows[1];
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
 
-    for (let i = 0; i < headers.length; i++) {
-      metadata[headers[i]] = values[i];
+  // ===== Apply data to the DOM (called repeatedly) =====
+  function applyLiveData() {
+    if (!cache.loaded) return;
+
+    const m = cache.metadata || {};
+    const boxRows = cache.boxOfficeRows || [];
+    const sponsorRows = cache.sponsorshipRows || [];
+
+    // ----- Production header -----
+    if (m['Production Title']) setText('showTitle', m['Production Title']);
+    const season = m['Season'] || '';
+    const school = m['School Name'] || '';
+    const metaParts = [];
+    if (season) metaParts.push(season);
+    if (school) metaParts.push(school);
+    if (metaParts.length) setText('showMeta', metaParts.join(' · '));
+
+    // ----- User chip -----
+    if (m['Student Producer']) {
+      setText('userName', m['Student Producer']);
+      setText('userAvatar', getInitials(m['Student Producer']));
     }
 
-    console.log('SP² Live Data: Dashboard metadata loaded', metadata);
-
-    // ----- Update Production Header -----
-    const showTitleEl = document.getElementById('showTitle');
-    if (showTitleEl && metadata['Production Title']) {
-      showTitleEl.textContent = metadata['Production Title'];
-    }
-
-    const showMetaEl = document.getElementById('showMeta');
-    if (showMetaEl) {
-      const season = metadata['Season'] || '';
-      const school = metadata['School Name'] || '';
-      const metaParts = [];
-      if (season) metaParts.push(season);
-      if (school) metaParts.push(school);
-      showMetaEl.textContent = metaParts.join(' · ');
-    }
-
-    // ----- Update User Chip (Student Producer) -----
-    const userNameEl = document.getElementById('userName');
-    if (userNameEl && metadata['Student Producer']) {
-      userNameEl.textContent = metadata['Student Producer'];
-    }
-
-    const userAvatarEl = document.getElementById('userAvatar');
-    if (userAvatarEl && metadata['Student Producer']) {
-      userAvatarEl.textContent = getInitials(metadata['Student Producer']);
-    }
-
-    // ----- Update Days to Opening Countdown -----
-    const countdownEl = document.getElementById('countdownNum');
-    const countdownLabelEl = document.getElementById('countdownLabel');
-    if (countdownEl && metadata['Opening Date']) {
-      const openingDate = parseDate(metadata['Opening Date']);
+    // ----- Days to opening countdown -----
+    if (m['Opening Date']) {
+      const openingDate = parseDate(m['Opening Date']);
       if (openingDate) {
         const days = daysBetween(openingDate);
-        if (days > 0) {
-          countdownEl.textContent = days;
-          if (countdownLabelEl) countdownLabelEl.textContent = 'Days to Opening';
-        } else if (days === 0) {
-          countdownEl.textContent = '0';
-          if (countdownLabelEl) countdownLabelEl.textContent = 'Opening Today';
-        } else {
-          countdownEl.textContent = Math.abs(days);
-          if (countdownLabelEl) countdownLabelEl.textContent = 'Days Since Opening';
+        const allCountdownIds = ['countdownNum', 'financeCountdown', 'boxCountdown', 'sponsorCountdown', 'mktCountdown', 'gsCountdown', 'actionCountdown'];
+        const labelIds = { countdownNum: 'countdownLabel' };
+
+        let displayText, labelText;
+        if (days > 0) { displayText = days; labelText = 'Days to Opening'; }
+        else if (days === 0) { displayText = '0'; labelText = 'Opening Today'; }
+        else { displayText = Math.abs(days); labelText = 'Days Since Opening'; }
+
+        allCountdownIds.forEach(id => setText(id, displayText));
+        if (labelIds.countdownNum) setText(labelIds.countdownNum, labelText);
+      }
+    }
+
+    // ===== BOX OFFICE DATA =====
+    if (boxRows.length > 1) {
+      const headers = boxRows[0];
+      const idIdx = headers.indexOf('Performance_ID');
+      const adultIdx = headers.indexOf('Adult Tickets');
+      const studentIdx = headers.indexOf('Student Tickets');
+      const compIdx = headers.indexOf('Comp Tickets');
+      const capacityIdx = headers.indexOf('Capacity');
+      const totalRevIdx = headers.indexOf('Total Revenue');
+
+      // Aggregates
+      let totalAdult = 0, totalStudent = 0, totalComp = 0;
+      let totalCapacity = 0, totalRevenue = 0;
+      const performances = [];
+
+      for (let i = 1; i < boxRows.length; i++) {
+        const adult = parseInt(boxRows[i][adultIdx], 10) || 0;
+        const student = parseInt(boxRows[i][studentIdx], 10) || 0;
+        const comp = parseInt(boxRows[i][compIdx], 10) || 0;
+        const capacity = parseInt(boxRows[i][capacityIdx], 10) || 0;
+        const revenue = parseMoney(boxRows[i][totalRevIdx]);
+
+        totalAdult += adult;
+        totalStudent += student;
+        totalComp += comp;
+        totalCapacity += capacity;
+        totalRevenue += revenue;
+
+        const sold = adult + student + comp;
+        performances.push({
+          name: boxRows[i][idIdx] || ('Performance ' + i),
+          sold: sold,
+          capacity: capacity,
+          remaining: Math.max(0, capacity - sold),
+          fill: capacity > 0 ? Math.round((sold / capacity) * 100) : 0
+        });
+      }
+
+      const totalTickets = totalAdult + totalStudent + totalComp;
+      const totalPaidTickets = totalAdult + totalStudent;
+      const ticketGoal = parseInt(m['Ticket Goal'], 10) || totalCapacity;
+      const avgPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
+
+      // ----- Executive Dashboard KPIs -----
+      setText('kpiTickets', totalTickets.toLocaleString());
+      setText('kpiRevenue', formatMoney(totalRevenue));
+
+      // ----- Box Office Report KPIs -----
+      setText('boxSold', totalTickets.toLocaleString());
+      const capacityPct = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
+      setText('boxSoldCtx', capacityPct + '% of ' + totalCapacity.toLocaleString() + ' capacity');
+
+      setText('boxRev', formatMoney(totalRevenue));
+      setText('boxRevCtx', 'Avg ' + formatMoney(avgPrice) + ' per ticket');
+
+      // Pace vs Ticket Goal (not capacity)
+      const pacePct = ticketGoal > 0 ? Math.round((totalTickets / ticketGoal) * 100) - 100 : 0;
+      setText('boxPace', (pacePct >= 0 ? '+' : '') + pacePct + '%');
+      setText('boxPaceCtx', (pacePct >= 0 ? 'Ahead of' : 'Behind') + ' goal of ' + ticketGoal.toLocaleString());
+
+      const remaining = Math.max(0, totalCapacity - totalTickets);
+      setText('boxInventory', remaining.toLocaleString());
+      setText('boxInventoryCtx', performances.length + ' show performances');
+
+      // ----- Sales by Performance Night table -----
+      const perfTbody = document.getElementById('performanceTableBody');
+      if (perfTbody && performances.length > 0) {
+        perfTbody.innerHTML = performances.map(p => {
+          const fillClass = p.fill >= 70 ? '' : (p.fill >= 40 ? 'gold' : '');
+          const barColor = p.fill >= 70 ? '' : 'gold';
+          return `<tr>
+            <td>${p.name}</td>
+            <td class="num">${p.sold}</td>
+            <td class="num">${p.remaining}</td>
+            <td><span class="mini-bar"><span class="mini-bar-fill ${barColor}" style="width: ${p.fill}%"></span></span>${p.fill}%</td>
+          </tr>`;
+        }).join('');
+      }
+
+      // ----- Performance table subtitle -----
+      const seatsPerHouse = performances[0] ? performances[0].capacity : 0;
+      setText('performanceTableSub', seatsPerHouse + '-seat house · ' + performances.length + ' nights');
+
+      // ----- Sales Channel Breakdown -----
+      // Default model: virtually all sales online via Ludus, with comps from real data
+      const channelTbody = document.getElementById('channelTableBody');
+      if (channelTbody) {
+        const onlineTickets = totalAdult + totalStudent; // all paid tickets
+        const onlineRevenue = totalRevenue;
+        const onlineAvg = onlineTickets > 0 ? onlineRevenue / onlineTickets : 0;
+        const onlineShare = totalTickets > 0 ? Math.round((onlineTickets / totalTickets) * 100) : 0;
+        const compShare = totalTickets > 0 ? Math.round((totalComp / totalTickets) * 100) : 0;
+
+        channelTbody.innerHTML = `
+          <tr>
+            <td>Online (Ludus platform)</td>
+            <td class="num">${onlineTickets}</td>
+            <td class="num">${formatMoney(onlineRevenue)}</td>
+            <td class="num">${formatMoney(onlineAvg)}</td>
+            <td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td>
+          </tr>
+          <tr>
+            <td>Cash / At the door</td>
+            <td class="num">0</td>
+            <td class="num">$0</td>
+            <td class="num">$0</td>
+            <td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 0%"></span></span>0%</td>
+          </tr>
+          <tr>
+            <td>Comps (sponsor, press)</td>
+            <td class="num">${totalComp}</td>
+            <td class="num">$0</td>
+            <td class="num">$0</td>
+            <td><span class="mini-bar"><span class="mini-bar-fill green" style="width: ${compShare}%"></span></span>${compShare}%</td>
+          </tr>
+        `;
+      }
+    }
+
+    // ===== SPONSORSHIP DATA =====
+    if (sponsorRows.length > 1) {
+      const headers = sponsorRows[0];
+      const stageIdx = headers.indexOf('Stage');
+      const amountClosedIdx = headers.indexOf('Amount Closed');
+
+      let totalClosed = 0;
+      let closedCount = 0;
+      for (let i = 1; i < sponsorRows.length; i++) {
+        const stage = sponsorRows[i][stageIdx];
+        if (stage && stage.toLowerCase() === 'closed') {
+          totalClosed += parseMoney(sponsorRows[i][amountClosedIdx]);
+          closedCount++;
         }
-        console.log('SP² Live Data: Countdown updated to ' + days + ' days');
+      }
+
+      setText('kpiSponsor', formatMoney(totalClosed));
+
+      const sponsorshipGoal = parseMoney(m['Sponsorship Goal']) || 0;
+      const sponsorCtxEl = document.getElementById('kpiSponsorCtx');
+      if (sponsorCtxEl) {
+        if (sponsorshipGoal > 0) {
+          const percentOfTarget = Math.round((totalClosed / sponsorshipGoal) * 100);
+          sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(sponsorshipGoal) + ' target';
+        }
       }
     }
-
-  } catch (error) {
-    console.error('SP² Live Data: Error loading Dashboard metadata', error);
   }
 
-  // ============ BOX OFFICE DATA ============
-  try {
-    const response = await fetch(BOX_OFFICE_CSV);
-    if (!response.ok) throw new Error('Failed to fetch Box Office CSV: ' + response.status);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-    const headers = rows[0];
+  // ===== Initial fetch (one-time) =====
+  async function loadAllData() {
+    try {
+      const [dashRes, boxRes, sponsorRes] = await Promise.all([
+        fetch(DASHBOARD_CSV),
+        fetch(BOX_OFFICE_CSV),
+        fetch(SPONSORSHIP_CSV)
+      ]);
 
-    const adultIdx = headers.indexOf('Adult Tickets');
-    const studentIdx = headers.indexOf('Student Tickets');
-    const totalRevIdx = headers.indexOf('Total Revenue');
-
-    let totalTickets = 0;
-    let totalRevenue = 0;
-
-    for (let i = 1; i < rows.length; i++) {
-      const adult = parseInt(rows[i][adultIdx], 10) || 0;
-      const student = parseInt(rows[i][studentIdx], 10) || 0;
-      totalTickets += adult + student;
-      totalRevenue += parseMoney(rows[i][totalRevIdx]);
-    }
-
-    const ticketsEl = document.getElementById('kpiTickets');
-    if (ticketsEl) {
-      ticketsEl.textContent = totalTickets.toLocaleString();
-      console.log('SP² Live Data: Tickets Sold updated to ' + totalTickets);
-    }
-
-    const revenueEl = document.getElementById('kpiRevenue');
-    if (revenueEl) {
-      revenueEl.textContent = formatMoney(totalRevenue);
-      console.log('SP² Live Data: Revenue updated to ' + formatMoney(totalRevenue));
-    }
-  } catch (error) {
-    console.error('SP² Live Data: Error loading Box Office', error);
-  }
-
-  // ============ SPONSORSHIP DATA ============
-  try {
-    const response = await fetch(SPONSORSHIP_CSV);
-    if (!response.ok) throw new Error('Failed to fetch Sponsorship CSV: ' + response.status);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-    const headers = rows[0];
-
-    const stageIdx = headers.indexOf('Stage');
-    const amountClosedIdx = headers.indexOf('Amount Closed');
-
-    if (stageIdx === -1 || amountClosedIdx === -1) {
-      console.error('SP² Live Data: Could not find Stage or Amount Closed columns');
-      return;
-    }
-
-    let totalClosed = 0;
-    let closedCount = 0;
-    for (let i = 1; i < rows.length; i++) {
-      const stage = rows[i][stageIdx];
-      if (stage && stage.toLowerCase() === 'closed') {
-        totalClosed += parseMoney(rows[i][amountClosedIdx]);
-        closedCount++;
+      // Dashboard metadata
+      if (dashRes.ok) {
+        const text = await dashRes.text();
+        const rows = parseCSV(text);
+        if (rows.length >= 2) {
+          const meta = {};
+          for (let i = 0; i < rows[0].length; i++) {
+            meta[rows[0][i]] = rows[1][i];
+          }
+          cache.metadata = meta;
+          console.log('SP² Live Data: Dashboard metadata loaded', meta);
+        }
       }
-    }
 
-    const sponsorEl = document.getElementById('kpiSponsor');
-    if (sponsorEl) {
-      sponsorEl.textContent = formatMoney(totalClosed);
-      console.log('SP² Live Data: Sponsorship Closed updated to ' + formatMoney(totalClosed) + ' (' + closedCount + ' sponsors)');
-    }
-
-    const sponsorshipGoal = parseMoney(metadata['Sponsorship Goal']) || 0;
-    const sponsorCtxEl = document.getElementById('kpiSponsorCtx');
-    if (sponsorCtxEl) {
-      if (sponsorshipGoal > 0) {
-        const percentOfTarget = Math.round((totalClosed / sponsorshipGoal) * 100);
-        sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(sponsorshipGoal) + ' target';
-      } else {
-        sponsorCtxEl.textContent = 'No goal set';
+      // Box Office
+      if (boxRes.ok) {
+        cache.boxOfficeRows = parseCSV(await boxRes.text());
+        console.log('SP² Live Data: Box Office loaded (' + (cache.boxOfficeRows.length - 1) + ' performances)');
       }
+
+      // Sponsorship
+      if (sponsorRes.ok) {
+        cache.sponsorshipRows = parseCSV(await sponsorRes.text());
+        console.log('SP² Live Data: Sponsorship loaded (' + (cache.sponsorshipRows.length - 1) + ' sponsors)');
+      }
+
+      cache.loaded = true;
+      applyLiveData();
+    } catch (error) {
+      console.error('SP² Live Data: Error loading', error);
     }
-  } catch (error) {
-    console.error('SP² Live Data: Error loading Sponsorship', error);
   }
+
+  // ===== Hook into renderDashboard so live data wins after every scrubber move =====
+  if (typeof window.renderDashboard === 'function') {
+    const originalRender = window.renderDashboard;
+    window.renderDashboard = function (w) {
+      originalRender(w);
+      applyLiveData();
+    };
+  } else {
+    // renderDashboard is in script scope, not window. Use a MutationObserver fallback:
+    // re-apply live data whenever the KPI elements change (debounced).
+    let pending = null;
+    const observer = new MutationObserver(() => {
+      if (pending) return;
+      pending = setTimeout(() => { pending = null; applyLiveData(); }, 50);
+    });
+    const kpiEl = document.getElementById('kpiTickets');
+    if (kpiEl) {
+      observer.observe(kpiEl, { childList: true, characterData: true, subtree: true });
+    }
+  }
+
+  // Kick off the initial load
+  loadAllData();
 })();
 </script>
 </body>
