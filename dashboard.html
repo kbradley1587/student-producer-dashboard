@@ -3957,11 +3957,13 @@ renderDashboard(11);
 </script>
 <script>
 // ============ SP² LIVE DATA WIRING ============
-// Fetches Box Office data from CMW's published Google Sheet
-// and populates Tickets Sold and Revenue to Date KPIs.
+// Fetches Box Office and Sponsorship data from CMW's published Google Sheets
+// and populates Tickets Sold, Revenue to Date, and Sponsorship Closed KPIs.
 
-(async function loadLiveBoxOffice() {
+(async function loadLiveData() {
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
+  const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
+  const SPONSORSHIP_TARGET = 6000;
 
   // Helper: parse a single CSV row, respecting quoted commas
   function parseRow(row) {
@@ -3983,6 +3985,11 @@ renderDashboard(11);
     return cells;
   }
 
+  // Helper: parse full CSV string into array of rows
+  function parseCSV(csvText) {
+    return csvText.trim().split('\n').map(parseRow);
+  }
+
   // Helper: strip currency formatting ($1,624.00 -> 1624)
   function parseMoney(str) {
     if (!str) return 0;
@@ -3990,24 +3997,25 @@ renderDashboard(11);
     return parseFloat(cleaned) || 0;
   }
 
+  // Helper: format a number as currency string ($1,234)
+  function formatMoney(num) {
+    return '$' + num.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  }
+
+  // ============ BOX OFFICE DATA ============
   try {
     const response = await fetch(BOX_OFFICE_CSV);
-    if (!response.ok) throw new Error('Failed to fetch CSV: ' + response.status);
+    if (!response.ok) throw new Error('Failed to fetch Box Office CSV: ' + response.status);
     const csvText = await response.text();
-
-    const rows = csvText.trim().split('\n').map(parseRow);
+    const rows = parseCSV(csvText);
     const headers = rows[0];
 
     const adultIdx = headers.indexOf('Adult Tickets');
     const studentIdx = headers.indexOf('Student Tickets');
     const totalRevIdx = headers.indexOf('Total Revenue');
-
-    if (adultIdx === -1 || studentIdx === -1) {
-      console.error('SP² Live Data: Could not find Adult/Student Tickets columns');
-    }
-    if (totalRevIdx === -1) {
-      console.error('SP² Live Data: Could not find Total Revenue column');
-    }
 
     let totalTickets = 0;
     let totalRevenue = 0;
@@ -4016,32 +4024,64 @@ renderDashboard(11);
       const adult = parseInt(rows[i][adultIdx], 10) || 0;
       const student = parseInt(rows[i][studentIdx], 10) || 0;
       totalTickets += adult + student;
-
       totalRevenue += parseMoney(rows[i][totalRevIdx]);
     }
 
-    // Update Tickets Sold
     const ticketsEl = document.getElementById('kpiTickets');
     if (ticketsEl) {
       ticketsEl.textContent = totalTickets.toLocaleString();
       console.log('SP² Live Data: Tickets Sold updated to ' + totalTickets);
-    } else {
-      console.error('SP² Live Data: Could not find kpiTickets element');
     }
 
-    // Update Revenue to Date
     const revenueEl = document.getElementById('kpiRevenue');
     if (revenueEl) {
-      revenueEl.textContent = '$' + totalRevenue.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      });
-      console.log('SP² Live Data: Revenue updated to $' + totalRevenue);
-    } else {
-      console.error('SP² Live Data: Could not find kpiRevenue element');
+      revenueEl.textContent = formatMoney(totalRevenue);
+      console.log('SP² Live Data: Revenue updated to ' + formatMoney(totalRevenue));
     }
   } catch (error) {
-    console.error('SP² Live Data: Error loading box office data', error);
+    console.error('SP² Live Data: Error loading Box Office', error);
+  }
+
+  // ============ SPONSORSHIP DATA ============
+  try {
+    const response = await fetch(SPONSORSHIP_CSV);
+    if (!response.ok) throw new Error('Failed to fetch Sponsorship CSV: ' + response.status);
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    const headers = rows[0];
+
+    const stageIdx = headers.indexOf('Stage');
+    const amountClosedIdx = headers.indexOf('Amount Closed');
+
+    if (stageIdx === -1 || amountClosedIdx === -1) {
+      console.error('SP² Live Data: Could not find Stage or Amount Closed columns');
+      return;
+    }
+
+    // Sum Amount Closed only for rows where Stage = "Closed"
+    let totalClosed = 0;
+    let closedCount = 0;
+    for (let i = 1; i < rows.length; i++) {
+      const stage = rows[i][stageIdx];
+      if (stage && stage.toLowerCase() === 'closed') {
+        totalClosed += parseMoney(rows[i][amountClosedIdx]);
+        closedCount++;
+      }
+    }
+
+    const sponsorEl = document.getElementById('kpiSponsor');
+    if (sponsorEl) {
+      sponsorEl.textContent = formatMoney(totalClosed);
+      console.log('SP² Live Data: Sponsorship Closed updated to ' + formatMoney(totalClosed) + ' (' + closedCount + ' sponsors)');
+    }
+
+    const sponsorCtxEl = document.getElementById('kpiSponsorCtx');
+    if (sponsorCtxEl) {
+      const percentOfTarget = Math.round((totalClosed / SPONSORSHIP_TARGET) * 100);
+      sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(SPONSORSHIP_TARGET) + ' target';
+    }
+  } catch (error) {
+    console.error('SP² Live Data: Error loading Sponsorship', error);
   }
 })();
 </script>
