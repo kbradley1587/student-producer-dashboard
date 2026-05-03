@@ -4104,7 +4104,7 @@ renderDashboard(11);
 
       const totalTickets = totalAdult + totalStudent + totalComp;
       const totalPaidTickets = totalAdult + totalStudent;
-      const ticketGoal = parseInt(m['Ticket Goal'], 10) || totalCapacity;
+      const ticketGoal = parseMoney(m['Ticket Goal']) || totalCapacity;
       const avgPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
 
       // Executive Dashboard KPIs
