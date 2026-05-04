@@ -2646,36 +2646,53 @@ body {
       </div>
 
       <div class="kpi-row">
-        <div class="kpi-tile green">
-          <div class="kpi-label">Complete This Week</div>
-          <div class="kpi-value" id="actionsDone">3</div>
-          <div class="kpi-context">Delivered on or before due</div>
-        </div>
-        <div class="kpi-tile gold">
-          <div class="kpi-label">In Progress</div>
-          <div class="kpi-value" id="actionsOpen">5</div>
-          <div class="kpi-context">Tracking to due dates</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Overdue</div>
-          <div class="kpi-value" id="actionsLate">0</div>
-          <div class="kpi-context">Clean week</div>
-        </div>
-        <div class="kpi-tile ink">
-          <div class="kpi-label">Owners Active</div>
-          <div class="kpi-value">7</div>
-          <div class="kpi-context">All departments contributing</div>
-        </div>
-      </div>
+  <div class="kpi-tile green">
+    <div class="kpi-label">Complete this week</div>
+    <div class="kpi-value" id="actComplete">3</div>
+    <div class="kpi-context" id="actCompleteCtx">Delivered on or before due</div>
+  </div>
+  <div class="kpi-tile gold">
+    <div class="kpi-label">In Progress</div>
+    <div class="kpi-value" id="actInProgress">5</div>
+    <div class="kpi-context" id="actInProgressCtx">Tracking to due dates</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">Overdue</div>
+    <div class="kpi-value" id="actOverdue">0</div>
+    <div class="kpi-context" id="actOverdueCtx">Clean week</div>
+  </div>
+  <div class="kpi-tile ink">
+    <div class="kpi-label">Owners Active</div>
+    <div class="kpi-value" id="actOwners">7</div>
+    <div class="kpi-context" id="actOwnersCtx">All departments contributing</div>
+  </div>
+</div>
 
       <div class="dash-card full">
-        <div class="dash-card-header">
-          <div class="dash-card-title" id="fullActionsTitle">Full Action Log · Week 11</div>
-          <div class="dash-card-sub">Standing items plus this week's deliverables</div>
-        </div>
-        <ul class="action-list" id="fullActionList"></ul>
-      </div>
+  <div class="dash-card-header">
+    <div>
+      <div class="dash-card-title" id="actLogTitle">Full Action Log · Week 11</div>
+      <div class="dash-card-sub">Standing items plus this week's deliverables</div>
     </div>
+  </div>
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th>Description</th>
+          <th>Owner</th>
+          <th>Due Date</th>
+          <th>Priority</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="actionLogTableBody">
+        <tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">Loading action items…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
     <!-- ============ RESOURCES ============ -->
     <div class="view" id="view-resources">
@@ -3962,6 +3979,7 @@ renderDashboard(11);
   const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
   const TEAM_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1253836572&single=true&output=csv';
   const FINANCE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=2143390940&single=true&output=csv';
+  const ACTIONS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=2135019067&single=true&output=csv';
 
   const cache = {
     metadata: null,
@@ -3969,6 +3987,7 @@ renderDashboard(11);
     sponsorshipRows: null,
     teamByDepartment: null,
     financeRows: null,
+    actionRows: null,
     loaded: false
   };
 
@@ -4032,6 +4051,12 @@ renderDashboard(11);
     return Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
   }
 
+  function formatShortDate(date) {
+    if (!date) return '—';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[date.getMonth()] + ' ' + date.getDate();
+  }
+
   function setText(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
@@ -4055,6 +4080,24 @@ renderDashboard(11);
     return status;
   }
 
+  // Action item-specific status pill helper (different color logic from sponsorship)
+  function actionStatusPill(status, isOverdue) {
+    if (isOverdue) return '<span class="pill" style="background:#fde2e2;color:#9a2222;">Overdue</span>';
+    const s = (status || '').toLowerCase();
+    if (s === 'complete') return '<span class="pill green">✓ Complete</span>';
+    if (s === 'in progress') return '<span class="pill gold">In Progress</span>';
+    if (s === 'open') return '<span class="pill gray">Open</span>';
+    return '<span class="pill gray">' + (status || '—') + '</span>';
+  }
+
+  function priorityPill(priority) {
+    const p = (priority || '').toLowerCase();
+    if (p === 'high') return '<span class="pill" style="background:#fde2e2;color:#9a2222;">High</span>';
+    if (p === 'medium' || p === 'meduim') return '<span class="pill gold">Medium</span>';
+    if (p === 'low') return '<span class="pill gray">Low</span>';
+    return '<span class="pill gray">' + (priority || '—') + '</span>';
+  }
+
   function applyLiveData() {
     if (!cache.loaded) return;
 
@@ -4063,6 +4106,7 @@ renderDashboard(11);
     const sponsorRows = cache.sponsorshipRows || [];
     const team = cache.teamByDepartment || {};
     const finRows = cache.financeRows || [];
+    const actRows = cache.actionRows || [];
 
     if (m['Production Title']) setText('showTitle', m['Production Title']);
     const season = m['Season'] || '';
@@ -4107,6 +4151,7 @@ renderDashboard(11);
     updateOwnerLine('view-sponsorship', 'Sponsorship');
     updateOwnerLine('view-marketing', 'Marketing');
     updateOwnerLine('view-guestservices', 'Guest Services');
+    updateOwnerLine('view-actions', 'Action Items');
 
     const actionsOwner = team['Action Items'] || team['Producer'];
     if (actionsOwner && actionsOwner.name) {
@@ -4134,18 +4179,12 @@ renderDashboard(11);
         const comp = parseInt(boxRows[i][compIdx], 10) || 0;
         const capacity = parseInt(boxRows[i][capacityIdx], 10) || 0;
         const revenue = parseMoney(boxRows[i][totalRevIdx]);
-
-        totalAdult += adult;
-        totalStudent += student;
-        totalComp += comp;
-        totalCapacity += capacity;
-        totalRevenue += revenue;
-
+        totalAdult += adult; totalStudent += student; totalComp += comp;
+        totalCapacity += capacity; totalRevenue += revenue;
         const sold = adult + student + comp;
         performances.push({
           name: boxRows[i][idIdx] || ('Performance ' + i),
-          sold: sold,
-          capacity: capacity,
+          sold: sold, capacity: capacity,
           remaining: Math.max(0, capacity - sold),
           fill: capacity > 0 ? Math.round((sold / capacity) * 100) : 0
         });
@@ -4208,9 +4247,7 @@ renderDashboard(11);
       const thankIdx = headers.indexOf('Thank-You');
 
       const buckets = { Outreach: [], Proposal: [], Negotiation: [], Closed: [], Declined: [] };
-      let totalClosed = 0;
-      let totalProposalRequested = 0;
-      let totalOutreachRequested = 0;
+      let totalClosed = 0, totalProposalRequested = 0, totalOutreachRequested = 0;
 
       for (let i = 1; i < sponsorRows.length; i++) {
         const row = sponsorRows[i];
@@ -4291,7 +4328,6 @@ renderDashboard(11);
       const budgetIdx = headers.indexOf('Budget');
       const actualIdx = headers.indexOf('Actual');
       const varianceIdx = headers.indexOf('Variance');
-      const statusIdx = headers.indexOf('Status');
 
       let totalIncomeBudget = 0, totalIncomeActual = 0;
       let totalExpenseBudget = 0, totalExpenseActual = 0;
@@ -4303,32 +4339,19 @@ renderDashboard(11);
         const type = (row[typeIdx] || '').trim();
         const category = (row[categoryIdx] || '').trim();
         if (!type || !category) continue;
-
         const budget = parseMoney(row[budgetIdx]);
         const actual = parseMoney(row[actualIdx]);
         const variance = parseMoney(row[varianceIdx]);
         const description = row[descIdx] || '';
-        const status = row[statusIdx] || '';
-
         const lineItem = {
-          type: type,
-          category: category,
-          description: description,
-          budget: budget,
-          actual: actual,
-          variance: variance,
-          status: status,
+          type: type, category: category, description: description,
+          budget: budget, actual: actual, variance: variance,
           pctUsed: budget > 0 ? Math.round((actual / budget) * 100) : 0
         };
-
         if (type === 'Income') {
-          totalIncomeBudget += budget;
-          totalIncomeActual += actual;
-          incomeRows.push(lineItem);
+          totalIncomeBudget += budget; totalIncomeActual += actual; incomeRows.push(lineItem);
         } else if (type === 'Expense') {
-          totalExpenseBudget += budget;
-          totalExpenseActual += actual;
-          expenseRows.push(lineItem);
+          totalExpenseBudget += budget; totalExpenseActual += actual; expenseRows.push(lineItem);
         }
       }
 
@@ -4336,21 +4359,16 @@ renderDashboard(11);
       const projectedNet = totalIncomeBudget - totalExpenseBudget;
       const totalBudgetVariance = (totalIncomeActual - totalIncomeBudget) - (totalExpenseActual - totalExpenseBudget);
 
-      // ----- Finance KPI tiles -----
       setText('finRevenue', formatMoney(totalIncomeActual));
       setText('finRevenueCtx', 'Tickets + sponsorship + concessions');
-
       setText('finExpenses', formatMoney(totalExpenseActual));
       const expensePct = totalExpenseBudget > 0 ? Math.round((totalExpenseActual / totalExpenseBudget) * 100) : 0;
       setText('finExpensesCtx', expensePct + '% of ' + formatMoney(totalExpenseBudget) + ' budget');
-
       setText('finNet', formatMoney(netToDate));
       setText('finNetProj', formatMoney(projectedNet));
-
       setText('finVariance', formatMoneySigned(totalBudgetVariance));
       setText('finVarianceCtx', (totalBudgetVariance >= 0 ? 'Favorable' : 'Unfavorable') + ' · vs. plan');
 
-      // ----- Budget vs. Actual table -----
       const budgetActualTbody = document.getElementById('budgetActualTableBody');
       if (budgetActualTbody) {
         const allRows = [...incomeRows, ...expenseRows];
@@ -4358,17 +4376,10 @@ renderDashboard(11);
           const label = line.type === 'Income' ? `${line.category} (income)` : line.category;
           const varianceDisplay = formatMoneySigned(line.variance);
           const barClass = line.pctUsed >= 90 ? '' : (line.pctUsed >= 50 ? 'gold' : 'gold');
-          return `<tr>
-            <td>${label}</td>
-            <td class="num">${formatMoney(line.budget)}</td>
-            <td class="num">${formatMoney(line.actual)}</td>
-            <td class="num">${varianceDisplay}</td>
-            <td><span class="mini-bar"><span class="mini-bar-fill ${barClass}" style="width: ${Math.min(line.pctUsed, 100)}%"></span></span>${line.pctUsed}%</td>
-          </tr>`;
+          return `<tr><td>${label}</td><td class="num">${formatMoney(line.budget)}</td><td class="num">${formatMoney(line.actual)}</td><td class="num">${varianceDisplay}</td><td><span class="mini-bar"><span class="mini-bar-fill ${barClass}" style="width: ${Math.min(line.pctUsed, 100)}%"></span></span>${line.pctUsed}%</td></tr>`;
         }).join('');
       }
 
-      // ----- P&L Projection table -----
       const pnlTbody = document.getElementById('pnlTableBody');
       if (pnlTbody) {
         let html = '<tr class="pnl-section"><td colspan="2">REVENUE</td></tr>';
@@ -4388,16 +4399,113 @@ renderDashboard(11);
         pnlTbody.innerHTML = html;
       }
     }
+
+    // ===== ACTION ITEMS DATA =====
+    if (actRows.length > 1) {
+      const headers = actRows[0];
+      const idIdx = headers.indexOf('Action_ID');
+      const deptIdx = headers.indexOf('Department');
+      const descIdx = headers.indexOf('Description');
+      const ownerIdx = headers.indexOf('Owner');
+      const createdIdx = headers.indexOf('Created Date');
+      const priorityIdx = headers.indexOf('Priority');
+      const dueIdx = headers.indexOf('Due Date');
+      const statusIdx = headers.indexOf('Status');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+
+      let completeThisWeek = 0;
+      let inProgressCount = 0;
+      let overdueCount = 0;
+      const ownersSet = new Set();
+      const allActions = [];
+
+      for (let i = 1; i < actRows.length; i++) {
+        const row = actRows[i];
+        const description = row[descIdx] || '';
+        if (!description) continue;
+
+        const status = (row[statusIdx] || '').trim();
+        const owner = (row[ownerIdx] || '').trim();
+        const dueDate = parseDate(row[dueIdx]);
+        const department = row[deptIdx] || '';
+        const priority = row[priorityIdx] || '';
+
+        // Compute overdue: Due Date in past AND not yet Complete
+        const isOverdue = dueDate && dueDate < today && status.toLowerCase() !== 'complete';
+        // Complete this week: Status = Complete AND Due Date within last 7 days
+        const isCompleteThisWeek = status.toLowerCase() === 'complete' && dueDate && dueDate >= oneWeekAgo && dueDate <= today;
+
+        if (isCompleteThisWeek) completeThisWeek++;
+        if (status.toLowerCase() === 'in progress') inProgressCount++;
+        if (isOverdue) overdueCount++;
+        if (status.toLowerCase() !== 'complete' && owner) ownersSet.add(owner);
+
+        allActions.push({
+          id: row[idIdx],
+          department: department,
+          description: description,
+          owner: owner,
+          dueDate: dueDate,
+          priority: priority,
+          status: status,
+          isOverdue: isOverdue
+        });
+      }
+
+      // ----- Action Items KPI tiles -----
+      setText('actComplete', completeThisWeek.toString());
+      setText('actCompleteCtx', completeThisWeek > 0 ? 'Delivered on or before due' : 'No completions this week');
+
+      setText('actInProgress', inProgressCount.toString());
+      setText('actInProgressCtx', inProgressCount > 0 ? 'Tracking to due dates' : 'No items in progress');
+
+      setText('actOverdue', overdueCount.toString());
+      setText('actOverdueCtx', overdueCount === 0 ? 'Clean week' : (overdueCount === 1 ? '1 item past due' : overdueCount + ' items past due'));
+
+      setText('actOwners', ownersSet.size.toString());
+      setText('actOwnersCtx', ownersSet.size > 0 ? 'All departments contributing' : 'No active owners');
+
+      // ----- Action Log table -----
+      const logTbody = document.getElementById('actionLogTableBody');
+      if (logTbody) {
+        if (allActions.length === 0) {
+          logTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No action items yet</td></tr>';
+        } else {
+          // Sort: overdue first, then in progress, then open, then complete, by due date within each
+          const sorted = allActions.slice().sort((a, b) => {
+            const order = { 'overdue': 0, 'in progress': 1, 'open': 2, 'complete': 3 };
+            const aKey = a.isOverdue ? 'overdue' : (a.status || '').toLowerCase();
+            const bKey = b.isOverdue ? 'overdue' : (b.status || '').toLowerCase();
+            const aRank = order[aKey] !== undefined ? order[aKey] : 4;
+            const bRank = order[bKey] !== undefined ? order[bKey] : 4;
+            if (aRank !== bRank) return aRank - bRank;
+            if (a.dueDate && b.dueDate) return a.dueDate - b.dueDate;
+            return 0;
+          });
+          logTbody.innerHTML = sorted.map(a => `
+            <tr>
+              <td>${a.department}</td>
+              <td>${a.description}</td>
+              <td>${a.owner}</td>
+              <td>${formatShortDate(a.dueDate)}</td>
+              <td>${priorityPill(a.priority)}</td>
+              <td>${actionStatusPill(a.status, a.isOverdue)}</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
   }
 
   async function loadAllData() {
     try {
-      const [dashRes, boxRes, sponsorRes, teamRes, finRes] = await Promise.all([
-        fetch(DASHBOARD_CSV),
-        fetch(BOX_OFFICE_CSV),
-        fetch(SPONSORSHIP_CSV),
-        fetch(TEAM_CSV),
-        fetch(FINANCE_CSV)
+      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes] = await Promise.all([
+        fetch(DASHBOARD_CSV), fetch(BOX_OFFICE_CSV), fetch(SPONSORSHIP_CSV),
+        fetch(TEAM_CSV), fetch(FINANCE_CSV), fetch(ACTIONS_CSV)
       ]);
 
       if (dashRes.ok) {
@@ -4436,10 +4544,8 @@ renderDashboard(11);
           const dept = teamRows[i][deptIdx];
           if (dept) {
             teamLookup[dept] = {
-              name: teamRows[i][nameIdx] || '',
-              email: teamRows[i][emailIdx] || '',
-              phone: teamRows[i][phoneIdx] || '',
-              roleTitle: teamRows[i][titleIdx] || ''
+              name: teamRows[i][nameIdx] || '', email: teamRows[i][emailIdx] || '',
+              phone: teamRows[i][phoneIdx] || '', roleTitle: teamRows[i][titleIdx] || ''
             };
           }
         }
@@ -4450,6 +4556,11 @@ renderDashboard(11);
       if (finRes.ok) {
         cache.financeRows = parseCSV(await finRes.text());
         console.log('SP² Live Data: Finance loaded (' + (cache.financeRows.length - 1) + ' line items)');
+      }
+
+      if (actRes.ok) {
+        cache.actionRows = parseCSV(await actRes.text());
+        console.log('SP² Live Data: Actions loaded (' + (cache.actionRows.length - 1) + ' items)');
       }
 
       cache.loaded = true;
