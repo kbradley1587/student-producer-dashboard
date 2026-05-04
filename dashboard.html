@@ -2361,33 +2361,33 @@ body {
         The Sponsorship Director owns all revenue that isn't ticket sales. Builds the deck, identifies prospects, makes the ask, closes agreements, and ensures sponsor recognition is delivered as promised.
       </div>
 
-      <div class="kpi-row">
-        <div class="kpi-tile green">
-          <div class="kpi-label">Closed</div>
-          <div class="kpi-value" id="spClosedVal">$4,750</div>
-          <div class="kpi-context">5 sponsors · 79% of target</div>
-        </div>
-        <div class="kpi-tile gold">
-          <div class="kpi-label">In Proposal</div>
-          <div class="kpi-value" id="spProposalVal">$1,250</div>
-          <div class="kpi-context">2 active proposals</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">In Outreach</div>
-          <div class="kpi-value" id="spOutreachVal">$2,400</div>
-          <div class="kpi-context">10 prospects engaged</div>
-        </div>
-        <div class="kpi-tile ink">
-          <div class="kpi-label">Target</div>
-          <div class="kpi-value" id="spTargetVal">$6,000</div>
-          <div class="kpi-context">Set in Week 1 budget meeting</div>
-        </div>
-      </div>
+     <div class="kpi-row">
+  <div class="kpi-tile">
+    <div class="kpi-label">Closed</div>
+    <div class="kpi-value" id="sponClosed">$4,750</div>
+    <div class="kpi-context" id="sponClosedCtx">5 sponsors · 79% of target</div>
+  </div>
+  <div class="kpi-tile gold">
+    <div class="kpi-label">In Proposal</div>
+    <div class="kpi-value" id="sponProposal">$1,250</div>
+    <div class="kpi-context" id="sponProposalCtx">2 active proposals</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">In Outreach</div>
+    <div class="kpi-value" id="sponOutreach">$2,400</div>
+    <div class="kpi-context" id="sponOutreachCtx">10 prospects engaged</div>
+  </div>
+  <div class="kpi-tile ink">
+    <div class="kpi-label">Target</div>
+    <div class="kpi-value" id="sponTarget">$6,000</div>
+    <div class="kpi-context">Set in Week 1 budget meeting</div>
+  </div>
+</div>
 
       <div class="dash-card full" style="margin-bottom: 1.25rem;">
         <div class="dash-card-header">
           <div class="dash-card-title">Full Sponsorship Pipeline</div>
-          <div class="dash-card-sub">Prospects → Contacted → Proposal → Closed</div>
+          <div class="dash-card-sub">Outreach → Proposal → Negotiation → Closed</div>
         </div>
         <div class="kanban" id="fullKanban"></div>
       </div>
@@ -2401,9 +2401,9 @@ body {
 
           <table class="data-table">
           <thead>
-            <tr><th>Sponsor</th><th class="num">Amount</th><th>Package</th><th>Ad Delivered</th><th>Social Post</th><th>Thank-You</th></tr>
+            <tr><th>Sponsor</th><th class="num">Amount</th><th>Tier</th><th>Ad Delivered</th><th>Social Post</th><th>Thank-You</th></tr>
           </thead>
-          <tbody>
+          <tbody id="recognitionTableBody">
             <tr><td><strong>Edward Jones (Bel Air)</strong></td><td class="num">$1,500</td><td>Playbill full page</td><td><span class="pill green">✓ Approved</span></td><td><span class="pill green">✓ Posted</span></td><td><span class="pill gold">Pending</span></td></tr>
             <tr><td><strong>Mountain Branch Golf</strong></td><td class="num">$1,000</td><td>Program spread</td><td><span class="pill green">✓ Approved</span></td><td><span class="pill green">✓ Posted</span></td><td><span class="pill green">✓ Sent</span></td></tr>
             <tr><td><strong>Tower Realty</strong></td><td class="num">$1,000</td><td>Half page</td><td><span class="pill gold">In design</span></td><td><span class="pill gray">Scheduled</span></td><td><span class="pill gold">Pending</span></td></tr>
@@ -4034,10 +4034,24 @@ renderDashboard(11);
     if (el) el.textContent = text;
   }
 
-  function setSubText(elementId, text) {
-    // Use this for elements like content-sub which need full element text replacement
-    const el = document.querySelector(elementId);
-    if (el) el.textContent = text;
+  // Determines pill color class based on status text
+  function statusPillClass(status) {
+    if (!status) return 'gray';
+    const s = status.toLowerCase();
+    if (s.includes('approved') || s.includes('posted') || s.includes('sent')) return 'green';
+    if (s.includes('design') || s.includes('pending')) return 'gold';
+    if (s.includes('scheduled')) return 'gray';
+    return 'gray';
+  }
+
+  // Adds checkmark prefix for completed status text
+  function statusDisplayText(status) {
+    if (!status) return '—';
+    const s = status.toLowerCase();
+    if (s.includes('approved') || s.includes('posted') || s.includes('sent')) {
+      return '✓ ' + status;
+    }
+    return status;
   }
 
   // ===== Apply data =====
@@ -4081,10 +4095,7 @@ renderDashboard(11);
       }
     }
 
-    // ----- Department Owner lines (each report's "Owner: X · Y" subtitle) -----
-    // The HTML structure for each report has a <div class="content-sub">Owner: ... · ...</div>
-    // We need to find the right one for each view and update it.
-
+    // ----- Department Owner lines -----
     function updateOwnerLine(viewId, department) {
       const member = team[department];
       if (!member || !member.name) return;
@@ -4102,7 +4113,6 @@ renderDashboard(11);
     updateOwnerLine('view-marketing', 'Marketing');
     updateOwnerLine('view-guestservices', 'Guest Services');
 
-    // Action Items uses a different ID pattern
     const actionsOwner = team['Action Items'] || team['Producer'];
     if (actionsOwner && actionsOwner.name) {
       const role = actionsOwner.roleTitle || 'Student Producer';
@@ -4151,11 +4161,9 @@ renderDashboard(11);
       const ticketGoal = parseMoney(m['Ticket Goal']) || totalCapacity;
       const avgPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
 
-      // Executive Dashboard KPIs
       setText('kpiTickets', totalTickets.toLocaleString());
       setText('kpiRevenue', formatMoney(totalRevenue));
 
-      // Box Office Report KPIs (with cleaned-up context lines)
       setText('boxSold', totalTickets.toLocaleString());
       const capacityPct = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
       setText('boxSoldCtx', capacityPct + '% of ' + totalCapacity.toLocaleString() + ' total seats');
@@ -4171,7 +4179,6 @@ renderDashboard(11);
       setText('boxInventory', remaining.toLocaleString());
       setText('boxInventoryCtx', 'Across ' + performances.length + ' performances');
 
-      // Sales by Performance Night table
       const perfTbody = document.getElementById('performanceTableBody');
       if (perfTbody && performances.length > 0) {
         perfTbody.innerHTML = performances.map(p => {
@@ -4188,7 +4195,6 @@ renderDashboard(11);
       const seatsPerHouse = performances[0] ? performances[0].capacity : 0;
       setText('performanceTableSub', seatsPerHouse + '-seat house · ' + performances.length + ' nights');
 
-      // Sales Channel Breakdown
       const channelTbody = document.getElementById('channelTableBody');
       if (channelTbody) {
         const onlineTickets = totalAdult + totalStudent;
@@ -4226,17 +4232,52 @@ renderDashboard(11);
     // ===== SPONSORSHIP DATA =====
     if (sponsorRows.length > 1) {
       const headers = sponsorRows[0];
+      const businessIdx = headers.indexOf('Business Name');
       const stageIdx = headers.indexOf('Stage');
-      const amountClosedIdx = headers.indexOf('Amount Closed');
+      const tierIdx = headers.indexOf('Tier');
+      const requestedIdx = headers.indexOf('Amount Requested');
+      const closedIdx = headers.indexOf('Amount Closed');
+      const adIdx = headers.indexOf('Ad Delivered');
+      const socialIdx = headers.indexOf('Social Post');
+      const thankIdx = headers.indexOf('Thank-You');
 
+      // Categorize all rows by stage
+      const buckets = { Outreach: [], Proposal: [], Negotiation: [], Closed: [], Declined: [] };
       let totalClosed = 0;
+      let totalProposalRequested = 0;
+      let totalOutreachRequested = 0;
+
       for (let i = 1; i < sponsorRows.length; i++) {
-        const stage = sponsorRows[i][stageIdx];
-        if (stage && stage.toLowerCase() === 'closed') {
-          totalClosed += parseMoney(sponsorRows[i][amountClosedIdx]);
+        const row = sponsorRows[i];
+        const stage = row[stageIdx] || '';
+        const business = row[businessIdx] || '';
+        const tier = row[tierIdx] || '';
+        const requested = parseMoney(row[requestedIdx]);
+        const closed = parseMoney(row[closedIdx]);
+
+        if (!business) continue;
+
+        const sponsorObj = {
+          business: business,
+          tier: tier,
+          requested: requested,
+          closed: closed,
+          adDelivered: row[adIdx] || '',
+          socialPost: row[socialIdx] || '',
+          thankYou: row[thankIdx] || ''
+        };
+
+        if (buckets[stage]) {
+          buckets[stage].push(sponsorObj);
         }
+
+        // KPI rollups
+        if (stage === 'Closed') totalClosed += closed;
+        else if (stage === 'Proposal' || stage === 'Negotiation') totalProposalRequested += requested;
+        else if (stage === 'Outreach') totalOutreachRequested += requested;
       }
 
+      // ----- Executive Dashboard sponsorship KPI -----
       setText('kpiSponsor', formatMoney(totalClosed));
 
       const sponsorshipGoal = parseMoney(m['Sponsorship Goal']) || 0;
@@ -4244,6 +4285,72 @@ renderDashboard(11);
       if (sponsorCtxEl && sponsorshipGoal > 0) {
         const percentOfTarget = Math.round((totalClosed / sponsorshipGoal) * 100);
         sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(sponsorshipGoal) + ' target';
+      }
+
+      // ----- Sponsorship Report KPI tiles -----
+      // KPI: CLOSED
+      setText('sponClosed', formatMoney(totalClosed));
+      const closedCount = buckets.Closed.length;
+      const targetPct = sponsorshipGoal > 0 ? Math.round((totalClosed / sponsorshipGoal) * 100) : 0;
+      setText('sponClosedCtx', closedCount + ' sponsors · ' + targetPct + '% of target');
+
+      // KPI: IN PROPOSAL (Proposal + Negotiation rolled together)
+      setText('sponProposal', formatMoney(totalProposalRequested));
+      const activeProposalCount = buckets.Proposal.length + buckets.Negotiation.length;
+      setText('sponProposalCtx', activeProposalCount + ' active proposals');
+
+      // KPI: IN OUTREACH (Outreach only, with declined count in context)
+      setText('sponOutreach', formatMoney(totalOutreachRequested));
+      const outreachCount = buckets.Outreach.length;
+      const declinedCount = buckets.Declined.length;
+      const outreachCtx = outreachCount + ' prospects engaged' + (declinedCount > 0 ? ' · ' + declinedCount + ' declined' : '');
+      setText('sponOutreachCtx', outreachCtx);
+
+      // KPI: TARGET
+      setText('sponTarget', formatMoney(sponsorshipGoal));
+
+      // ----- Full Sponsorship Pipeline kanban -----
+      const kanban = document.getElementById('fullKanban');
+      if (kanban) {
+        const columns = [
+          { stage: 'Outreach', label: 'OUTREACH', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Target ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Proposal', label: 'PROPOSAL', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Asked ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Negotiation', label: 'NEGOTIATION', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Negotiating ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Closed', label: 'CLOSED', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${formatMoney(s.closed)} · ${s.tier}</div></div>` }
+        ];
+
+        kanban.innerHTML = columns.map(col => {
+          const sponsors = buckets[col.stage] || [];
+          const cards = sponsors.map(s => `<div class="kanban-card">${col.formatCard(s)}</div>`).join('');
+          return `
+            <div class="kanban-column">
+              <div class="kanban-column-header">
+                ${col.label}<span class="kanban-count">${sponsors.length}</span>
+              </div>
+              ${cards}
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ----- Closed Sponsor Recognition Status table -----
+      const recogTbody = document.getElementById('recognitionTableBody');
+      if (recogTbody) {
+        const closedSponsors = buckets.Closed;
+        if (closedSponsors.length === 0) {
+          recogTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No closed sponsors yet</td></tr>';
+        } else {
+          recogTbody.innerHTML = closedSponsors.map(s => `
+            <tr>
+              <td><strong>${s.business}</strong></td>
+              <td class="num">${formatMoney(s.closed)}</td>
+              <td>${s.tier}</td>
+              <td><span class="pill ${statusPillClass(s.adDelivered)}">${statusDisplayText(s.adDelivered)}</span></td>
+              <td><span class="pill ${statusPillClass(s.socialPost)}">${statusDisplayText(s.socialPost)}</span></td>
+              <td><span class="pill ${statusPillClass(s.thankYou)}">${statusDisplayText(s.thankYou)}</span></td>
+            </tr>
+          `).join('');
+        }
       }
     }
   }
