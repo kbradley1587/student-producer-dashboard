@@ -4317,6 +4317,27 @@ renderDashboard(11);
           `).join('');
         }
       }
+     // ----- Executive Dashboard: Sponsorship Pipeline widget -----
+      const execKanban = document.getElementById('kanbanBoard');
+      if (execKanban) {
+        const execColumns = [
+          { stage: 'Outreach', label: 'OUTREACH', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Target ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Proposal', label: 'PROPOSAL', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Asked ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Negotiation', label: 'NEGOTIATION', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Negotiating ${formatMoney(s.requested)}</div></div>` },
+          { stage: 'Closed', label: 'CLOSED', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${formatMoney(s.closed)} · ${s.tier}</div></div>` }
+        ];
+        execKanban.innerHTML = execColumns.map(col => {
+          const sponsors = buckets[col.stage] || [];
+          const cards = sponsors.map(s => `<div class="kanban-card">${col.formatCard(s)}</div>`).join('');
+          return `<div class="kanban-column"><div class="kanban-column-header">${col.label}<span class="kanban-count">${sponsors.length}</span></div>${cards}</div>`;
+        }).join('');
+      }
+
+      // ----- Executive Dashboard: Sponsorship subtitle -----
+      const sponsorSubEl = document.getElementById('sponsorSub');
+      if (sponsorSubEl) {
+        sponsorSubEl.textContent = formatMoney(totalClosed) + ' closed · ' + formatMoney(totalProposalRequested) + ' in proposal · ' + formatMoney(totalOutreachRequested) + ' in outreach';
+      } 
     }
 
     // ===== FINANCE DATA =====
@@ -4498,6 +4519,54 @@ renderDashboard(11);
           `).join('');
         }
       }
+     // ----- Executive Dashboard: This Week's Action Items widget -----
+      const execActionList = document.getElementById('actionList');
+      if (execActionList) {
+        const completedItems = allActions.filter(a => (a.status || '').toLowerCase() === 'complete');
+        const activeItems = allActions.filter(a => (a.status || '').toLowerCase() !== 'complete');
+
+        const priorityOrder = { 'high': 0, 'medium': 1, 'meduim': 1, 'low': 2 };
+        activeItems.sort((a, b) => {
+          if (a.isOverdue && !b.isOverdue) return -1;
+          if (!a.isOverdue && b.isOverdue) return 1;
+          const aPri = priorityOrder[(a.priority || '').toLowerCase()] !== undefined ? priorityOrder[(a.priority || '').toLowerCase()] : 3;
+          const bPri = priorityOrder[(b.priority || '').toLowerCase()] !== undefined ? priorityOrder[(b.priority || '').toLowerCase()] : 3;
+          if (aPri !== bPri) return aPri - bPri;
+          if (a.dueDate && b.dueDate) return a.dueDate - b.dueDate;
+          return 0;
+        });
+
+        const displayItems = [...completedItems, ...activeItems].slice(0, 6);
+
+        execActionList.innerHTML = displayItems.map(a => {
+          const isComplete = (a.status || '').toLowerCase() === 'complete';
+          const dueLabel = isComplete ? 'Done' : 'W' + (m['Current Week'] || '11');
+          const checkboxHtml = isComplete
+            ? '<input type="checkbox" checked disabled style="margin-right:0.75rem;">'
+            : '<input type="checkbox" disabled style="margin-right:0.75rem;">';
+          const textStyle = isComplete ? 'text-decoration:line-through;color:#a8a094;' : '';
+          return `
+            <li style="display:flex;align-items:center;padding:0.5rem 0;border-bottom:1px solid #e8e1d3;">
+              ${checkboxHtml}
+              <span style="flex:1;${textStyle}">${a.description}</span>
+              <span class="pill gray" style="margin-right:0.75rem;">${a.department}</span>
+              <span style="color:#6b6557;font-size:0.85em;min-width:30px;text-align:right;">${dueLabel}</span>
+            </li>
+          `;
+        }).join('');
+      }
+
+      // ----- Executive Dashboard: Action Items subtitle -----
+      const actionsSubEl = document.getElementById('actionsSub');
+      if (actionsSubEl) {
+        const openCount = allActions.filter(a => {
+          const s = (a.status || '').toLowerCase();
+          return s === 'open' || s === 'in progress' || a.isOverdue;
+        }).length;
+        const completeCount = allActions.filter(a => (a.status || '').toLowerCase() === 'complete').length;
+        const currentWeek = m['Current Week'] || '11';
+        actionsSubEl.textContent = 'Week ' + currentWeek + ' · ' + openCount + ' open · ' + completeCount + ' complete';
+      } 
     }
   }
 
