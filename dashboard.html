@@ -3955,22 +3955,27 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
 renderDashboard(11);
 </script>
 <script>
+<script>
 // ============ SP² LIVE DATA WIRING ============
-// Fetches once, caches the parsed data, then re-applies on every render
-// AND every view switch to ensure the scrubber/navigation doesn't overwrite live values.
+// Fetches Dashboard, Box Office, Sponsorship, and Team data from CMW's
+// published Google Sheets. Caches once, applies on every render to ensure
+// scrubber and navigation don't overwrite live values.
 
 (function () {
   const DASHBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=0&single=true&output=csv';
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
   const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
+  const TEAM_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1253836572&single=true&output=csv';
 
   const cache = {
     metadata: null,
     boxOfficeRows: null,
     sponsorshipRows: null,
+    teamByDepartment: null,
     loaded: false
   };
 
+  // ===== Helpers =====
   function parseRow(row) {
     const cells = [];
     let current = '';
@@ -3997,6 +4002,10 @@ renderDashboard(11);
 
   function formatMoney(num) {
     return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function formatMoneyDecimal(num) {
+    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function getInitials(fullName) {
@@ -4026,12 +4035,20 @@ renderDashboard(11);
     if (el) el.textContent = text;
   }
 
+  function setSubText(elementId, text) {
+    // Use this for elements like content-sub which need full element text replacement
+    const el = document.querySelector(elementId);
+    if (el) el.textContent = text;
+  }
+
+  // ===== Apply data =====
   function applyLiveData() {
     if (!cache.loaded) return;
 
     const m = cache.metadata || {};
     const boxRows = cache.boxOfficeRows || [];
     const sponsorRows = cache.sponsorshipRows || [];
+    const team = cache.teamByDepartment || {};
 
     // ----- Production header -----
     if (m['Production Title']) setText('showTitle', m['Production Title']);
@@ -4042,7 +4059,7 @@ renderDashboard(11);
     if (school) metaParts.push(school);
     if (metaParts.length) setText('showMeta', metaParts.join(' · '));
 
-    // ----- User chip -----
+    // ----- User chip (Producer) -----
     if (m['Student Producer']) {
       setText('userName', m['Student Producer']);
       setText('userAvatar', getInitials(m['Student Producer']));
@@ -4063,6 +4080,34 @@ renderDashboard(11);
         allCountdownIds.forEach(id => setText(id, displayText));
         setText('countdownLabel', labelText);
       }
+    }
+
+    // ----- Department Owner lines (each report's "Owner: X · Y" subtitle) -----
+    // The HTML structure for each report has a <div class="content-sub">Owner: ... · ...</div>
+    // We need to find the right one for each view and update it.
+
+    function updateOwnerLine(viewId, department) {
+      const member = team[department];
+      if (!member || !member.name) return;
+      const view = document.getElementById(viewId);
+      if (!view) return;
+      const subEl = view.querySelector('.content-sub');
+      if (!subEl) return;
+      const role = member.roleTitle || department;
+      subEl.textContent = 'Owner: ' + member.name + ' · ' + role;
+    }
+
+    updateOwnerLine('view-finance', 'Finance');
+    updateOwnerLine('view-boxoffice', 'Box Office');
+    updateOwnerLine('view-sponsorship', 'Sponsorship');
+    updateOwnerLine('view-marketing', 'Marketing');
+    updateOwnerLine('view-guestservices', 'Guest Services');
+
+    // Action Items uses a different ID pattern
+    const actionsOwner = team['Action Items'] || team['Producer'];
+    if (actionsOwner && actionsOwner.name) {
+      const role = actionsOwner.roleTitle || 'Student Producer';
+      setText('actionsOwnerLine', 'Owner: ' + actionsOwner.name + ' · ' + role);
     }
 
     // ===== BOX OFFICE DATA =====
@@ -4111,13 +4156,13 @@ renderDashboard(11);
       setText('kpiTickets', totalTickets.toLocaleString());
       setText('kpiRevenue', formatMoney(totalRevenue));
 
-      // Box Office Report KPIs
+      // Box Office Report KPIs (with cleaned-up context lines)
       setText('boxSold', totalTickets.toLocaleString());
       const capacityPct = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
       setText('boxSoldCtx', capacityPct + '% of ' + totalCapacity.toLocaleString() + ' total seats');
 
       setText('boxRev', formatMoney(totalRevenue));
-      setText('boxRevCtx', 'Avg ' + formatMoney(avgPrice) + ' per paid ticket');
+      setText('boxRevCtx', 'Avg ' + formatMoneyDecimal(avgPrice) + ' per paid ticket');
 
       const pacePct = ticketGoal > 0 ? Math.round((totalTickets / ticketGoal) * 100) - 100 : 0;
       setText('boxPace', (pacePct >= 0 ? '+' : '') + pacePct + '%');
@@ -4125,7 +4170,7 @@ renderDashboard(11);
 
       const remaining = Math.max(0, totalCapacity - totalTickets);
       setText('boxInventory', remaining.toLocaleString());
-      setText('boxInventoryCtx', performances.length + ' show performances');
+      setText('boxInventoryCtx', 'Across ' + performances.length + ' performances');
 
       // Sales by Performance Night table
       const perfTbody = document.getElementById('performanceTableBody');
@@ -4158,7 +4203,7 @@ renderDashboard(11);
             <td>Online (Ludus platform)</td>
             <td class="num">${onlineTickets}</td>
             <td class="num">${formatMoney(onlineRevenue)}</td>
-            <td class="num">${formatMoney(onlineAvg)}</td>
+            <td class="num">${formatMoneyDecimal(onlineAvg)}</td>
             <td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td>
           </tr>
           <tr>
@@ -4206,10 +4251,11 @@ renderDashboard(11);
 
   async function loadAllData() {
     try {
-      const [dashRes, boxRes, sponsorRes] = await Promise.all([
+      const [dashRes, boxRes, sponsorRes, teamRes] = await Promise.all([
         fetch(DASHBOARD_CSV),
         fetch(BOX_OFFICE_CSV),
-        fetch(SPONSORSHIP_CSV)
+        fetch(SPONSORSHIP_CSV),
+        fetch(TEAM_CSV)
       ]);
 
       if (dashRes.ok) {
@@ -4235,6 +4281,31 @@ renderDashboard(11);
         console.log('SP² Live Data: Sponsorship loaded (' + (cache.sponsorshipRows.length - 1) + ' sponsors)');
       }
 
+      if (teamRes.ok) {
+        const teamRows = parseCSV(await teamRes.text());
+        const teamHeaders = teamRows[0];
+        const deptIdx = teamHeaders.indexOf('Department');
+        const nameIdx = teamHeaders.indexOf('Owner Name');
+        const emailIdx = teamHeaders.indexOf('Email');
+        const phoneIdx = teamHeaders.indexOf('Phone');
+        const titleIdx = teamHeaders.indexOf('Role Title');
+
+        const teamLookup = {};
+        for (let i = 1; i < teamRows.length; i++) {
+          const dept = teamRows[i][deptIdx];
+          if (dept) {
+            teamLookup[dept] = {
+              name: teamRows[i][nameIdx] || '',
+              email: teamRows[i][emailIdx] || '',
+              phone: teamRows[i][phoneIdx] || '',
+              roleTitle: teamRows[i][titleIdx] || ''
+            };
+          }
+        }
+        cache.teamByDepartment = teamLookup;
+        console.log('SP² Live Data: Team loaded (' + Object.keys(teamLookup).length + ' members)', teamLookup);
+      }
+
       cache.loaded = true;
       applyLiveData();
     } catch (error) {
@@ -4242,30 +4313,24 @@ renderDashboard(11);
     }
   }
 
-  // ===== Re-apply live data after EVERY user interaction =====
-
-  // 1. Re-apply on scrubber input
+  // Re-apply on every interaction
   const scrubber = document.getElementById('weekScrubber');
   if (scrubber) {
     scrubber.addEventListener('input', () => setTimeout(applyLiveData, 10));
   }
 
-  // 2. Re-apply on scrubber button clicks (W4, W8, W11, W15, W16)
   document.querySelectorAll('.scrub-btn').forEach(btn => {
     btn.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
 
-  // 3. Re-apply on sidebar navigation clicks
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
 
-  // 4. Re-apply on KPI tile drill-down clicks
   document.querySelectorAll('[data-goto]').forEach(el => {
     el.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
 
-  // Kick off the initial load
   loadAllData();
 })();
 </script>
