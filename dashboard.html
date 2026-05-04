@@ -2171,27 +2171,27 @@ body {
       </div>
 
       <div class="kpi-row">
-        <div class="kpi-tile gold">
-          <div class="kpi-label">Total Revenue</div>
-          <div class="kpi-value" id="finRevenue">$8,240</div>
-          <div class="kpi-context">Tickets + sponsorship</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Total Expenses</div>
-          <div class="kpi-value" id="finExpense">$3,820</div>
-          <div class="kpi-context">67% of $5,700 budget</div>
-        </div>
-        <div class="kpi-tile green">
-          <div class="kpi-label">Net to Date</div>
-          <div class="kpi-value" id="finNet">$4,420</div>
-          <div class="kpi-context">Projection: <strong id="finProj">$9,200</strong> at close</div>
-        </div>
-        <div class="kpi-tile ink">
-          <div class="kpi-label">Budget Variance</div>
-          <div class="kpi-value variance-pos" id="finVariance">+$1,420</div>
-          <div class="kpi-context">Favorable · vs. plan</div>
-        </div>
-      </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">Total Revenue</div>
+    <div class="kpi-value" id="finRevenue">$12,990</div>
+    <div class="kpi-context" id="finRevenueCtx">Tickets + sponsorship</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">Total Expenses</div>
+    <div class="kpi-value" id="finExpenses">$7,346</div>
+    <div class="kpi-context" id="finExpensesCtx">67% of $5,700 budget</div>
+  </div>
+  <div class="kpi-tile green">
+    <div class="kpi-label">Net to Date</div>
+    <div class="kpi-value" id="finNet">$5,644</div>
+    <div class="kpi-context" id="finNetCtx">Projection: <strong id="finNetProj">$11,300</strong> at close</div>
+  </div>
+  <div class="kpi-tile gold">
+    <div class="kpi-label">Budget Variance</div>
+    <div class="kpi-value" id="finVariance">+$1,693</div>
+    <div class="kpi-context" id="finVarianceCtx">Favorable · vs. plan</div>
+  </div>
+</div>
 
       <div class="dash-card full" style="margin-bottom: 1.25rem;">
         <div class="dash-card-header">
@@ -2206,7 +2206,7 @@ body {
           <thead>
             <tr><th>Category</th><th class="num">Budget</th><th class="num">Actual</th><th class="num">Variance</th><th>% Used</th></tr>
           </thead>
-          <tbody id="budgetBody"></tbody>
+          <tbody id="budgetActualTableBody">
         </table>
 
         </div>
@@ -2225,7 +2225,7 @@ body {
           <thead>
             <tr><th>Line</th><th class="num">Amount</th></tr>
           </thead>
-          <tbody>
+          <tbody id="pnlTableBody">
             <tr class="section"><td colspan="2">Revenue</td></tr>
             <tr><td>Ticket Sales (projected 800 @ $20 avg)</td><td class="num">$16,000</td></tr>
             <tr><td>Sponsorship (closed + projected)</td><td class="num">$6,000</td></tr>
@@ -3956,25 +3956,22 @@ renderDashboard(11);
 </script>
 <script>
 // ============ SP² LIVE DATA WIRING ============
-// Fetches Dashboard, Box Office, Sponsorship, and Team data from CMW's
-// published Google Sheets. Caches once, applies on every render to ensure
-// scrubber and navigation don't overwrite live values.
-
 (function () {
   const DASHBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=0&single=true&output=csv';
   const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
   const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
   const TEAM_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1253836572&single=true&output=csv';
+  const FINANCE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=2143390940&single=true&output=csv';
 
   const cache = {
     metadata: null,
     boxOfficeRows: null,
     sponsorshipRows: null,
     teamByDepartment: null,
+    financeRows: null,
     loaded: false
   };
 
-  // ===== Helpers =====
   function parseRow(row) {
     const cells = [];
     let current = '';
@@ -4000,7 +3997,13 @@ renderDashboard(11);
   }
 
   function formatMoney(num) {
-    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const sign = num < 0 ? '-' : '';
+    return sign + '$' + Math.abs(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function formatMoneySigned(num) {
+    if (num >= 0) return '+$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return '-$' + Math.abs(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
   function formatMoneyDecimal(num) {
@@ -4034,7 +4037,6 @@ renderDashboard(11);
     if (el) el.textContent = text;
   }
 
-  // Determines pill color class based on status text
   function statusPillClass(status) {
     if (!status) return 'gray';
     const s = status.toLowerCase();
@@ -4044,7 +4046,6 @@ renderDashboard(11);
     return 'gray';
   }
 
-  // Adds checkmark prefix for completed status text
   function statusDisplayText(status) {
     if (!status) return '—';
     const s = status.toLowerCase();
@@ -4054,7 +4055,6 @@ renderDashboard(11);
     return status;
   }
 
-  // ===== Apply data =====
   function applyLiveData() {
     if (!cache.loaded) return;
 
@@ -4062,8 +4062,8 @@ renderDashboard(11);
     const boxRows = cache.boxOfficeRows || [];
     const sponsorRows = cache.sponsorshipRows || [];
     const team = cache.teamByDepartment || {};
+    const finRows = cache.financeRows || [];
 
-    // ----- Production header -----
     if (m['Production Title']) setText('showTitle', m['Production Title']);
     const season = m['Season'] || '';
     const school = m['School Name'] || '';
@@ -4072,30 +4072,25 @@ renderDashboard(11);
     if (school) metaParts.push(school);
     if (metaParts.length) setText('showMeta', metaParts.join(' · '));
 
-    // ----- User chip (Producer) -----
     if (m['Student Producer']) {
       setText('userName', m['Student Producer']);
       setText('userAvatar', getInitials(m['Student Producer']));
     }
 
-    // ----- Days to opening countdown -----
     if (m['Opening Date']) {
       const openingDate = parseDate(m['Opening Date']);
       if (openingDate) {
         const days = daysBetween(openingDate);
         const allCountdownIds = ['countdownNum', 'financeCountdown', 'boxCountdown', 'sponsorCountdown', 'mktCountdown', 'gsCountdown', 'actionCountdown'];
-
         let displayText, labelText;
         if (days > 0) { displayText = days; labelText = 'Days to Opening'; }
         else if (days === 0) { displayText = '0'; labelText = 'Opening Today'; }
         else { displayText = Math.abs(days); labelText = 'Days Since Opening'; }
-
         allCountdownIds.forEach(id => setText(id, displayText));
         setText('countdownLabel', labelText);
       }
     }
 
-    // ----- Department Owner lines -----
     function updateOwnerLine(viewId, department) {
       const member = team[department];
       if (!member || !member.name) return;
@@ -4163,18 +4158,14 @@ renderDashboard(11);
 
       setText('kpiTickets', totalTickets.toLocaleString());
       setText('kpiRevenue', formatMoney(totalRevenue));
-
       setText('boxSold', totalTickets.toLocaleString());
       const capacityPct = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
       setText('boxSoldCtx', capacityPct + '% of ' + totalCapacity.toLocaleString() + ' total seats');
-
       setText('boxRev', formatMoney(totalRevenue));
       setText('boxRevCtx', 'Avg ' + formatMoneyDecimal(avgPrice) + ' per paid ticket');
-
       const pacePct = ticketGoal > 0 ? Math.round((totalTickets / ticketGoal) * 100) - 100 : 0;
       setText('boxPace', (pacePct >= 0 ? '+' : '') + pacePct + '%');
       setText('boxPaceCtx', (pacePct >= 0 ? 'Ahead of' : 'Behind') + ' goal of ' + ticketGoal.toLocaleString());
-
       const remaining = Math.max(0, totalCapacity - totalTickets);
       setText('boxInventory', remaining.toLocaleString());
       setText('boxInventoryCtx', 'Across ' + performances.length + ' performances');
@@ -4183,15 +4174,9 @@ renderDashboard(11);
       if (perfTbody && performances.length > 0) {
         perfTbody.innerHTML = performances.map(p => {
           const barColor = p.fill >= 70 ? '' : (p.fill >= 40 ? 'gold' : 'gold');
-          return `<tr>
-            <td>${p.name}</td>
-            <td class="num">${p.sold}</td>
-            <td class="num">${p.remaining}</td>
-            <td><span class="mini-bar"><span class="mini-bar-fill ${barColor}" style="width: ${p.fill}%"></span></span>${p.fill}%</td>
-          </tr>`;
+          return `<tr><td>${p.name}</td><td class="num">${p.sold}</td><td class="num">${p.remaining}</td><td><span class="mini-bar"><span class="mini-bar-fill ${barColor}" style="width: ${p.fill}%"></span></span>${p.fill}%</td></tr>`;
         }).join('');
       }
-
       const seatsPerHouse = performances[0] ? performances[0].capacity : 0;
       setText('performanceTableSub', seatsPerHouse + '-seat house · ' + performances.length + ' nights');
 
@@ -4202,29 +4187,10 @@ renderDashboard(11);
         const onlineAvg = onlineTickets > 0 ? onlineRevenue / onlineTickets : 0;
         const onlineShare = totalTickets > 0 ? Math.round((onlineTickets / totalTickets) * 100) : 0;
         const compShare = totalTickets > 0 ? Math.round((totalComp / totalTickets) * 100) : 0;
-
         channelTbody.innerHTML = `
-          <tr>
-            <td>Online (Ludus platform)</td>
-            <td class="num">${onlineTickets}</td>
-            <td class="num">${formatMoney(onlineRevenue)}</td>
-            <td class="num">${formatMoneyDecimal(onlineAvg)}</td>
-            <td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td>
-          </tr>
-          <tr>
-            <td>Cash / At the door</td>
-            <td class="num">0</td>
-            <td class="num">$0</td>
-            <td class="num">$0</td>
-            <td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 0%"></span></span>0%</td>
-          </tr>
-          <tr>
-            <td>Comps (sponsor, press)</td>
-            <td class="num">${totalComp}</td>
-            <td class="num">$0</td>
-            <td class="num">$0</td>
-            <td><span class="mini-bar"><span class="mini-bar-fill green" style="width: ${compShare}%"></span></span>${compShare}%</td>
-          </tr>
+          <tr><td>Online (Ludus platform)</td><td class="num">${onlineTickets}</td><td class="num">${formatMoney(onlineRevenue)}</td><td class="num">${formatMoneyDecimal(onlineAvg)}</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td></tr>
+          <tr><td>Cash / At the door</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 0%"></span></span>0%</td></tr>
+          <tr><td>Comps (sponsor, press)</td><td class="num">${totalComp}</td><td class="num">$0</td><td class="num">$0</td><td><span class="mini-bar"><span class="mini-bar-fill green" style="width: ${compShare}%"></span></span>${compShare}%</td></tr>
         `;
       }
     }
@@ -4241,7 +4207,6 @@ renderDashboard(11);
       const socialIdx = headers.indexOf('Social Post');
       const thankIdx = headers.indexOf('Thank-You');
 
-      // Categorize all rows by stage
       const buckets = { Outreach: [], Proposal: [], Negotiation: [], Closed: [], Declined: [] };
       let totalClosed = 0;
       let totalProposalRequested = 0;
@@ -4251,35 +4216,23 @@ renderDashboard(11);
         const row = sponsorRows[i];
         const stage = row[stageIdx] || '';
         const business = row[businessIdx] || '';
-        const tier = row[tierIdx] || '';
-        const requested = parseMoney(row[requestedIdx]);
-        const closed = parseMoney(row[closedIdx]);
-
         if (!business) continue;
-
         const sponsorObj = {
           business: business,
-          tier: tier,
-          requested: requested,
-          closed: closed,
+          tier: row[tierIdx] || '',
+          requested: parseMoney(row[requestedIdx]),
+          closed: parseMoney(row[closedIdx]),
           adDelivered: row[adIdx] || '',
           socialPost: row[socialIdx] || '',
           thankYou: row[thankIdx] || ''
         };
-
-        if (buckets[stage]) {
-          buckets[stage].push(sponsorObj);
-        }
-
-        // KPI rollups
-        if (stage === 'Closed') totalClosed += closed;
-        else if (stage === 'Proposal' || stage === 'Negotiation') totalProposalRequested += requested;
-        else if (stage === 'Outreach') totalOutreachRequested += requested;
+        if (buckets[stage]) buckets[stage].push(sponsorObj);
+        if (stage === 'Closed') totalClosed += sponsorObj.closed;
+        else if (stage === 'Proposal' || stage === 'Negotiation') totalProposalRequested += sponsorObj.requested;
+        else if (stage === 'Outreach') totalOutreachRequested += sponsorObj.requested;
       }
 
-      // ----- Executive Dashboard sponsorship KPI -----
       setText('kpiSponsor', formatMoney(totalClosed));
-
       const sponsorshipGoal = parseMoney(m['Sponsorship Goal']) || 0;
       const sponsorCtxEl = document.getElementById('kpiSponsorCtx');
       if (sponsorCtxEl && sponsorshipGoal > 0) {
@@ -4287,29 +4240,20 @@ renderDashboard(11);
         sponsorCtxEl.textContent = percentOfTarget + '% of ' + formatMoney(sponsorshipGoal) + ' target';
       }
 
-      // ----- Sponsorship Report KPI tiles -----
-      // KPI: CLOSED
       setText('sponClosed', formatMoney(totalClosed));
       const closedCount = buckets.Closed.length;
       const targetPct = sponsorshipGoal > 0 ? Math.round((totalClosed / sponsorshipGoal) * 100) : 0;
       setText('sponClosedCtx', closedCount + ' sponsors · ' + targetPct + '% of target');
-
-      // KPI: IN PROPOSAL (Proposal + Negotiation rolled together)
       setText('sponProposal', formatMoney(totalProposalRequested));
       const activeProposalCount = buckets.Proposal.length + buckets.Negotiation.length;
       setText('sponProposalCtx', activeProposalCount + ' active proposals');
-
-      // KPI: IN OUTREACH (Outreach only, with declined count in context)
       setText('sponOutreach', formatMoney(totalOutreachRequested));
       const outreachCount = buckets.Outreach.length;
       const declinedCount = buckets.Declined.length;
       const outreachCtx = outreachCount + ' prospects engaged' + (declinedCount > 0 ? ' · ' + declinedCount + ' declined' : '');
       setText('sponOutreachCtx', outreachCtx);
-
-      // KPI: TARGET
       setText('sponTarget', formatMoney(sponsorshipGoal));
 
-      // ----- Full Sponsorship Pipeline kanban -----
       const kanban = document.getElementById('fullKanban');
       if (kanban) {
         const columns = [
@@ -4318,22 +4262,13 @@ renderDashboard(11);
           { stage: 'Negotiation', label: 'NEGOTIATION', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${s.tier} · Negotiating ${formatMoney(s.requested)}</div></div>` },
           { stage: 'Closed', label: 'CLOSED', formatCard: s => `<div><strong>${s.business}</strong><div style="font-size:0.85em;color:#6b6557;margin-top:2px;">${formatMoney(s.closed)} · ${s.tier}</div></div>` }
         ];
-
         kanban.innerHTML = columns.map(col => {
           const sponsors = buckets[col.stage] || [];
           const cards = sponsors.map(s => `<div class="kanban-card">${col.formatCard(s)}</div>`).join('');
-          return `
-            <div class="kanban-column">
-              <div class="kanban-column-header">
-                ${col.label}<span class="kanban-count">${sponsors.length}</span>
-              </div>
-              ${cards}
-            </div>
-          `;
+          return `<div class="kanban-column"><div class="kanban-column-header">${col.label}<span class="kanban-count">${sponsors.length}</span></div>${cards}</div>`;
         }).join('');
       }
 
-      // ----- Closed Sponsor Recognition Status table -----
       const recogTbody = document.getElementById('recognitionTableBody');
       if (recogTbody) {
         const closedSponsors = buckets.Closed;
@@ -4341,27 +4276,128 @@ renderDashboard(11);
           recogTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No closed sponsors yet</td></tr>';
         } else {
           recogTbody.innerHTML = closedSponsors.map(s => `
-            <tr>
-              <td><strong>${s.business}</strong></td>
-              <td class="num">${formatMoney(s.closed)}</td>
-              <td>${s.tier}</td>
-              <td><span class="pill ${statusPillClass(s.adDelivered)}">${statusDisplayText(s.adDelivered)}</span></td>
-              <td><span class="pill ${statusPillClass(s.socialPost)}">${statusDisplayText(s.socialPost)}</span></td>
-              <td><span class="pill ${statusPillClass(s.thankYou)}">${statusDisplayText(s.thankYou)}</span></td>
-            </tr>
+            <tr><td><strong>${s.business}</strong></td><td class="num">${formatMoney(s.closed)}</td><td>${s.tier}</td><td><span class="pill ${statusPillClass(s.adDelivered)}">${statusDisplayText(s.adDelivered)}</span></td><td><span class="pill ${statusPillClass(s.socialPost)}">${statusDisplayText(s.socialPost)}</span></td><td><span class="pill ${statusPillClass(s.thankYou)}">${statusDisplayText(s.thankYou)}</span></td></tr>
           `).join('');
         }
+      }
+    }
+
+    // ===== FINANCE DATA =====
+    if (finRows.length > 1) {
+      const headers = finRows[0];
+      const typeIdx = headers.indexOf('Type');
+      const categoryIdx = headers.indexOf('Category');
+      const descIdx = headers.indexOf('Description');
+      const budgetIdx = headers.indexOf('Budget');
+      const actualIdx = headers.indexOf('Actual');
+      const varianceIdx = headers.indexOf('Variance');
+      const statusIdx = headers.indexOf('Status');
+
+      let totalIncomeBudget = 0, totalIncomeActual = 0;
+      let totalExpenseBudget = 0, totalExpenseActual = 0;
+      const incomeRows = [];
+      const expenseRows = [];
+
+      for (let i = 1; i < finRows.length; i++) {
+        const row = finRows[i];
+        const type = (row[typeIdx] || '').trim();
+        const category = (row[categoryIdx] || '').trim();
+        if (!type || !category) continue;
+
+        const budget = parseMoney(row[budgetIdx]);
+        const actual = parseMoney(row[actualIdx]);
+        const variance = parseMoney(row[varianceIdx]);
+        const description = row[descIdx] || '';
+        const status = row[statusIdx] || '';
+
+        const lineItem = {
+          type: type,
+          category: category,
+          description: description,
+          budget: budget,
+          actual: actual,
+          variance: variance,
+          status: status,
+          pctUsed: budget > 0 ? Math.round((actual / budget) * 100) : 0
+        };
+
+        if (type === 'Income') {
+          totalIncomeBudget += budget;
+          totalIncomeActual += actual;
+          incomeRows.push(lineItem);
+        } else if (type === 'Expense') {
+          totalExpenseBudget += budget;
+          totalExpenseActual += actual;
+          expenseRows.push(lineItem);
+        }
+      }
+
+      const netToDate = totalIncomeActual - totalExpenseActual;
+      const projectedNet = totalIncomeBudget - totalExpenseBudget;
+      const totalBudgetVariance = (totalIncomeActual - totalIncomeBudget) - (totalExpenseActual - totalExpenseBudget);
+
+      // ----- Finance KPI tiles -----
+      setText('finRevenue', formatMoney(totalIncomeActual));
+      setText('finRevenueCtx', 'Tickets + sponsorship + concessions');
+
+      setText('finExpenses', formatMoney(totalExpenseActual));
+      const expensePct = totalExpenseBudget > 0 ? Math.round((totalExpenseActual / totalExpenseBudget) * 100) : 0;
+      setText('finExpensesCtx', expensePct + '% of ' + formatMoney(totalExpenseBudget) + ' budget');
+
+      setText('finNet', formatMoney(netToDate));
+      setText('finNetProj', formatMoney(projectedNet));
+
+      setText('finVariance', formatMoneySigned(totalBudgetVariance));
+      setText('finVarianceCtx', (totalBudgetVariance >= 0 ? 'Favorable' : 'Unfavorable') + ' · vs. plan');
+
+      // ----- Budget vs. Actual table -----
+      const budgetActualTbody = document.getElementById('budgetActualTableBody');
+      if (budgetActualTbody) {
+        const allRows = [...incomeRows, ...expenseRows];
+        budgetActualTbody.innerHTML = allRows.map(line => {
+          const label = line.type === 'Income' ? `${line.category} (income)` : line.category;
+          const varianceDisplay = formatMoneySigned(line.variance);
+          const barClass = line.pctUsed >= 90 ? '' : (line.pctUsed >= 50 ? 'gold' : 'gold');
+          return `<tr>
+            <td>${label}</td>
+            <td class="num">${formatMoney(line.budget)}</td>
+            <td class="num">${formatMoney(line.actual)}</td>
+            <td class="num">${varianceDisplay}</td>
+            <td><span class="mini-bar"><span class="mini-bar-fill ${barClass}" style="width: ${Math.min(line.pctUsed, 100)}%"></span></span>${line.pctUsed}%</td>
+          </tr>`;
+        }).join('');
+      }
+
+      // ----- P&L Projection table -----
+      const pnlTbody = document.getElementById('pnlTableBody');
+      if (pnlTbody) {
+        let html = '<tr class="pnl-section"><td colspan="2">REVENUE</td></tr>';
+        incomeRows.forEach(line => {
+          const label = line.description ? `${line.category} (${line.description})` : line.category;
+          html += `<tr><td>${label}</td><td class="num">${formatMoney(line.budget)}</td></tr>`;
+        });
+        html += `<tr class="pnl-subtotal"><td><strong>Total Revenue</strong></td><td class="num"><strong>${formatMoney(totalIncomeBudget)}</strong></td></tr>`;
+        html += '<tr class="pnl-section"><td colspan="2">EXPENSES</td></tr>';
+        expenseRows.forEach(line => {
+          const label = line.description ? `${line.category} (${line.description})` : line.category;
+          html += `<tr><td>${label}</td><td class="num">${formatMoney(line.budget)}</td></tr>`;
+        });
+        html += `<tr class="pnl-subtotal"><td><strong>Total Expenses</strong></td><td class="num"><strong>${formatMoney(totalExpenseBudget)}</strong></td></tr>`;
+        html += '<tr class="pnl-section"><td colspan="2">BOTTOM LINE</td></tr>';
+        html += `<tr class="pnl-subtotal"><td><strong>Projected Net</strong></td><td class="num"><strong>${formatMoney(projectedNet)}</strong></td></tr>`;
+        pnlTbody.innerHTML = html;
       }
     }
   }
 
   async function loadAllData() {
     try {
-      const [dashRes, boxRes, sponsorRes, teamRes] = await Promise.all([
+      const [dashRes, boxRes, sponsorRes, teamRes, finRes] = await Promise.all([
         fetch(DASHBOARD_CSV),
         fetch(BOX_OFFICE_CSV),
         fetch(SPONSORSHIP_CSV),
-        fetch(TEAM_CSV)
+        fetch(TEAM_CSV),
+        fetch(FINANCE_CSV)
       ]);
 
       if (dashRes.ok) {
@@ -4395,7 +4431,6 @@ renderDashboard(11);
         const emailIdx = teamHeaders.indexOf('Email');
         const phoneIdx = teamHeaders.indexOf('Phone');
         const titleIdx = teamHeaders.indexOf('Role Title');
-
         const teamLookup = {};
         for (let i = 1; i < teamRows.length; i++) {
           const dept = teamRows[i][deptIdx];
@@ -4412,6 +4447,11 @@ renderDashboard(11);
         console.log('SP² Live Data: Team loaded (' + Object.keys(teamLookup).length + ' members)', teamLookup);
       }
 
+      if (finRes.ok) {
+        cache.financeRows = parseCSV(await finRes.text());
+        console.log('SP² Live Data: Finance loaded (' + (cache.financeRows.length - 1) + ' line items)');
+      }
+
       cache.loaded = true;
       applyLiveData();
     } catch (error) {
@@ -4419,20 +4459,16 @@ renderDashboard(11);
     }
   }
 
-  // Re-apply on every interaction
   const scrubber = document.getElementById('weekScrubber');
   if (scrubber) {
     scrubber.addEventListener('input', () => setTimeout(applyLiveData, 10));
   }
-
   document.querySelectorAll('.scrub-btn').forEach(btn => {
     btn.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
-
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
-
   document.querySelectorAll('[data-goto]').forEach(el => {
     el.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
