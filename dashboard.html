@@ -3674,9 +3674,9 @@ function renderDashboard(w) {
   renderKanban("fullKanban", kanbanByWeek[kWeek]);
 
   // ============ MARKETING PAGE ============
-  document.getElementById("mkTotalFollowers").textContent = fmtComma(d.ig + d.tt + d.fb);
+  safeSet("mkTotalFollowers", fmtComma(d.ig + d.tt + d.fb));
   const prevTotal = prev.ig + prev.tt + prev.fb;
-  document.getElementById("mkTotalDelta").innerHTML = `<span class="kpi-delta">+${d.ig + d.tt + d.fb - prevTotal}</span> in last 7 days`;
+  safeSet("mkTotalDelta", `<span class="kpi-delta">+${d.ig + d.tt + d.fb - prevTotal}</span> in last 7 days`, "innerHTML");
   document.getElementById("mkReach").textContent = fmtComma(d.reach);
   document.getElementById("mkEng").textContent = d.eng + "%";
   document.getElementById("mkClicks").textContent = fmtComma(d.clicks);
@@ -4607,8 +4607,8 @@ renderDashboard(11);
         const datePosted = parseDate(row[dateIdx]);
         if (!datePosted) continue;
         if (datePosted >= sevenDaysAgo && datePosted <= today) {
-          weeklyReach += parseInt(row[reachIdx], 10) || 0;
-          weeklyClicks += parseInt(row[clicksIdx], 10) || 0;
+          weeklyReach += parseMoney(row[reachIdx]);
+          weeklyClicks += parseMoney(row[clicksIdx]);
           const eng = parseFloat(row[engIdx]) || 0;
           if (eng > 0) {
             weeklyEngSum += eng;
@@ -4642,9 +4642,9 @@ renderDashboard(11);
             platform: row[platformIdx] || '',
             type: row[typeIdx] || '',
             duration: row[durationIdx] || '',
-            reach: parseInt(row[reachIdx], 10) || 0,
+            reach: parseMoney(row[reachIdx]),
             engagement: parseFloat(row[engIdx]) || 0,
-            clicks: parseInt(row[clicksIdx], 10) || 0,
+            clicks: parseMoney(row[clicksIdx]),
             date: datePosted
           });
         }
