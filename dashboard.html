@@ -3655,10 +3655,7 @@ function renderDashboard(w) {
   const rev = d.ticketRev + d.sponsorClosed;
   document.getElementById("finRevenue").textContent = fmtMoney(rev);
   const expense = Math.round(rev * 0.45 + 1500);
-  document.getElementById("finExpense").textContent = fmtMoney(expense);
   document.getElementById("finNet").textContent = fmtMoney(rev - expense);
-  const projection = 13510 * Math.min(1, w / 16) + 2000;
-  document.getElementById("finProj").textContent = fmtMoney(Math.round(projection / 100) * 100);
   document.getElementById("finVariance").textContent = `+${fmtMoney(Math.round((rev - expense) * 0.3))}`;
 
   renderBudgetTable(w);
