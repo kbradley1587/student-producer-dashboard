@@ -4009,7 +4009,13 @@ renderDashboard(11);
   }
 
   function parseCSV(csvText) {
-    return csvText.trim().split('\n').map(parseRow);
+  const rows = csvText.trim().split('\n').map(parseRow);
+  // Drop the styled banner row (R1) — headers are on R2, data starts R3
+  if (rows.length > 0 && rows[0][0] && rows[0][0].includes('SP²')) {
+    rows.shift();
+  }
+  return rows;
+}
   }
 
   function parseMoney(str) {
