@@ -2435,10 +2435,10 @@ body {
 
       <div class="kpi-row">
         <div class="kpi-tile">
-          <div class="kpi-label">Total Followers</div>
-          <div class="kpi-value" id="mkTotalFollowers">2,823</div>
-          <div class="kpi-context" id="mkTotalDelta"><span class="kpi-delta">+257</span> in last 7 days</div>
-        </div>
+          <div class="kpi-label">Active Campaigns</div>
+          <div class="kpi-value" id="mkActiveCampaigns">—</div>
+          <div class="kpi-context" id="mkActiveCampaignsCtx">Drafted + Scheduled</div>
+      </div>
         <div class="kpi-tile gold">
           <div class="kpi-label">Weekly Reach</div>
           <div class="kpi-value" id="mkReach">18,420</div>
@@ -4586,6 +4586,64 @@ renderDashboard(11);
         actionsSubEl.textContent = 'Week ' + currentWeek + ' · ' + openCount + ' open · ' + completeCount + ' complete';
       } 
     }
+    // ===== MARKETING DATA - KPI TILES =====
+    const mkPostsRows = cache.mkPostsRows || [];
+    const mkCalendarRows = cache.mkCalendarRows || [];
+
+    if (mkPostsRows.length > 1) {
+      const headers = mkPostsRows[0];
+      const dateIdx = headers.indexOf('Date Posted');
+      const reachIdx = headers.indexOf('Reach');
+      const engIdx = headers.indexOf('Engagement Rate');
+      const clicksIdx = headers.indexOf('Link Clicks');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+
+      let weeklyReach = 0;
+      let weeklyClicks = 0;
+      let weeklyEngSum = 0;
+      let weeklyEngCount = 0;
+
+      for (let i = 1; i < mkPostsRows.length; i++) {
+        const row = mkPostsRows[i];
+        const datePosted = parseDate(row[dateIdx]);
+        if (!datePosted) continue;
+        if (datePosted >= sevenDaysAgo && datePosted <= today) {
+          weeklyReach += parseInt(row[reachIdx], 10) || 0;
+          weeklyClicks += parseInt(row[clicksIdx], 10) || 0;
+          const eng = parseFloat(row[engIdx]) || 0;
+          if (eng > 0) {
+            weeklyEngSum += eng;
+            weeklyEngCount++;
+          }
+        }
+      }
+
+      const avgEng = weeklyEngCount > 0 ? (weeklyEngSum / weeklyEngCount) : 0;
+
+      setText('mkReach', weeklyReach.toLocaleString());
+      setText('mkEng', avgEng.toFixed(1) + '%');
+      setText('mkClicks', weeklyClicks.toLocaleString());
+    }
+
+    // Active Campaigns count from Calendar tab
+    if (mkCalendarRows.length > 1) {
+      const headers = mkCalendarRows[0];
+      const statusIdx = headers.indexOf('Status');
+
+      let activeCount = 0;
+      for (let i = 1; i < mkCalendarRows.length; i++) {
+        const status = (mkCalendarRows[i][statusIdx] || '').trim();
+        if (status === 'Drafted' || status === 'Scheduled') {
+          activeCount++;
+        }
+      }
+
+      setText('mkActiveCampaigns', activeCount.toString());
+    }      
   }
 
   async function loadAllData() {
