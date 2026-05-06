@@ -2098,37 +2098,33 @@ body {
           <div class="dash-card-header">
             <div>
               <div class="dash-card-title">Social Media</div>
-              <div class="dash-card-sub">Last 7 days</div>
+              <div class="dash-card-sub">Reach by platform · Last 7 days</div>
             </div>
             <a class="card-link" data-goto="marketing">Open Report →</a>
           </div>
           <div class="social-grid">
             <div class="social-tile">
               <div class="social-platform">Instagram</div>
-              <div class="social-followers" id="igFollowers">1,247</div>
-              <div class="social-growth" id="igGrowth">+84 this week</div>
-              <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path id="igSpark" d="M 0 26 L 14 24 L 28 22 L 42 18 L 56 16 L 70 12 L 84 8 L 100 4" stroke="#8b1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+              <div class="social-followers" id="igReach">—</div>
+              <div class="social-growth" id="igPosts">— posts</div>
             </div>
-            <div class="social-tile">
+          <div class="social-tile">
               <div class="social-platform">TikTok</div>
-              <div class="social-followers" id="ttFollowers">892</div>
-              <div class="social-growth" id="ttGrowth">+152 this week</div>
-              <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path id="ttSpark" d="M 0 28 L 14 26 L 28 20 L 42 22 L 56 14 L 70 10 L 84 6 L 100 2" stroke="#8b1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+              <div class="social-followers" id="ttReach">—</div>
+              <div class="social-growth" id="ttPosts">— posts</div>
             </div>
             <div class="social-tile">
               <div class="social-platform">Facebook</div>
-              <div class="social-followers" id="fbFollowers">684</div>
-              <div class="social-growth" id="fbGrowth">+21 this week</div>
-              <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none"><path id="fbSpark" d="M 0 22 L 14 20 L 28 18 L 42 18 L 56 16 L 70 14 L 84 14 L 100 12" stroke="#8b1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+              <div class="social-followers" id="fbReach">—</div>
+              <div class="social-growth" id="fbPosts">— posts</div>
             </div>
           </div>
           <div class="social-summary">
-            <div class="social-summary-row"><span>Total reach this week</span><strong id="reachVal">18,420</strong></div>
-            <div class="social-summary-row"><span>Engagement rate</span><strong id="engVal">7.2%</strong></div>
-            <div class="social-summary-row"><span>Ticket link clicks</span><strong id="clicksVal">284</strong></div>
+            <div class="social-summary-row"><span>Total reach this week</span><strong id="reachVal">—</strong></div>
+            <div class="social-summary-row"><span>Engagement rate</span><strong id="engVal">—</strong></div>
+            <div class="social-summary-row"><span>Ticket link clicks</span><strong id="clicksVal">—</strong></div>
           </div>
         </div>
-      </div>
 
       <div class="dash-card full" style="margin-bottom: 1.25rem;">
         <div class="dash-card-header">
@@ -3611,19 +3607,19 @@ function renderDashboard(w) {
   renderSalesChart(w);
 
   // Social
-  document.getElementById("igFollowers").textContent = fmtComma(d.ig);
-  document.getElementById("ttFollowers").textContent = fmtComma(d.tt);
-  document.getElementById("fbFollowers").textContent = fmtComma(d.fb);
+  safeSet("igFollowers", fmtComma(d.ig));
+  safeSet("ttFollowers", fmtComma(d.tt));
+  safeSet("fbFollowers", fmtComma(d.fb));
   const prevW = Math.max(0, w - 2);
   const prev = weekData[prevW];
-  document.getElementById("igGrowth").textContent = `+${d.ig - prev.ig} this week`;
-  document.getElementById("ttGrowth").textContent = `+${d.tt - prev.tt} this week`;
-  document.getElementById("fbGrowth").textContent = `+${d.fb - prev.fb} this week`;
-  document.getElementById("reachVal").textContent = fmtComma(d.reach);
-  document.getElementById("engVal").textContent = d.eng + "%";
-  document.getElementById("clicksVal").textContent = fmtComma(d.clicks);
+  safeSet("igGrowth", `+${d.ig - prev.ig} this week`);
+  safeSet("ttGrowth", `+${d.tt - prev.tt} this week`);
+  safeSet("fbGrowth", `+${d.fb - prev.fb} this week`);
+  safeSet("reachVal", fmtComma(d.reach));
+  safeSet("engVal", d.eng + "%");
+  safeSet("clicksVal", fmtComma(d.clicks));
 
-  renderSparklines(w);
+  // renderSparklines(w);  // Sparklines removed - tile now shows reach by platform
 
   // Kanban
   const kWeek = nearestKey(kanbanByWeek, w);
@@ -4591,27 +4587,58 @@ renderDashboard(11);
       let weeklyEngSum = 0;
       let weeklyEngCount = 0;
 
+      // Reach grouped by platform (case-insensitive matching)
+      const platformReach = { instagram: 0, tiktok: 0, facebook: 0 };
+      const platformPosts = { instagram: 0, tiktok: 0, facebook: 0 };
+      const platformIdxRow = headers.indexOf('Platform');
+
       for (let i = 1; i < mkPostsRows.length; i++) {
         const row = mkPostsRows[i];
         const datePosted = parseDate(row[dateIdx]);
         if (!datePosted) continue;
         if (datePosted >= sevenDaysAgo && datePosted <= today) {
-          weeklyReach += parseMoney(row[reachIdx]);
+          const reach = parseMoney(row[reachIdx]);
+          weeklyReach += reach;
           weeklyClicks += parseMoney(row[clicksIdx]);
           const eng = parseFloat(row[engIdx]) || 0;
           if (eng > 0) {
             weeklyEngSum += eng;
             weeklyEngCount++;
           }
+
+          // Group by platform — match common variations (Instagram, IG, IG Story, etc.)
+          const platform = (row[platformIdxRow] || '').toLowerCase();
+          if (platform.includes('instagram') || platform === 'ig' || platform.startsWith('ig ')) {
+            platformReach.instagram += reach;
+            platformPosts.instagram++;
+          } else if (platform.includes('tiktok') || platform === 'tt') {
+            platformReach.tiktok += reach;
+            platformPosts.tiktok++;
+          } else if (platform.includes('facebook') || platform === 'fb' || platform.startsWith('fb ')) {
+            platformReach.facebook += reach;
+            platformPosts.facebook++;
+          }
         }
       }
 
       const avgEng = weeklyEngCount > 0 ? (weeklyEngSum / weeklyEngCount) : 0;
 
+      // Marketing department KPI tiles (existing)
       setText('mkReach', weeklyReach.toLocaleString());
       setText('mkEng', avgEng.toFixed(1) + '%');
       setText('mkClicks', weeklyClicks.toLocaleString());
 
+      // Executive Dashboard Social Media tile (new)
+      setText('igReach', platformReach.instagram.toLocaleString());
+      setText('ttReach', platformReach.tiktok.toLocaleString());
+      setText('fbReach', platformReach.facebook.toLocaleString());
+      setText('igPosts', platformPosts.instagram + (platformPosts.instagram === 1 ? ' post' : ' posts'));
+      setText('ttPosts', platformPosts.tiktok + (platformPosts.tiktok === 1 ? ' post' : ' posts'));
+      setText('fbPosts', platformPosts.facebook + (platformPosts.facebook === 1 ? ' post' : ' posts'));
+      setText('reachVal', weeklyReach.toLocaleString());
+      setText('engVal', avgEng.toFixed(1) + '%');
+      setText('clicksVal', weeklyClicks.toLocaleString());
+      
       // ----- Recent Posts table (last 30 days) -----
       const titleIdx = headers.indexOf('Post Title');
       const platformIdx = headers.indexOf('Platform');
