@@ -2459,23 +2459,18 @@ body {
       <div class="dash-card full" style="margin-bottom: 1.25rem;">
         <div class="dash-card-header">
           <div class="dash-card-title">Recent Posts Performance</div>
-          <div class="dash-card-sub">Last 7 days across all platforms</div>
+          <div class="dash-card-sub">Last 30 days across all platforms</div>
         </div>
         <div class="table-scroll">
 
-          <table class="data-table">
-          <thead>
-            <tr><th>Post</th><th>Platform</th><th>Type</th><th class="num">Reach</th><th class="num">Engagement</th><th class="num">Link Clicks</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Opening number rehearsal reel</td><td>TikTok</td><td>Video · 0:47</td><td class="num">6,820</td><td class="num">9.1%</td><td class="num">92</td></tr>
-            <tr><td>Meet the Drowsy Chaperone cast</td><td>Instagram</td><td>Carousel</td><td class="num">3,240</td><td class="num">8.4%</td><td class="num">61</td></tr>
-            <tr><td>Behind-the-scenes costume fitting</td><td>Instagram</td><td>Reel</td><td class="num">2,890</td><td class="num">7.8%</td><td class="num">44</td></tr>
-            <tr><td>Director's note + pre-sale link</td><td>Facebook</td><td>Post</td><td class="num">2,110</td><td class="num">6.2%</td><td class="num">38</td></tr>
-            <tr><td>Countdown graphic: 40 days</td><td>Instagram Story</td><td>Story</td><td class="num">1,840</td><td class="num">5.5%</td><td class="num">28</td></tr>
-            <tr><td>Sponsor spotlight: Mountain Branch</td><td>Instagram</td><td>Post</td><td class="num">1,520</td><td class="num">4.3%</td><td class="num">21</td></tr>
-          </tbody>
-        </table>
+         <table class="data-table">
+        <thead>
+          <tr><th>Post</th><th>Platform</th><th>Type</th><th class="num">Reach</th><th class="num">Engagement</th><th class="num">Link Clicks</th></tr>
+        </thead>
+        <tbody id="mkPostsTableBody">
+        <tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">Loading recent posts…</td></tr>
+      </tbody>
+      </table>
 
         </div>
       </div>
@@ -4627,6 +4622,48 @@ renderDashboard(11);
       setText('mkReach', weeklyReach.toLocaleString());
       setText('mkEng', avgEng.toFixed(1) + '%');
       setText('mkClicks', weeklyClicks.toLocaleString());
+
+      // ----- Recent Posts table (last 30 days) -----
+      const titleIdx = headers.indexOf('Post Title');
+      const platformIdx = headers.indexOf('Platform');
+      const typeIdx = headers.indexOf('Type');
+      const durationIdx = headers.indexOf('Duration');
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+
+      const recentPosts = [];
+      for (let i = 1; i < mkPostsRows.length; i++) {
+        const row = mkPostsRows[i];
+        const datePosted = parseDate(row[dateIdx]);
+        if (!datePosted) continue;
+        if (datePosted >= thirtyDaysAgo && datePosted <= today) {
+          recentPosts.push({
+            title: row[titleIdx] || '',
+            platform: row[platformIdx] || '',
+            type: row[typeIdx] || '',
+            duration: row[durationIdx] || '',
+            reach: parseInt(row[reachIdx], 10) || 0,
+            engagement: parseFloat(row[engIdx]) || 0,
+            clicks: parseInt(row[clicksIdx], 10) || 0,
+            date: datePosted
+          });
+        }
+      }
+
+      // Sort by date descending (newest first)
+      recentPosts.sort((a, b) => b.date - a.date);
+
+      const postsTbody = document.getElementById('mkPostsTableBody');
+      if (postsTbody) {
+        if (recentPosts.length === 0) {
+          postsTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No posts in the last 30 days</td></tr>';
+        } else {
+          postsTbody.innerHTML = recentPosts.map(p => {
+            const typeDisplay = p.duration ? p.type + ' · ' + p.duration : p.type;
+            return `<tr><td>${p.title}</td><td>${p.platform}</td><td>${typeDisplay}</td><td class="num">${p.reach.toLocaleString()}</td><td class="num">${p.engagement.toFixed(1)}%</td><td class="num">${p.clicks.toLocaleString()}</td></tr>`;
+          }).join('');
+        }
+      }
     }
 
     // Active Campaigns count from Calendar tab
