@@ -3569,6 +3569,10 @@ const fmtComma = (n) => n.toLocaleString();
 
 // ============ RENDER FUNCTIONS ============
 function renderDashboard(w) {
+  function safeSet(id, value, prop = 'textContent') {
+    const el = document.getElementById(id);
+    if (el) el[prop] = value;
+  }
   const d = weekData[w - 1];
   const phase = phaseLabels[d.phase];
   const daysToOpen = d.daysToOpen;
