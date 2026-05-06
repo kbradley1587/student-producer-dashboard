@@ -4008,11 +4008,17 @@ renderDashboard(11);
     return cells;
   }
 
-  function parseCSV(csvText) {
+ function parseCSV(csvText) {
   const rows = csvText.trim().split('\n').map(parseRow);
-  // Drop the styled banner row (R1) — headers are on R2, data starts R3
-  if (rows.length > 0 && rows[0][0] && rows[0][0].includes('SP²')) {
-    rows.shift();
+  // Drop the styled banner row (R1) — headers are on R2, data starts R3.
+  // Detect banner by checking if first row has only one populated cell
+  // (banner is a merged cell, headers fill multiple cells).
+  if (rows.length > 1) {
+    const firstRow = rows[0];
+    const populatedCells = firstRow.filter(c => c && c.trim()).length;
+    if (populatedCells === 1) {
+      rows.shift();
+    }
   }
   return rows;
 }
