@@ -2485,16 +2485,10 @@ body {
 
             <table class="data-table">
             <thead><tr><th>Date</th><th>Platform</th><th>Content</th></tr></thead>
-            <tbody>
-              <tr><td>Wed</td><td>Instagram</td><td>Poster reveal with Design Team</td></tr>
-              <tr><td>Thu</td><td>TikTok</td><td>Dance break rehearsal clip</td></tr>
-              <tr><td>Fri</td><td>FB + IG</td><td>Press release + Aegis coverage</td></tr>
-              <tr><td>Sat</td><td>TikTok</td><td>Behind-the-scenes set build</td></tr>
-              <tr><td>Mon</td><td>IG Story</td><td>Countdown: 30 days</td></tr>
-              <tr><td>Tue</td><td>Instagram</td><td>Sponsor spotlight: Edward Jones</td></tr>
-              <tr><td>Wed</td><td>TikTok</td><td>"A day in the life of tech week"</td></tr>
+            <tbody id="mkCalendarTableBody">
+                <tr><td colspan="3" style="text-align:center;color:#6b6557;padding:1rem;">Loading calendar…</td></tr>
             </tbody>
-          </table>
+            </table>
 
           </div>
         </div>
@@ -2507,15 +2501,10 @@ body {
 
             <table class="data-table">
             <thead><tr><th>Asset</th><th>Owner</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>Show poster (final)</td><td>Alex L.</td><td><span class="pill green">✓ Approved</span></td></tr>
-              <tr><td>Program cover</td><td>Alex L.</td><td><span class="pill gold">In review</span></td></tr>
-              <tr><td>Tower Realty ad</td><td>Jamie S.</td><td><span class="pill gold">In design</span></td></tr>
-              <tr><td>Lobby signage pack</td><td>Jamie S.</td><td><span class="pill gray">Queued</span></td></tr>
-              <tr><td>Countdown graphic set</td><td>Alex L.</td><td><span class="pill green">✓ Done</span></td></tr>
-              <tr><td>Thank-you sponsor cards</td><td>Jamie S.</td><td><span class="pill gray">Queued</span></td></tr>
+            <tbody id="mkDesignTableBody">
+                <tr><td colspan="3" style="text-align:center;color:#6b6557;padding:1rem;">Loading design queue…</td></tr>
             </tbody>
-          </table>
+            </table>
 
           </div>
         </div>
@@ -4666,19 +4655,103 @@ renderDashboard(11);
       }
     }
 
-    // Active Campaigns count from Calendar tab
+   // Active Campaigns count + Calendar table from Calendar tab
     if (mkCalendarRows.length > 1) {
       const headers = mkCalendarRows[0];
+      const dateIdx = headers.indexOf('Date');
+      const platformIdx = headers.indexOf('Platform');
+      const contentIdx = headers.indexOf('Content');
       const statusIdx = headers.indexOf('Status');
 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tenDaysOut = new Date(today);
+      tenDaysOut.setDate(today.getDate() + 10);
+
       let activeCount = 0;
+      const upcoming = [];
+
       for (let i = 1; i < mkCalendarRows.length; i++) {
-        const status = (mkCalendarRows[i][statusIdx] || '').trim();
+        const row = mkCalendarRows[i];
+        const status = (row[statusIdx] || '').trim();
         if (status === 'Drafted' || status === 'Scheduled') {
           activeCount++;
         }
+        const date = parseDate(row[dateIdx]);
+        if (date && date >= today && date <= tenDaysOut) {
+          upcoming.push({
+            date: date,
+            platform: row[platformIdx] || '',
+            content: row[contentIdx] || ''
+          });
+        }
       }
 
+      setText('mkActiveCampaigns', activeCount.toString());
+
+      upcoming.sort((a, b) => a.date - b.date);
+
+      const calTbody = document.getElementById('mkCalendarTableBody');
+      if (calTbody) {
+        if (upcoming.length === 0) {
+          calTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#6b6557;padding:1rem;">No upcoming entries in next 10 days</td></tr>';
+        } else {
+          const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          calTbody.innerHTML = upcoming.map(c => {
+            const dayLabel = dayNames[c.date.getDay()];
+            return `<tr><td>${dayLabel}</td><td>${c.platform}</td><td>${c.content}</td></tr>`;
+          }).join('');
+        }
+      }
+    }
+
+    // ===== MARKETING DATA - DESIGN QUEUE =====
+    const mkDesignRows = cache.mkDesignRows || [];
+    if (mkDesignRows.length > 1) {
+      const headers = mkDesignRows[0];
+      const assetIdx = headers.indexOf('Asset Name');
+      const ownerIdx = headers.indexOf('Owner');
+      const statusIdx = headers.indexOf('Status');
+
+      const statusOrder = { 'In review': 0, 'In design': 1, 'Approved': 2, 'Queued': 3, 'Done': 4 };
+      const assets = [];
+
+      for (let i = 1; i < mkDesignRows.length; i++) {
+        const row = mkDesignRows[i];
+        const name = row[assetIdx] || '';
+        const status = row[statusIdx] || '';
+        if (!name || status === 'Done') continue;
+        assets.push({
+          name: name,
+          owner: row[ownerIdx] || '',
+          status: status
+        });
+      }
+
+      assets.sort((a, b) => {
+        const aRank = statusOrder[a.status] !== undefined ? statusOrder[a.status] : 99;
+        const bRank = statusOrder[b.status] !== undefined ? statusOrder[b.status] : 99;
+        return aRank - bRank;
+      });
+
+      function designStatusPill(status) {
+        if (status === 'Approved' || status === 'Done') return '<span class="pill green">✓ ' + status + '</span>';
+        if (status === 'In review' || status === 'In design') return '<span class="pill gold">' + status + '</span>';
+        if (status === 'Queued') return '<span class="pill gray">' + status + '</span>';
+        return '<span class="pill gray">' + status + '</span>';
+      }
+
+      const desTbody = document.getElementById('mkDesignTableBody');
+      if (desTbody) {
+        if (assets.length === 0) {
+          desTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#6b6557;padding:1rem;">No active design work</td></tr>';
+        } else {
+          desTbody.innerHTML = assets.map(a => {
+            return `<tr><td>${a.name}</td><td>${a.owner}</td><td>${designStatusPill(a.status)}</td></tr>`;
+          }).join('');
+        }
+      }
+    }
       setText('mkActiveCampaigns', activeCount.toString());
     }      
   }
