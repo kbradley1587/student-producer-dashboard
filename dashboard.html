@@ -4589,9 +4589,10 @@ renderDashboard(11);
 
   async function loadAllData() {
     try {
-      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes] = await Promise.all([
+      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes] = await Promise.all([
         fetch(DASHBOARD_CSV), fetch(BOX_OFFICE_CSV), fetch(SPONSORSHIP_CSV),
-        fetch(TEAM_CSV), fetch(FINANCE_CSV), fetch(ACTIONS_CSV)
+        fetch(TEAM_CSV), fetch(FINANCE_CSV), fetch(ACTIONS_CSV),
+        fetch(MK_POSTS_CSV), fetch(MK_CALENDAR_CSV), fetch(MK_DESIGN_CSV)
       ]);
 
       if (dashRes.ok) {
@@ -4647,6 +4648,21 @@ renderDashboard(11);
       if (actRes.ok) {
         cache.actionRows = parseCSV(await actRes.text());
         console.log('SP² Live Data: Actions loaded (' + (cache.actionRows.length - 1) + ' items)');
+      }
+
+      if (mkPostsRes.ok) {
+        cache.mkPostsRows = parseCSV(await mkPostsRes.text());
+        console.log('SP² Live Data: Marketing Posts loaded (' + (cache.mkPostsRows.length - 1) + ' posts)');
+      }
+
+      if (mkCalRes.ok) {
+        cache.mkCalendarRows = parseCSV(await mkCalRes.text());
+        console.log('SP² Live Data: Marketing Calendar loaded (' + (cache.mkCalendarRows.length - 1) + ' entries)');
+      }
+
+      if (mkDesRes.ok) {
+        cache.mkDesignRows = parseCSV(await mkDesRes.text());
+        console.log('SP² Live Data: Marketing Design loaded (' + (cache.mkDesignRows.length - 1) + ' assets)');
       }
 
       cache.loaded = true;
