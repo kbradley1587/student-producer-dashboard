@@ -3673,9 +3673,9 @@ function renderDashboard(w) {
   renderDailySales(w);
 
   // ============ SPONSORSHIP PAGE ============
-  document.getElementById("spClosedVal").textContent = fmtMoney(d.sponsorClosed);
-  document.getElementById("spProposalVal").textContent = fmtMoney(d.sponsorProposal);
-  document.getElementById("spOutreachVal").textContent = fmtMoney(d.sponsorOutreach);
+  safeSet("spClosedVal", fmtMoney(d.sponsorClosed));
+  safeSet("spProposalVal", fmtMoney(d.sponsorProposal));
+  safeSet("spOutreachVal", fmtMoney(d.sponsorOutreach));
   renderKanban("fullKanban", kanbanByWeek[kWeek]);
 
   // ============ MARKETING PAGE ============
@@ -3687,10 +3687,10 @@ function renderDashboard(w) {
   document.getElementById("mkClicks").textContent = fmtComma(d.clicks);
 
   // ============ ACTIONS PAGE ============
-  document.getElementById("actionsDone").textContent = done;
-  document.getElementById("actionsOpen").textContent = open;
-  document.getElementById("actionsLate").textContent = w > 12 ? 1 : 0;
-  document.getElementById("fullActionsTitle").textContent = `Full Action Log · Week ${w}`;
+  safeSet("actionsDone", done);
+  safeSet("actionsOpen", open);
+  safeSet("actionsLate", w > 12 ? 1 : 0);
+  safeSet("fullActionsTitle", `Full Action Log · Week ${w}`);
   renderActions("fullActionList", actions);
 
   // Scrubber visuals
