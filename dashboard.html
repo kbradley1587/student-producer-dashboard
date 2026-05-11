@@ -4773,7 +4773,7 @@ renderDashboard(11);
 
     if (gsRows.length > 1) {
       const headers = gsRows[0];
-      const dateIdx = headers.indexOf('Performance Date');
+      const performanceIdx = headers.indexOf('Performance');
       const roleIdx = headers.indexOf('Role');
       const nameIdx = headers.indexOf('Volunteer Name');
       const shiftIdx = headers.indexOf('Shift Time');
@@ -4788,8 +4788,7 @@ renderDashboard(11);
         const name = (row[nameIdx] || '').trim();
         if (!role || !name) continue;
         shifts.push({
-          date: parseDate(row[dateIdx]),
-          dateRaw: row[dateIdx] || '',
+          performance: (row[performanceIdx] || '').trim(),
           role: role,
           name: name,
           shift: row[shiftIdx] || '',
@@ -4797,7 +4796,6 @@ renderDashboard(11);
           lead: (row[leadIdx] || '').trim().toLowerCase() === 'yes'
         });
       }
-
       // ----- KPI: Ushers Confirmed -----
       const ushers = shifts.filter(s => s.role.toLowerCase() === 'usher');
       const ushersConfirmed = ushers.filter(s => s.status.toLowerCase() === 'confirmed').length;
@@ -4811,50 +4809,61 @@ renderDashboard(11);
       setText('gsConcessions', concessionsConfirmed.toString());
       setText('gsConcessionsCtx', concessionsConfirmed + ' of ' + concessions.length + ' shifts confirmed');
 
-      // ----- Usher Schedule table (grouped by performance date) -----
-      const byDate = {};
-      ushers.forEach(s => {
-        const key = s.dateRaw;
-        if (!byDate[key]) {
-          byDate[key] = { date: s.date, dateRaw: key, confirmed: 0, pending: 0, cancelled: 0, leadName: '—' };
-        }
-        const sLower = s.status.toLowerCase();
-        if (sLower === 'confirmed') byDate[key].confirmed++;
-        else if (sLower === 'pending') byDate[key].pending++;
-        else if (sLower === 'cancelled') byDate[key].cancelled++;
-        if (s.lead && s.status.toLowerCase() !== 'cancelled') byDate[key].leadName = s.name;
-      });
-
-      // Cross-reference performance names from Box Office tab
-      const performanceLookup = {};
+      // ----- Usher Schedule table (grouped by performance) -----
+      // Build performance metadata lookup from Box Office: { perfId → { date, order } }
+      const performanceMeta = {};
+      const performanceOrder = [];
       const boxRows = cache.boxOfficeRows || [];
       if (boxRows.length > 1) {
         const bHeaders = boxRows[0];
         const bIdIdx = bHeaders.indexOf('Performance_ID');
         const bDateIdx = bHeaders.indexOf('Date');
         for (let i = 1; i < boxRows.length; i++) {
+          const idVal = (boxRows[i][bIdIdx] || '').trim();
           const dateVal = boxRows[i][bDateIdx];
-          const idVal = boxRows[i][bIdIdx];
-          if (dateVal && idVal) performanceLookup[dateVal] = idVal;
+          if (idVal) {
+            performanceMeta[idVal] = { date: parseDate(dateVal), order: i };
+            performanceOrder.push(idVal);
+          }
         }
       }
 
-      const dateKeys = Object.keys(byDate).sort();
+      // Group ushers by performance name
+      const byPerf = {};
+      ushers.forEach(s => {
+        const key = s.performance || 'Unassigned';
+        if (!byPerf[key]) {
+          byPerf[key] = { performance: key, confirmed: 0, pending: 0, cancelled: 0, leadName: '—' };
+        }
+        const sLower = s.status.toLowerCase();
+        if (sLower === 'confirmed') byPerf[key].confirmed++;
+        else if (sLower === 'pending') byPerf[key].pending++;
+        else if (sLower === 'cancelled') byPerf[key].cancelled++;
+        if (s.lead && s.status.toLowerCase() !== 'cancelled') byPerf[key].leadName = s.name;
+      });
+
+      // Sort performances by their order in Box Office (so Opening Night appears first, Closing Night last)
+      const perfKeys = Object.keys(byPerf).sort((a, b) => {
+        const aOrder = performanceMeta[a] ? performanceMeta[a].order : 999;
+        const bOrder = performanceMeta[b] ? performanceMeta[b].order : 999;
+        return aOrder - bOrder;
+      });
+
       const usherTbody = document.getElementById('gsUsherTableBody');
       if (usherTbody) {
-        if (dateKeys.length === 0) {
+        if (perfKeys.length === 0) {
           usherTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No usher shifts scheduled</td></tr>';
         } else {
-          usherTbody.innerHTML = dateKeys.map(key => {
-            const row = byDate[key];
-            const perfName = performanceLookup[key] || 'Performance';
-            const dateLabel = formatShortDate(row.date);
-            return `<tr><td>${perfName}</td><td>${dateLabel}</td><td class="num">${row.confirmed}</td><td class="num">${row.pending}</td><td class="num">${row.cancelled}</td><td>${row.leadName}</td></tr>`;
+          usherTbody.innerHTML = perfKeys.map(key => {
+            const row = byPerf[key];
+            const meta = performanceMeta[key];
+            const dateLabel = meta && meta.date ? formatShortDate(meta.date) : '—';
+            return `<tr><td>${row.performance}</td><td>${dateLabel}</td><td class="num">${row.confirmed}</td><td class="num">${row.pending}</td><td class="num">${row.cancelled}</td><td>${row.leadName}</td></tr>`;
           }).join('');
         }
       }
 
-      const perfCount = dateKeys.length;
+      const perfCount = perfKeys.length;
       setText('gsUsherSub', 'Per performance · ' + perfCount + ' show' + (perfCount === 1 ? '' : 's'));
     }
 
