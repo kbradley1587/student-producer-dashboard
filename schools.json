@@ -2,6 +2,7 @@
   "cmw": {
     "schoolName": "C. Milton Wright High School",
     "shortName": "CMW",
+    "accessCodeHash": "919bd70b4d003d95261f76ed44bb0a1a67cb6943684484126b47699aa892a194",
     "publishedUrlBase": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub",
     "gids": {
       "dashboard": "0",
