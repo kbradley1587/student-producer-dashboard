@@ -1,0 +1,20 @@
+{
+  "cmw": {
+    "schoolName": "C. Milton Wright High School",
+    "shortName": "CMW",
+    "publishedUrlBase": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub",
+    "gids": {
+      "dashboard": "0",
+      "boxOffice": "6357353",
+      "sponsorship": "1179065102",
+      "team": "1253836572",
+      "finance": "2143390940",
+      "actions": "2135019067",
+      "mkPosts": "628647704",
+      "mkCalendar": "909419791",
+      "mkDesign": "556700079",
+      "guestServices": "562042141",
+      "vips": "1420058282"
+    }
+  }
+}
