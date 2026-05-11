@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access · SP² · The Student Producer Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #f5f0e6;
+  --cream-deep: #ebe4d4;
+  --paper: #fdfaf3;
+  --ink: #1a1410;
+  --ink-soft: #3a3229;
+  --ink-mute: #6b5d4f;
+  --red: #8b1a1a;
+  --red-deep: #5e1010;
+  --red-bright: #a82020;
+  --gold: #a8874a;
+  --green: #2d6a3f;
+  --rule: #d4c9b2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.brand-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 3rem;
+}
+
+.brand-mark {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: var(--red);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.brand-mark sup { font-size: 0.55em; vertical-align: super; }
+
+.brand-name {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 3rem 2.75rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(26, 20, 16, 0.04);
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--red);
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--red);
+  font-weight: 500;
+}
+
+.school-name {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--red);
+}
+
+.gold-rule {
+  width: 56px;
+  height: 2px;
+  background: var(--gold);
+  margin: 1.5rem 0 1.75rem;
+}
+
+.lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 1.75rem;
+}
+
+.field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  font-weight: 700;
+  margin-bottom: 0.55rem;
+  display: block;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: stretch;
+}
+
+input[type="password"], input[type="text"] {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background: var(--cream-deep);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+input:focus {
+  border-color: var(--red);
+  background: var(--paper);
+}
+
+input.error-state {
+  border-color: var(--red-bright);
+  background: #fdf4f4;
+}
+
+.submit-btn {
+  background: var(--red);
+  color: var(--cream);
+  border: none;
+  padding: 0 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.submit-btn:hover { background: var(--red-deep); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.feedback {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  min-height: 1.2rem;
+}
+
+.feedback.error { color: var(--red-bright); }
+.feedback.loading { color: var(--ink-mute); font-style: italic; }
+.feedback.success { color: var(--green); }
+
+.help-section {
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.help-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.help-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.help-text a {
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--red);
+  font-weight: 500;
+}
+
+.help-text a:hover {
+  color: var(--red-deep);
+  border-bottom-style: solid;
+}
+
+.footer-note {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+
+.footer-note em {
+  color: var(--red);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: 1.1em;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--ink-mute);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .shell { padding: 1.5rem 1.25rem; }
+  .card { padding: 2rem 1.5rem; }
+  .brand-bar { margin-bottom: 2rem; }
+  .input-row { flex-direction: column; }
+  .submit-btn { padding: 0.85rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="brand-bar">
+    <div class="brand-mark">SP<sup>2</sup></div>
+    <div class="brand-name">The Student<br>Producer Program</div>
+  </div>
+
+  <div class="card" id="gateCard">
+    <div class="loading-state" id="loadingState">Loading…</div>
+
+    <div id="gateContent" style="display:none;">
+      <div class="eyebrow">Access Required</div>
+      <h1>Welcome to <em id="schoolDisplay">your school</em>.</h1>
+      <div class="gold-rule"></div>
+
+      <p class="lede">
+        Enter your school's access code to view the dashboard. If you don't have a code, contact your program administrator.
+      </p>
+
+      <label class="field-label" for="codeInput">Access Code</label>
+      <div class="input-row">
+        <input type="password" id="codeInput" autocomplete="off" spellcheck="false" placeholder="Enter access code">
+        <button class="submit-btn" id="submitBtn">Enter →</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="help-section">
+        <div class="help-title">Lost your code?</div>
+        <p class="help-text">
+          Contact your program administrator, or email <a href="mailto:kevin@solutionsfor3AM.com?subject=SP%C2%B2%20Access%20Code%20Request">kevin@solutionsfor3AM.com</a> and we'll get you sorted.
+        </p>
+      </div>
+    </div>
+
+    <div id="errorState" style="display:none;">
+      <div class="eyebrow">Configuration Issue</div>
+      <h1>We hit a <em>snag</em>.</h1>
+      <div class="gold-rule"></div>
+      <p class="lede" id="errorMessage">We couldn't load the school directory.</p>
+      <div class="help-section">
+        <div class="help-title">Need Help?</div>
+        <p class="help-text">
+          Try refreshing the page. If the problem continues, email <a href="mailto:kevin@solutionsfor3AM.com?subject=SP%C2%B2%20Gate%20Error">kevin@solutionsfor3AM.com</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    A <em>3AM Solutions</em> Initiative
+  </div>
+
+</div>
+
+<script>
+(async function() {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('school');
+
+  const loadingEl  = document.getElementById('loadingState');
+  const gateEl     = document.getElementById('gateContent');
+  const errorEl    = document.getElementById('errorState');
+  const errorMsg   = document.getElementById('errorMessage');
+  const schoolDisp = document.getElementById('schoolDisplay');
+  const input      = document.getElementById('codeInput');
+  const submitBtn  = document.getElementById('submitBtn');
+  const feedback   = document.getElementById('feedback');
+
+  function showError(msg) {
+    loadingEl.style.display = 'none';
+    gateEl.style.display = 'none';
+    errorEl.style.display = 'block';
+    errorMsg.textContent = msg;
+  }
+
+  // Validate slug present
+  if (!slug) {
+    window.location.replace('/school-not-found.html?reason=missing');
+    return;
+  }
+
+  // Fetch registry
+  let registry;
+  try {
+    const res = await fetch('/schools.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Registry fetch failed: ' + res.status);
+    registry = await res.json();
+  } catch (err) {
+    console.error('SP² Gate: Could not load schools.json', err);
+    showError('We couldn\'t load the school directory. Please try refreshing the page.');
+    return;
+  }
+
+  const school = registry[slug];
+  if (!school) {
+    window.location.replace('/school-not-found.html?reason=unknown&slug=' + encodeURIComponent(slug));
+    return;
+  }
+
+  if (!school.accessCodeHash) {
+    console.error('SP² Gate: School "' + slug + '" has no accessCodeHash configured');
+    showError('This school is not yet configured for access control. Contact your administrator.');
+    return;
+  }
+
+  // SHA-256 helper
+  async function sha256(text) {
+    const encoded = new TextEncoder().encode(text);
+    const buffer = await crypto.subtle.digest('SHA-256', encoded);
+    const bytes = Array.from(new Uint8Array(buffer));
+    return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Render the gate
+  loadingEl.style.display = 'none';
+  gateEl.style.display = 'block';
+  schoolDisp.textContent = school.shortName || school.schoolName || slug.toUpperCase();
+  input.focus();
+
+  async function attemptUnlock() {
+    const code = input.value.trim();
+    if (!code) {
+      feedback.className = 'feedback error';
+      feedback.textContent = 'Please enter your access code.';
+      input.classList.add('error-state');
+      return;
+    }
+
+    feedback.className = 'feedback loading';
+    feedback.textContent = 'Checking…';
+    submitBtn.disabled = true;
+    input.classList.remove('error-state');
+
+    let hash;
+    try {
+      hash = await sha256(code);
+    } catch (err) {
+      console.error('SP² Gate: Hash computation failed', err);
+      feedback.className = 'feedback error';
+      feedback.textContent = 'Something went wrong. Please try again.';
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (hash === school.accessCodeHash) {
+      feedback.className = 'feedback success';
+      feedback.textContent = '✓ Access granted. Loading dashboard…';
+      // Store the verified hash (not the code) keyed by school slug
+      try {
+        localStorage.setItem('sp2_access_' + slug, hash);
+      } catch (err) {
+        console.warn('SP² Gate: localStorage write failed, proceeding without persistence', err);
+      }
+      setTimeout(() => {
+        window.location.replace('/dashboard?school=' + encodeURIComponent(slug));
+      }, 500);
+    } else {
+      feedback.className = 'feedback error';
+      feedback.textContent = 'That code doesn\'t match. Double-check spelling and try again.';
+      input.classList.add('error-state');
+      input.select();
+      submitBtn.disabled = false;
+    }
+  }
+
+  submitBtn.addEventListener('click', attemptUnlock);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      attemptUnlock();
+    }
+  });
+  input.addEventListener('input', () => {
+    if (input.classList.contains('error-state')) {
+      input.classList.remove('error-state');
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
