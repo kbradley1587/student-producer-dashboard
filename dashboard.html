@@ -2005,28 +2005,27 @@ body {
         </div>
       </div>
       <div class="kpi-row">
-        <div class="kpi-tile gold">
-          <div class="kpi-label">Ushers Confirmed</div>
-          <div class="kpi-value" id="gsUshersConfirmed">—</div>
-          <div class="kpi-context" id="gsUshersCtx">Loading…</div>
+        <div class="kpi-tile" data-goto="boxoffice">
+          <div class="kpi-label">Tickets Sold <span class="kpi-arrow">→</span></div>
+          <div class="kpi-value" id="kpiTickets">412</div>
+          <div class="kpi-context"><span class="kpi-delta" id="kpiTicketsDelta">↑ 68%</span> vs. same week last year</div>
         </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">VIPs Confirmed</div>
-          <div class="kpi-value" id="gsVipsConfirmed">—</div>
-          <div class="kpi-context" id="gsVipsCtx">Loading…</div>
+        <div class="kpi-tile gold" data-goto="finance">
+          <div class="kpi-label">Revenue to Date <span class="kpi-arrow">→</span></div>
+          <div class="kpi-value" id="kpiRevenue">$8,240</div>
+          <div class="kpi-context" id="kpiRevenueCtx"><span class="kpi-delta">↑ $3,110</span> vs. prior year</div>
         </div>
-        <div class="kpi-tile green">
-          <div class="kpi-label">Concession Volunteers</div>
-          <div class="kpi-value" id="gsConcessions">—</div>
-          <div class="kpi-context" id="gsConcessionsCtx">Loading…</div>
+        <div class="kpi-tile" data-goto="sponsorship">
+          <div class="kpi-label">Sponsorship Closed <span class="kpi-arrow">→</span></div>
+          <div class="kpi-value" id="kpiSponsor">$4,750</div>
+          <div class="kpi-context" id="kpiSponsorCtx">79% of $6,000 target</div>
         </div>
         <div class="kpi-tile ink">
-          <div class="kpi-label">Open GS Actions</div>
-          <div class="kpi-value" id="gsOpenActions">—</div>
-          <div class="kpi-context" id="gsOpenActionsCtx">Loading…</div>
+          <div class="kpi-label">Director Hours Recovered</div>
+          <div class="kpi-value" id="kpiHours">47</div>
+          <div class="kpi-context" id="kpiHoursCtx">Weeks 1 through 11</div>
         </div>
       </div>
-
       <div class="dash-card full">
         <div class="dash-card-header">
           <div>
@@ -2527,24 +2526,24 @@ body {
 
       <div class="kpi-row">
         <div class="kpi-tile gold">
-          <div class="kpi-label">Ushers Recruited</div>
-          <div class="kpi-value">18</div>
-          <div class="kpi-context">Target 24 · 6 open slots</div>
+          <div class="kpi-label">Ushers Confirmed</div>
+          <div class="kpi-value" id="gsUshersConfirmed">—</div>
+          <div class="kpi-context" id="gsUshersCtx">Loading…</div>
         </div>
         <div class="kpi-tile">
-          <div class="kpi-label">VIP Guests</div>
-          <div class="kpi-value">12</div>
-          <div class="kpi-context">Sponsors, press, admin</div>
+          <div class="kpi-label">VIPs Confirmed</div>
+          <div class="kpi-value" id="gsVipsConfirmed">—</div>
+          <div class="kpi-context" id="gsVipsCtx">Loading…</div>
         </div>
         <div class="kpi-tile green">
-          <div class="kpi-label">Concession Revenue Goal</div>
-          <div class="kpi-value">$1,200</div>
-          <div class="kpi-context">$3 avg per attendee</div>
+          <div class="kpi-label">Concession Volunteers</div>
+          <div class="kpi-value" id="gsConcessions">—</div>
+          <div class="kpi-context" id="gsConcessionsCtx">Loading…</div>
         </div>
         <div class="kpi-tile ink">
-          <div class="kpi-label">Lobby Readiness</div>
-          <div class="kpi-value">62%</div>
-          <div class="kpi-context">Signage, flow, VIP check-in</div>
+          <div class="kpi-label">Open GS Actions</div>
+          <div class="kpi-value" id="gsOpenActions">—</div>
+          <div class="kpi-context" id="gsOpenActionsCtx">Loading…</div>
         </div>
       </div>
 
@@ -4756,7 +4755,6 @@ renderDashboard(11);
         return '<span class="pill gray">' + status + '</span>';
       }
 
-      const desTbody = document.getElementById('mkDesignTableBody');
       const desTbody = document.getElementById('mkDesignTableBody');
       if (desTbody) {
         if (assets.length === 0) {
