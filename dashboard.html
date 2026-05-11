@@ -5015,6 +5015,25 @@ renderDashboard(11);
     currentSchool = school;
     console.log('SP² Multi-tenant: Loaded school "' + slug + '" (' + school.schoolName + ')');
 
+    // Step 3.5: Access code gate check
+    // If the school has an accessCodeHash configured, verify the user has a matching
+    // hash in localStorage. If not, redirect to gate.html. Schools without
+    // accessCodeHash skip this check (backward-compatible).
+    if (school.accessCodeHash) {
+      let storedHash = null;
+      try {
+        storedHash = localStorage.getItem('sp2_access_' + slug);
+      } catch (err) {
+        console.warn('SP² Gate: localStorage read failed', err);
+      }
+      if (storedHash !== school.accessCodeHash) {
+        console.log('SP² Gate: No valid access code for "' + slug + '" — redirecting to gate');
+        window.location.replace('/gate.html?school=' + encodeURIComponent(slug));
+        return;
+      }
+      console.log('SP² Gate: Access verified for "' + slug + '"');
+    }
+
     // Step 4: Build all 11 CSV URLs from the registry
     DASHBOARD_CSV          = buildCsvUrl(school, 'dashboard');
     BOX_OFFICE_CSV         = buildCsvUrl(school, 'boxOffice');
