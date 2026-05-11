@@ -3938,17 +3938,32 @@ renderDashboard(11);
 <script>
 // ============ SP² LIVE DATA WIRING ============
 (function () {
-  const DASHBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=0&single=true&output=csv';
-  const BOX_OFFICE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=6357353&single=true&output=csv';
-  const SPONSORSHIP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1179065102&single=true&output=csv';
-  const TEAM_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1253836572&single=true&output=csv';
-  const FINANCE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=2143390940&single=true&output=csv';
-  const ACTIONS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=2135019067&single=true&output=csv';
-  const MK_POSTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=628647704&single=true&output=csv';
-  const MK_CALENDAR_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=909419791&single=true&output=csv';
-  const MK_DESIGN_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=556700079&single=true&output=csv';
-  const GUEST_SERVICES_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=562042141&single=true&output=csv';
-  const GUEST_SERVICES_VIPS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1420058282&single=true&output=csv';
+  // ===== MULTI-TENANT SCHOOL RESOLUTION =====
+  // Reads ?school=cmw from URL, fetches schools.json registry, builds CSV URLs.
+  // Falls back to error page if school missing or unknown.
+
+  function getSchoolSlug() {
+    const params = new URLSearchParams(window.location.search);
+    return (params.get('school') || '').trim().toLowerCase();
+  }
+
+  function buildCsvUrl(school, tabKey) {
+    const gid = school.gids[tabKey];
+    return school.publishedUrlBase + '?gid=' + gid + '&single=true&output=csv';
+  }
+
+  function redirectToError(reason, slug) {
+    const params = new URLSearchParams();
+    params.set('reason', reason);
+    if (slug) params.set('slug', slug);
+    window.location.href = 'school-not-found.html?' + params.toString();
+  }
+
+  // These will be populated after the school is resolved.
+  let DASHBOARD_CSV, BOX_OFFICE_CSV, SPONSORSHIP_CSV, TEAM_CSV, FINANCE_CSV,
+      ACTIONS_CSV, MK_POSTS_CSV, MK_CALENDAR_CSV, MK_DESIGN_CSV,
+      GUEST_SERVICES_CSV, GUEST_SERVICES_VIPS_CSV;
+  let currentSchool = null;
   
   const cache = {
     metadata: null,
@@ -4970,6 +4985,50 @@ renderDashboard(11);
   }
 
   async function loadAllData() {
+    // Step 1: Resolve school from URL
+    const slug = getSchoolSlug();
+    if (!slug) {
+      console.warn('SP² Multi-tenant: No school specified in URL');
+      redirectToError('missing');
+      return;
+    }
+
+    // Step 2: Fetch registry
+    let registry;
+    try {
+      const regRes = await fetch('/schools.json');
+      if (!regRes.ok) throw new Error('Registry fetch failed: ' + regRes.status);
+      registry = await regRes.json();
+    } catch (err) {
+      console.error('SP² Multi-tenant: Could not load schools.json', err);
+      redirectToError('registry_error', slug);
+      return;
+    }
+
+    // Step 3: Look up the school
+    const school = registry[slug];
+    if (!school) {
+      console.warn('SP² Multi-tenant: School "' + slug + '" not in registry');
+      redirectToError('unknown', slug);
+      return;
+    }
+    currentSchool = school;
+    console.log('SP² Multi-tenant: Loaded school "' + slug + '" (' + school.schoolName + ')');
+
+    // Step 4: Build all 11 CSV URLs from the registry
+    DASHBOARD_CSV          = buildCsvUrl(school, 'dashboard');
+    BOX_OFFICE_CSV         = buildCsvUrl(school, 'boxOffice');
+    SPONSORSHIP_CSV        = buildCsvUrl(school, 'sponsorship');
+    TEAM_CSV               = buildCsvUrl(school, 'team');
+    FINANCE_CSV            = buildCsvUrl(school, 'finance');
+    ACTIONS_CSV            = buildCsvUrl(school, 'actions');
+    MK_POSTS_CSV           = buildCsvUrl(school, 'mkPosts');
+    MK_CALENDAR_CSV        = buildCsvUrl(school, 'mkCalendar');
+    MK_DESIGN_CSV          = buildCsvUrl(school, 'mkDesign');
+    GUEST_SERVICES_CSV     = buildCsvUrl(school, 'guestServices');
+    GUEST_SERVICES_VIPS_CSV = buildCsvUrl(school, 'vips');
+
+    // Step 5: Load all CSVs in parallel (original logic, unchanged)
     try {
       const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes, gsRes, vipsRes] = await Promise.all([
         fetch(DASHBOARD_CSV), fetch(BOX_OFFICE_CSV), fetch(SPONSORSHIP_CSV),
@@ -4977,7 +5036,7 @@ renderDashboard(11);
         fetch(MK_POSTS_CSV), fetch(MK_CALENDAR_CSV), fetch(MK_DESIGN_CSV),
         fetch(GUEST_SERVICES_CSV), fetch(GUEST_SERVICES_VIPS_CSV)
       ]);
-      
+
       if (dashRes.ok) {
         const text = await dashRes.text();
         const rows = parseCSV(text);
@@ -5064,7 +5123,6 @@ renderDashboard(11);
       console.error('SP² Live Data: Error loading', error);
     }
   }
-
   const scrubber = document.getElementById('weekScrubber');
   if (scrubber) {
     scrubber.addEventListener('input', () => setTimeout(applyLiveData, 10));
