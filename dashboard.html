@@ -2005,25 +2005,25 @@ body {
         </div>
       </div>
       <div class="kpi-row">
-        <div class="kpi-tile" data-goto="boxoffice">
-          <div class="kpi-label">Tickets Sold <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiTickets">412</div>
-          <div class="kpi-context"><span class="kpi-delta" id="kpiTicketsDelta">↑ 68%</span> vs. same week last year</div>
+        <div class="kpi-tile gold">
+          <div class="kpi-label">Ushers Confirmed</div>
+          <div class="kpi-value" id="gsUshersConfirmed">—</div>
+          <div class="kpi-context" id="gsUshersCtx">Loading…</div>
         </div>
-        <div class="kpi-tile gold" data-goto="finance">
-          <div class="kpi-label">Revenue to Date <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiRevenue">$8,240</div>
-          <div class="kpi-context" id="kpiRevenueCtx"><span class="kpi-delta">↑ $3,110</span> vs. prior year</div>
+        <div class="kpi-tile">
+          <div class="kpi-label">VIPs Confirmed</div>
+          <div class="kpi-value" id="gsVipsConfirmed">—</div>
+          <div class="kpi-context" id="gsVipsCtx">Loading…</div>
         </div>
-        <div class="kpi-tile" data-goto="sponsorship">
-          <div class="kpi-label">Sponsorship Closed <span class="kpi-arrow">→</span></div>
-          <div class="kpi-value" id="kpiSponsor">$4,750</div>
-          <div class="kpi-context" id="kpiSponsorCtx">79% of $6,000 target</div>
+        <div class="kpi-tile green">
+          <div class="kpi-label">Concession Volunteers</div>
+          <div class="kpi-value" id="gsConcessions">—</div>
+          <div class="kpi-context" id="gsConcessionsCtx">Loading…</div>
         </div>
         <div class="kpi-tile ink">
-          <div class="kpi-label">Director Hours Recovered</div>
-          <div class="kpi-value" id="kpiHours">47</div>
-          <div class="kpi-context" id="kpiHoursCtx">Weeks 1 through 11</div>
+          <div class="kpi-label">Open GS Actions</div>
+          <div class="kpi-value" id="gsOpenActions">—</div>
+          <div class="kpi-context" id="gsOpenActionsCtx">Loading…</div>
         </div>
       </div>
 
@@ -2551,22 +2551,17 @@ body {
       <div class="dash-card full" style="margin-bottom: 1.25rem;">
         <div class="dash-card-header">
           <div class="dash-card-title">Usher Schedule</div>
-          <div class="dash-card-sub">Per performance · 6 ushers per night</div>
+          <div class="dash-card-sub" id="gsUsherSub">Per performance</div>
         </div>
         <div class="table-scroll">
-
           <table class="data-table">
-          <thead>
-            <tr><th>Performance</th><th>Confirmed</th><th>Pending</th><th>Open</th><th>Lead Usher</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Thu · Opening Night</td><td>6 of 6</td><td>—</td><td>—</td><td>Marcus Hill</td></tr>
-            <tr><td>Fri · Second Night</td><td>5 of 6</td><td>1</td><td>—</td><td>Sofia Ramirez</td></tr>
-            <tr><td>Sat Matinee</td><td>4 of 6</td><td>1</td><td>1</td><td>Marcus Hill</td></tr>
-            <tr><td>Sat Evening · Closing</td><td>3 of 6</td><td>—</td><td>3</td><td>Open</td></tr>
-          </tbody>
-        </table>
-
+            <thead>
+              <tr><th>Performance</th><th>Date</th><th>Confirmed</th><th>Pending</th><th>Cancelled</th><th>Lead Usher</th></tr>
+            </thead>
+            <tbody id="gsUsherTableBody">
+              <tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">Loading usher schedule…</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -2574,36 +2569,24 @@ body {
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">VIP &amp; Press List</div>
-            <div class="dash-card-sub">Reserved seating &amp; special welcome</div>
+            <div class="dash-card-sub" id="gsVipSub">Confirmed guests · reserved seating</div>
           </div>
           <div class="table-scroll">
-
             <table class="data-table">
-            <thead><tr><th>Guest</th><th>Organization</th><th>Night</th></tr></thead>
-            <tbody>
-              <tr><td>Jim Harper</td><td>The Aegis (reviewer)</td><td>Opening</td></tr>
-              <tr><td>Dr. Susan Kay</td><td>HCPS Fine Arts Coord.</td><td>Opening</td></tr>
-              <tr><td>Principal M. Davies</td><td>C. Milton Wright HS</td><td>Opening</td></tr>
-              <tr><td>Edward Jones team (4)</td><td>Title Sponsor</td><td>Opening</td></tr>
-              <tr><td>Mountain Branch (2)</td><td>Sponsor</td><td>Friday</td></tr>
-              <tr><td>Tower Realty (2)</td><td>Sponsor</td><td>Friday</td></tr>
-            </tbody>
-          </table>
-
+              <thead><tr><th>Guest</th><th>Organization</th><th>Night</th><th class="num">Party</th></tr></thead>
+              <tbody id="gsVipTableBody">
+                <tr><td colspan="4" style="text-align:center;color:#6b6557;padding:1rem;">Loading VIP list…</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">Lobby &amp; Front-of-House Checklist</div>
-            <div class="dash-card-sub">Readiness by opening night</div>
+            <div class="dash-card-sub">Open Guest Services action items</div>
           </div>
-          <ul class="action-list">
-            <li class="action-item done"><div class="action-check done"></div><div class="action-task">Confirm concessions menu &amp; pricing</div><div class="action-owner">GS</div><div class="action-due ok">Done</div></li>
-            <li class="action-item done"><div class="action-check done"></div><div class="action-task">Order program printing (800 copies)</div><div class="action-owner">GS</div><div class="action-due ok">Done</div></li>
-            <li class="action-item"><div class="action-check"></div><div class="action-task">Finalize lobby signage package</div><div class="action-owner">GS</div><div class="action-due">W13</div></li>
-            <li class="action-item"><div class="action-check"></div><div class="action-task">VIP check-in table setup plan</div><div class="action-owner">GS</div><div class="action-due">W13</div></li>
-            <li class="action-item"><div class="action-check"></div><div class="action-task">Usher orientation &amp; walk-through</div><div class="action-owner">GS</div><div class="action-due">W15</div></li>
-            <li class="action-item"><div class="action-check"></div><div class="action-task">Concession volunteer schedule</div><div class="action-owner">GS</div><div class="action-due">W14</div></li>
+          <ul class="action-list" id="gsLobbyChecklist">
+            <li style="text-align:center;color:#6b6557;padding:1rem;list-style:none;">Loading checklist…</li>
           </ul>
         </div>
       </div>
@@ -3965,6 +3948,8 @@ renderDashboard(11);
   const MK_POSTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=628647704&single=true&output=csv';
   const MK_CALENDAR_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=909419791&single=true&output=csv';
   const MK_DESIGN_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=556700079&single=true&output=csv';
+  const GUEST_SERVICES_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=562042141&single=true&output=csv';
+  const GUEST_SERVICES_VIPS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub?gid=1420058282&single=true&output=csv';
   
   const cache = {
     metadata: null,
@@ -3976,6 +3961,8 @@ renderDashboard(11);
     mkPostsRows: null,
     mkCalendarRows: null,
     mkDesignRows: null,
+    gsRows: null,
+    vipsRows: null,
     loaded: false
   };
 
@@ -4770,6 +4757,7 @@ renderDashboard(11);
       }
 
       const desTbody = document.getElementById('mkDesignTableBody');
+      const desTbody = document.getElementById('mkDesignTableBody');
       if (desTbody) {
         if (assets.length === 0) {
           desTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#6b6557;padding:1rem;">No active design work</td></tr>';
@@ -4780,16 +4768,209 @@ renderDashboard(11);
         }
       }
     }
+
+    // ===== GUEST SERVICES DATA =====
+    const gsRows = cache.gsRows || [];
+    const vipsRows = cache.vipsRows || [];
+
+    if (gsRows.length > 1) {
+      const headers = gsRows[0];
+      const dateIdx = headers.indexOf('Performance Date');
+      const roleIdx = headers.indexOf('Role');
+      const nameIdx = headers.indexOf('Volunteer Name');
+      const shiftIdx = headers.indexOf('Shift Time');
+      const statusIdx = headers.indexOf('Status');
+      const leadIdx = headers.indexOf('Lead');
+
+      // Parse all GS rows into structured records
+      const shifts = [];
+      for (let i = 1; i < gsRows.length; i++) {
+        const row = gsRows[i];
+        const role = (row[roleIdx] || '').trim();
+        const name = (row[nameIdx] || '').trim();
+        if (!role || !name) continue;
+        shifts.push({
+          date: parseDate(row[dateIdx]),
+          dateRaw: row[dateIdx] || '',
+          role: role,
+          name: name,
+          shift: row[shiftIdx] || '',
+          status: (row[statusIdx] || '').trim(),
+          lead: (row[leadIdx] || '').trim().toLowerCase() === 'yes'
+        });
+      }
+
+      // ----- KPI: Ushers Confirmed -----
+      const ushers = shifts.filter(s => s.role.toLowerCase() === 'usher');
+      const ushersConfirmed = ushers.filter(s => s.status.toLowerCase() === 'confirmed').length;
+      const ushersPending = ushers.filter(s => s.status.toLowerCase() === 'pending').length;
+      setText('gsUshersConfirmed', ushersConfirmed.toString());
+      setText('gsUshersCtx', ushersConfirmed + ' of ' + ushers.length + ' shifts confirmed' + (ushersPending > 0 ? ' · ' + ushersPending + ' pending' : ''));
+
+      // ----- KPI: Concession Volunteers -----
+      const concessions = shifts.filter(s => s.role.toLowerCase() === 'concessions');
+      const concessionsConfirmed = concessions.filter(s => s.status.toLowerCase() === 'confirmed').length;
+      setText('gsConcessions', concessionsConfirmed.toString());
+      setText('gsConcessionsCtx', concessionsConfirmed + ' of ' + concessions.length + ' shifts confirmed');
+
+      // ----- Usher Schedule table (grouped by performance date) -----
+      const byDate = {};
+      ushers.forEach(s => {
+        const key = s.dateRaw;
+        if (!byDate[key]) {
+          byDate[key] = { date: s.date, dateRaw: key, confirmed: 0, pending: 0, cancelled: 0, leadName: '—' };
+        }
+        const sLower = s.status.toLowerCase();
+        if (sLower === 'confirmed') byDate[key].confirmed++;
+        else if (sLower === 'pending') byDate[key].pending++;
+        else if (sLower === 'cancelled') byDate[key].cancelled++;
+        if (s.lead && s.status.toLowerCase() !== 'cancelled') byDate[key].leadName = s.name;
+      });
+
+      // Cross-reference performance names from Box Office tab
+      const performanceLookup = {};
+      const boxRows = cache.boxOfficeRows || [];
+      if (boxRows.length > 1) {
+        const bHeaders = boxRows[0];
+        const bIdIdx = bHeaders.indexOf('Performance_ID');
+        const bDateIdx = bHeaders.indexOf('Date');
+        for (let i = 1; i < boxRows.length; i++) {
+          const dateVal = boxRows[i][bDateIdx];
+          const idVal = boxRows[i][bIdIdx];
+          if (dateVal && idVal) performanceLookup[dateVal] = idVal;
+        }
+      }
+
+      const dateKeys = Object.keys(byDate).sort();
+      const usherTbody = document.getElementById('gsUsherTableBody');
+      if (usherTbody) {
+        if (dateKeys.length === 0) {
+          usherTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No usher shifts scheduled</td></tr>';
+        } else {
+          usherTbody.innerHTML = dateKeys.map(key => {
+            const row = byDate[key];
+            const perfName = performanceLookup[key] || 'Performance';
+            const dateLabel = formatShortDate(row.date);
+            return `<tr><td>${perfName}</td><td>${dateLabel}</td><td class="num">${row.confirmed}</td><td class="num">${row.pending}</td><td class="num">${row.cancelled}</td><td>${row.leadName}</td></tr>`;
+          }).join('');
+        }
+      }
+
+      const perfCount = dateKeys.length;
+      setText('gsUsherSub', 'Per performance · ' + perfCount + ' show' + (perfCount === 1 ? '' : 's'));
+    }
+
+    // ----- VIPs KPI + table -----
+    if (vipsRows.length > 1) {
+      const headers = vipsRows[0];
+      const nameIdx = headers.indexOf('Guest Name');
+      const orgIdx = headers.indexOf('Organization');
+      const nightIdx = headers.indexOf('Performance Night');
+      const partyIdx = headers.indexOf('Party Size');
+      const statusIdx = headers.indexOf('Status');
+
+      const vips = [];
+      for (let i = 1; i < vipsRows.length; i++) {
+        const row = vipsRows[i];
+        const name = (row[nameIdx] || '').trim();
+        if (!name) continue;
+        vips.push({
+          name: name,
+          org: row[orgIdx] || '',
+          night: row[nightIdx] || '',
+          party: parseInt(row[partyIdx], 10) || 1,
+          status: (row[statusIdx] || '').trim()
+        });
+      }
+
+      const vipsConfirmed = vips.filter(v => v.status.toLowerCase() === 'confirmed');
+      const vipsTentative = vips.filter(v => v.status.toLowerCase() === 'tentative');
+      const totalGuests = vipsConfirmed.reduce((sum, v) => sum + v.party, 0);
+
+      setText('gsVipsConfirmed', vipsConfirmed.length.toString());
+      setText('gsVipsCtx', totalGuests + ' total guests' + (vipsTentative.length > 0 ? ' · ' + vipsTentative.length + ' tentative' : ''));
+
+      const vipTbody = document.getElementById('gsVipTableBody');
+      if (vipTbody) {
+        if (vipsConfirmed.length === 0) {
+          vipTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6b6557;padding:1rem;">No confirmed VIPs yet</td></tr>';
+        } else {
+          vipTbody.innerHTML = vipsConfirmed.map(v => {
+            return `<tr><td>${v.name}</td><td>${v.org}</td><td>${v.night}</td><td class="num">${v.party}</td></tr>`;
+          }).join('');
+        }
+      }
+      setText('gsVipSub', vipsConfirmed.length + ' confirmed · ' + totalGuests + ' total guests');
+    }
+
+    // ----- Lobby Checklist: pull from Action Items where Department = Guest Services -----
+    const actRowsForGS = cache.actionRows || [];
+    if (actRowsForGS.length > 1) {
+      const aHeaders = actRowsForGS[0];
+      const aDeptIdx = aHeaders.indexOf('Department');
+      const aDescIdx = aHeaders.indexOf('Description');
+      const aStatusIdx = aHeaders.indexOf('Status');
+      const aDueIdx = aHeaders.indexOf('Due Date');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const gsActions = [];
+      for (let i = 1; i < actRowsForGS.length; i++) {
+        const row = actRowsForGS[i];
+        const dept = (row[aDeptIdx] || '').trim().toLowerCase();
+        if (dept !== 'guest services') continue;
+        const status = (row[aStatusIdx] || '').trim();
+        const dueDate = parseDate(row[aDueIdx]);
+        gsActions.push({
+          desc: row[aDescIdx] || '',
+          status: status,
+          dueDate: dueDate,
+          isComplete: status.toLowerCase() === 'complete',
+          isOverdue: dueDate && dueDate < today && status.toLowerCase() !== 'complete'
+        });
+      }
+
+      // ----- KPI: Open GS Actions -----
+      const openCount = gsActions.filter(a => !a.isComplete).length;
+      const overdueCount = gsActions.filter(a => a.isOverdue).length;
+      setText('gsOpenActions', openCount.toString());
+      setText('gsOpenActionsCtx', openCount + ' open' + (overdueCount > 0 ? ' · ' + overdueCount + ' overdue' : ' · on track'));
+
+      // ----- Lobby Checklist render -----
+      gsActions.sort((a, b) => {
+        if (a.isComplete !== b.isComplete) return a.isComplete ? 1 : -1;
+        if (a.isOverdue !== b.isOverdue) return a.isOverdue ? -1 : 1;
+        if (a.dueDate && b.dueDate) return a.dueDate - b.dueDate;
+        return 0;
+      });
+
+      const checklistEl = document.getElementById('gsLobbyChecklist');
+      if (checklistEl) {
+        if (gsActions.length === 0) {
+          checklistEl.innerHTML = '<li style="text-align:center;color:#6b6557;padding:1rem;list-style:none;">No Guest Services action items</li>';
+        } else {
+          checklistEl.innerHTML = gsActions.slice(0, 8).map(a => {
+            const checkClass = a.isComplete ? 'action-check done' : 'action-check';
+            const itemClass = a.isComplete ? 'action-item done' : 'action-item';
+            const dueLabel = a.isComplete ? 'Done' : (a.dueDate ? formatShortDate(a.dueDate) : '—');
+            const dueClass = a.isComplete ? 'action-due ok' : (a.isOverdue ? 'action-due' : 'action-due ok');
+            return `<li class="${itemClass}"><div class="${checkClass}"></div><div class="action-task">${a.desc}</div><div class="action-owner">GS</div><div class="${dueClass}">${dueLabel}</div></li>`;
+          }).join('');
+        }
+      }
+    }
   }
 
   async function loadAllData() {
     try {
-      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes] = await Promise.all([
+      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes, gsRes, vipsRes] = await Promise.all([
         fetch(DASHBOARD_CSV), fetch(BOX_OFFICE_CSV), fetch(SPONSORSHIP_CSV),
         fetch(TEAM_CSV), fetch(FINANCE_CSV), fetch(ACTIONS_CSV),
-        fetch(MK_POSTS_CSV), fetch(MK_CALENDAR_CSV), fetch(MK_DESIGN_CSV)
+        fetch(MK_POSTS_CSV), fetch(MK_CALENDAR_CSV), fetch(MK_DESIGN_CSV),
+        fetch(GUEST_SERVICES_CSV), fetch(GUEST_SERVICES_VIPS_CSV)
       ]);
-
+      
       if (dashRes.ok) {
         const text = await dashRes.text();
         const rows = parseCSV(text);
@@ -4858,6 +5039,16 @@ renderDashboard(11);
       if (mkDesRes.ok) {
         cache.mkDesignRows = parseCSV(await mkDesRes.text());
         console.log('SP² Live Data: Marketing Design loaded (' + (cache.mkDesignRows.length - 1) + ' assets)');
+      }
+
+      if (gsRes.ok) {
+        cache.gsRows = parseCSV(await gsRes.text());
+        console.log('SP² Live Data: Guest Services loaded (' + (cache.gsRows.length - 1) + ' shifts)');
+      }
+
+      if (vipsRes.ok) {
+        cache.vipsRows = parseCSV(await vipsRes.text());
+        console.log('SP² Live Data: VIPs loaded (' + (cache.vipsRows.length - 1) + ' guests)');
       }
 
       cache.loaded = true;
