@@ -367,7 +367,7 @@ body {
 /* ============ MAIN LAYOUT ============ */
 .main-layout {
   display: flex;
-  height: calc(100vh - 72px - 66px);
+  height: calc(100vh - 72px);
 }
 
 /* ============ SIDEBAR ============ */
@@ -1921,24 +1921,7 @@ body {
   </div>
 </header>
 
-<!-- ============ SCRUBBER BAR ============ -->
-<div class="scrubber-bar">
-  <div class="scrubber-label">Cycle Week</div>
-  <div class="scrubber-week-display" id="weekDisplay">Week 11 of 16 <em>· Campaign Phase</em></div>
-  <div class="scrubber-container">
-    <input type="range" min="1" max="16" value="11" class="scrubber-input" id="weekScrubber">
-    <div class="scrubber-track">
-      <div class="scrubber-track-fill" id="scrubberFill"></div>
-    </div>
-  </div>
-  <div class="scrubber-controls">
-    <button class="scrub-btn" data-week="4">W4</button>
-    <button class="scrub-btn" data-week="8">W8</button>
-    <button class="scrub-btn active" data-week="11">W11</button>
-    <button class="scrub-btn" data-week="15">W15</button>
-    <button class="scrub-btn" data-week="16">W16</button>
-  </div>
-</div>
+<!-- Scrubber bar removed — dashboard now driven by live data from Google Sheets -->
 
 <!-- ============ MAIN LAYOUT ============ -->
 <div class="main-layout">
@@ -3876,18 +3859,7 @@ function switchView(view) {
 }
 
 // ============ INIT ============
-const scrubber = document.getElementById("weekScrubber");
-scrubber.addEventListener("input", (e) => {
-  renderDashboard(parseInt(e.target.value));
-});
-
-document.querySelectorAll(".scrub-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const week = parseInt(btn.dataset.week);
-    scrubber.value = week;
-    renderDashboard(week);
-  });
-});
+// (Scrubber listeners removed — dashboard initialized from live data)
 
 document.querySelectorAll(".nav-item").forEach(item => {
   item.addEventListener("click", () => {
@@ -5166,13 +5138,7 @@ renderDashboard(11);
       console.error('SP² Live Data: Error loading', error);
     }
   }
-  const scrubber = document.getElementById('weekScrubber');
-  if (scrubber) {
-    scrubber.addEventListener('input', () => setTimeout(applyLiveData, 10));
-  }
-  document.querySelectorAll('.scrub-btn').forEach(btn => {
-    btn.addEventListener('click', () => setTimeout(applyLiveData, 10));
-  });
+  
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => setTimeout(applyLiveData, 10));
   });
