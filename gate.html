@@ -326,8 +326,34 @@ input.error-state {
 
 <script>
 (async function() {
-  const params = new URLSearchParams(window.location.search);
-  const slug = params.get('school');
+  // Read school slug from URL — supports both ?school=cmw and /cmw path
+  function getSchoolSlug() {
+    // First priority: explicit ?school=xxx query parameter
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = (params.get('school') || '').trim().toLowerCase();
+    if (fromQuery) return fromQuery;
+
+    // Second priority: parse from URL path (e.g., /cmw → "cmw")
+    const path = window.location.pathname || '';
+    const segments = path.split('/').filter(s => s.length > 0);
+
+    // Paths to ignore (these are real pages, not school slugs)
+    const reservedPaths = new Set([
+      'dashboard', 'gate.html', 'school-not-found.html', 'index.html',
+      'schools.json', 'gate', 'index', 'admin', 'about', 'help'
+    ]);
+
+    if (segments.length === 1) {
+      const candidate = segments[0].toLowerCase();
+      if (!reservedPaths.has(candidate) && /^[a-z0-9-]+$/.test(candidate)) {
+        return candidate;
+      }
+    }
+
+    return '';
+  }
+
+  const slug = getSchoolSlug();
 
   const loadingEl  = document.getElementById('loadingState');
   const gateEl     = document.getElementById('gateContent');
