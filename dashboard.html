@@ -5287,7 +5287,11 @@ renderDashboard(11);
       // Find the most recently logged week (highest Week number in the data)
       for (let i = 1; i < hoursRows.length; i++) {
         const row = hoursRows[i];
-        const weekNum = parseInt(row[weekIdx], 10) || 0;
+        const weekRaw = (row[weekIdx] || '').toString().trim();
+        // Skip rows where Week isn't a clean positive integer (handles
+        // instructional placeholder rows like "1-16" or "Week #")
+        if (!/^\d+$/.test(weekRaw)) continue;
+        const weekNum = parseInt(weekRaw, 10);
         const hours = parseFloat(row[hoursIdx]) || 0;
         cumulativeHours += hours;
         if (weekNum > highestWeekLogged) highestWeekLogged = weekNum;
@@ -5297,7 +5301,9 @@ renderDashboard(11);
       if (highestWeekLogged > 0) {
         for (let i = 1; i < hoursRows.length; i++) {
           const row = hoursRows[i];
-          const weekNum = parseInt(row[weekIdx], 10) || 0;
+          const weekRaw = (row[weekIdx] || '').toString().trim();
+          if (!/^\d+$/.test(weekRaw)) continue;
+          const weekNum = parseInt(weekRaw, 10);
           if (weekNum === highestWeekLogged) {
             thisWeekHours += parseFloat(row[hoursIdx]) || 0;
           }
