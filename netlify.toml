@@ -1,0 +1,4 @@
+[[redirects]]
+     from = "/cmw"
+     to = "/dashboard?school=cmw"
+     status = 200
