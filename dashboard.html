@@ -4178,7 +4178,7 @@ renderDashboard(11);
   // These will be populated after the school is resolved.
   let DASHBOARD_CSV, BOX_OFFICE_CSV, SPONSORSHIP_CSV, TEAM_CSV, FINANCE_CSV,
       ACTIONS_CSV, MK_POSTS_CSV, MK_CALENDAR_CSV, MK_DESIGN_CSV,
-      GUEST_SERVICES_CSV, GUEST_SERVICES_VIPS_CSV;
+      GUEST_SERVICES_CSV, GUEST_SERVICES_VIPS_CSV, HOURS_LOG_CSV;
   let currentSchool = null;
   
   const cache = {
@@ -4193,6 +4193,7 @@ renderDashboard(11);
     mkDesignRows: null,
     gsRows: null,
     vipsRows: null,
+    hoursLogRows: null,
     loaded: false
   };
 
@@ -5254,7 +5255,7 @@ renderDashboard(11);
         return 0;
       });
 
-      const checklistEl = document.getElementById('gsLobbyChecklist');
+     const checklistEl = document.getElementById('gsLobbyChecklist');
       if (checklistEl) {
         if (gsActions.length === 0) {
           checklistEl.innerHTML = '<li style="text-align:center;color:#6b6557;padding:1rem;list-style:none;">No Guest Services action items</li>';
@@ -5269,8 +5270,61 @@ renderDashboard(11);
         }
       }
     }
-  }
 
+    // ===== HOURS LOG / DIRECTOR HOURS RECOVERED =====
+    // Reads cumulative + most-recent-week hours saved.
+    // Falls back gracefully if Hours Log isn't populated yet.
+    const hoursRows = cache.hoursLogRows || [];
+    let cumulativeHours = 0;
+    let thisWeekHours = 0;
+    let highestWeekLogged = 0;
+
+    if (hoursRows.length > 1) {
+      const headers = hoursRows[0];
+      const weekIdx = headers.indexOf('Week');
+      const hoursIdx = headers.indexOf('Hours Saved');
+
+      // Find the most recently logged week (highest Week number in the data)
+      for (let i = 1; i < hoursRows.length; i++) {
+        const row = hoursRows[i];
+        const weekRaw = (row[weekIdx] || '').toString().trim();
+        // Skip rows where Week isn't a clean positive integer (handles
+        // instructional placeholder rows like "1-16" or "Week #")
+        if (!/^\d+$/.test(weekRaw)) continue;
+        const weekNum = parseInt(weekRaw, 10);
+        const hours = parseFloat(row[hoursIdx]) || 0;
+        cumulativeHours += hours;
+        if (weekNum > highestWeekLogged) highestWeekLogged = weekNum;
+      }
+
+      // Sum hours for the most recent logged week
+      if (highestWeekLogged > 0) {
+        for (let i = 1; i < hoursRows.length; i++) {
+          const row = hoursRows[i];
+          const weekRaw = (row[weekIdx] || '').toString().trim();
+          if (!/^\d+$/.test(weekRaw)) continue;
+          const weekNum = parseInt(weekRaw, 10);
+          if (weekNum === highestWeekLogged) {
+            thisWeekHours += parseFloat(row[hoursIdx]) || 0;
+          }
+        }
+      }
+    }
+
+    // Render the tile
+    setText('kpiHours', cumulativeHours > 0 ? cumulativeHours.toLocaleString() : '0');
+    const hoursCtxEl = document.getElementById('kpiHoursCtx');
+    if (hoursCtxEl) {
+      if (cumulativeHours === 0) {
+        hoursCtxEl.innerHTML = '<em style="color:#6b6557;font-style:italic;">Log your first entry to start tracking</em>';
+      } else if (thisWeekHours > 0) {
+        hoursCtxEl.innerHTML = '<span class="kpi-delta">↑ ' + thisWeekHours + ' this week</span> · cumulative season total';
+      } else {
+        hoursCtxEl.textContent = 'Cumulative season total';
+      }
+    }
+  }
+  
   async function loadAllData() {
     // Step 1: Resolve school from URL
     const slug = getSchoolSlug();
@@ -5321,7 +5375,7 @@ renderDashboard(11);
       console.log('SP² Gate: Access verified for "' + slug + '"');
     }
 
-    // Step 4: Build all 11 CSV URLs from the registry
+    // Step 4: Build all CSV URLs from the registry
     DASHBOARD_CSV          = buildCsvUrl(school, 'dashboard');
     BOX_OFFICE_CSV         = buildCsvUrl(school, 'boxOffice');
     SPONSORSHIP_CSV        = buildCsvUrl(school, 'sponsorship');
@@ -5333,15 +5387,22 @@ renderDashboard(11);
     MK_DESIGN_CSV          = buildCsvUrl(school, 'mkDesign');
     GUEST_SERVICES_CSV     = buildCsvUrl(school, 'guestServices');
     GUEST_SERVICES_VIPS_CSV = buildCsvUrl(school, 'vips');
+    // hoursLog is optional — only fetch if school has it configured
+    HOURS_LOG_CSV          = school.gids && school.gids.hoursLog ? buildCsvUrl(school, 'hoursLog') : null;
 
     // Step 5: Load all CSVs in parallel (original logic, unchanged)
     try {
-      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes, gsRes, vipsRes] = await Promise.all([
+      // Build fetch array — only include hoursLog if URL exists
+      const fetches = [
         fetch(DASHBOARD_CSV), fetch(BOX_OFFICE_CSV), fetch(SPONSORSHIP_CSV),
         fetch(TEAM_CSV), fetch(FINANCE_CSV), fetch(ACTIONS_CSV),
         fetch(MK_POSTS_CSV), fetch(MK_CALENDAR_CSV), fetch(MK_DESIGN_CSV),
         fetch(GUEST_SERVICES_CSV), fetch(GUEST_SERVICES_VIPS_CSV)
-      ]);
+      ];
+      if (HOURS_LOG_CSV) fetches.push(fetch(HOURS_LOG_CSV));
+      const fetchResults = await Promise.all(fetches);
+      const [dashRes, boxRes, sponsorRes, teamRes, finRes, actRes, mkPostsRes, mkCalRes, mkDesRes, gsRes, vipsRes] = fetchResults;
+      const hoursRes = HOURS_LOG_CSV ? fetchResults[11] : null;
 
       if (dashRes.ok) {
         const text = await dashRes.text();
@@ -5421,6 +5482,13 @@ renderDashboard(11);
       if (vipsRes.ok) {
         cache.vipsRows = parseCSV(await vipsRes.text());
         console.log('SP² Live Data: VIPs loaded (' + (cache.vipsRows.length - 1) + ' guests)');
+      }
+
+      if (hoursRes && hoursRes.ok) {
+        cache.hoursLogRows = parseCSV(await hoursRes.text());
+        console.log('SP² Live Data: Hours Log loaded (' + (cache.hoursLogRows.length - 1) + ' entries)');
+      } else if (HOURS_LOG_CSV) {
+        console.warn('SP² Live Data: Hours Log fetch failed — tile will show 0');
       }
 
       cache.loaded = true;
