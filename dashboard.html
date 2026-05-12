@@ -1278,22 +1278,28 @@ body {
 
 .mini-bar {
   display: inline-block;
-  width: 60px;
-  height: 6px;
-  background: var(--rule-soft);
-  border-radius: 2px;
+  width: 80px;
+  height: 8px;
+  background: var(--cream-deep);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
   overflow: hidden;
   vertical-align: middle;
-  margin-right: 0.5rem;
+  margin-right: 0.6rem;
 }
 
 .mini-bar-fill {
+  display: block;
   height: 100%;
   background: var(--red);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  min-width: 2px;
 }
 
 .mini-bar-fill.gold { background: var(--gold); }
 .mini-bar-fill.green { background: var(--green); }
+.mini-bar-fill.over { background: var(--red-bright); }
 
 /* Status Pills */
 .pill {
@@ -4659,8 +4665,21 @@ renderDashboard(11);
         budgetActualTbody.innerHTML = allRows.map(line => {
           const label = line.type === 'Income' ? `${line.category} (income)` : line.category;
           const varianceDisplay = formatMoneySigned(line.variance);
-          const barClass = line.pctUsed >= 90 ? '' : (line.pctUsed >= 50 ? 'gold' : 'gold');
-          return `<tr><td>${label}</td><td class="num">${formatMoney(line.budget)}</td><td class="num">${formatMoney(line.actual)}</td><td class="num">${varianceDisplay}</td><td><span class="mini-bar"><span class="mini-bar-fill ${barClass}" style="width: ${Math.min(line.pctUsed, 100)}%"></span></span>${line.pctUsed}%</td></tr>`;
+          // Color logic:
+          // Income rows: green if at or above target (pctUsed >= 90), gold if mid (50-89), red if low (<50)
+          // Expense rows: green if well under (<70), gold if approaching (70-99), red if over budget (>=100)
+          let barClass;
+          if (line.type === 'Income') {
+            if (line.pctUsed >= 90) barClass = 'green';
+            else if (line.pctUsed >= 50) barClass = 'gold';
+            else barClass = '';  // red default
+          } else {
+            if (line.pctUsed >= 100) barClass = 'over';
+            else if (line.pctUsed >= 70) barClass = 'gold';
+            else barClass = 'green';
+          }
+          const barWidth = Math.min(line.pctUsed, 100);
+          return `<tr><td>${label}</td><td class="num">${formatMoney(line.budget)}</td><td class="num">${formatMoney(line.actual)}</td><td class="num">${varianceDisplay}</td><td><span class="mini-bar"><span class="mini-bar-fill ${barClass}" style="width: ${barWidth}%"></span></span>${line.pctUsed}%</td></tr>`;
         }).join('');
       }
 
