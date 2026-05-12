@@ -2651,7 +2651,7 @@ body {
         <div class="kpi-tile ink">
           <div class="kpi-label">Ticket Link Clicks</div>
           <div class="kpi-value" id="mkClicks">284</div>
-          <div class="kpi-context">Driving to the Ludus page</div>
+          <div class="kpi-context" id="mkClicksCtx">Driving to the ticketing page</div>
         </div>
       </div>
 
@@ -4495,8 +4495,11 @@ renderDashboard(11);
         const onlineAvg = onlineTickets > 0 ? onlineRevenue / onlineTickets : 0;
         const onlineShare = totalTickets > 0 ? Math.round((onlineTickets / totalTickets) * 100) : 0;
         const compShare = totalTickets > 0 ? Math.round((totalComp / totalTickets) * 100) : 0;
+        // Branded ticketing label — reads from school metadata, falls back to generic "Online"
+        const ticketingSystem = (m['Ticketing System'] || '').trim();
+        const onlineLabel = ticketingSystem ? 'Online (' + ticketingSystem + ')' : 'Online';
         channelTbody.innerHTML = `
-          <tr><td>Online (Ludus platform)</td><td class="num">${onlineTickets}</td><td class="num">${formatMoney(onlineRevenue)}</td><td class="num">${formatMoneyDecimal(onlineAvg)}</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td></tr>
+          <tr><td>${onlineLabel}</td><td class="num">${onlineTickets}</td><td class="num">${formatMoney(onlineRevenue)}</td><td class="num">${formatMoneyDecimal(onlineAvg)}</td><td><span class="mini-bar"><span class="mini-bar-fill" style="width: ${onlineShare}%"></span></span>${onlineShare}%</td></tr>
           <tr><td>Cash / At the door</td><td class="num">0</td><td class="num">$0</td><td class="num">$0</td><td><span class="mini-bar"><span class="mini-bar-fill gold" style="width: 0%"></span></span>0%</td></tr>
           <tr><td>Comps (sponsor, press)</td><td class="num">${totalComp}</td><td class="num">$0</td><td class="num">$0</td><td><span class="mini-bar"><span class="mini-bar-fill green" style="width: ${compShare}%"></span></span>${compShare}%</td></tr>
         `;
@@ -4911,7 +4914,9 @@ renderDashboard(11);
       setText('mkReach', weeklyReach.toLocaleString());
       setText('mkEng', avgEng.toFixed(1) + '%');
       setText('mkClicks', weeklyClicks.toLocaleString());
-
+      // Update ticketing context with school's platform name
+      const mkTicketingSystem = (m['Ticketing System'] || '').trim();
+      setText('mkClicksCtx', mkTicketingSystem ? 'Driving to the ' + mkTicketingSystem + ' page' : 'Driving to the ticketing page');
       // Executive Dashboard Social Media tile (new)
       setText('igReach', platformReach.instagram.toLocaleString());
       setText('ttReach', platformReach.tiktok.toLocaleString());
