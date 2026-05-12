@@ -5255,20 +5255,6 @@ renderDashboard(11);
         return 0;
       });
 
-      const checklistEl = document.getElementById('gsLobbyChecklist');
-      if (checklistEl) {
-        if (gsActions.length === 0) {
-          checklistEl.innerHTML = '<li style="text-align:center;color:#6b6557;padding:1rem;list-style:none;">No Guest Services action items</li>';
-        } else {
-          checklistEl.innerHTML = gsActions.slice(0, 8).map(a => {
-            const checkClass = a.isComplete ? 'action-check done' : 'action-check';
-            const itemClass = a.isComplete ? 'action-item done' : 'action-item';
-            const dueLabel = a.isComplete ? 'Done' : (a.dueDate ? formatShortDate(a.dueDate) : '—');
-            const dueClass = a.isComplete ? 'action-due ok' : (a.isOverdue ? 'action-due' : 'action-due ok');
-            return `<li class="${itemClass}"><div class="${checkClass}"></div><div class="action-task">${a.desc}</div><div class="action-owner">GS</div><div class="${dueClass}">${dueLabel}</div></li>`;
-          }).join('');
-        }
-      }
      const checklistEl = document.getElementById('gsLobbyChecklist');
       if (checklistEl) {
         if (gsActions.length === 0) {
