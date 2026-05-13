@@ -679,6 +679,45 @@ body {
   color: var(--red-deep);
 }
 
+/* Edit in Sheets button — sits in the header next to countdown */
+.edit-sheet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.edit-sheet-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--cream);
+}
+
+.edit-sheet-btn-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* On mobile, button sits below countdown rather than next to it */
+@media (max-width: 800px) {
+  .edit-sheet-btn {
+    font-size: 0.62rem;
+    padding: 0.35rem 0.65rem;
+  }
+}
+
 /* ============ GANTT ============ */
 .gantt-weeks {
   display: grid;
@@ -2322,7 +2361,7 @@ body {
       </div>
     </div>
 
-    <!-- ============ FINANCE REPORT ============ -->
+   <!-- ============ FINANCE REPORT ============ -->
     <div class="view" id="view-finance">
       <div class="content-header">
         <div class="content-title-block">
@@ -2330,9 +2369,15 @@ body {
           <h1 class="content-title"><em>Finance</em></h1>
           <div class="content-sub">Owner: Jordan Park · Finance Lead</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="financeCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="financeCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetFinance" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
       <div class="dept-header-note">
@@ -2425,11 +2470,18 @@ body {
           <h1 class="content-title"><em>Box Office</em></h1>
           <div class="content-sub">Owner: Aaliyah Chen · Box Office Manager</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="boxCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="boxCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetBoxOffice" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
+      
       <div class="dept-header-note">
         The Box Office Manager owns ticket sales operations, manages the ticketing platform, runs pre-sale and at-the-door, reconciles nightly, and produces the daily sales report for the full team.
       </div>
@@ -2543,7 +2595,7 @@ body {
       </div>
     </div>
 
-    <!-- ============ SPONSORSHIP REPORT ============ -->
+   <!-- ============ SPONSORSHIP REPORT ============ -->
     <div class="view" id="view-sponsorship">
       <div class="content-header">
         <div class="content-title-block">
@@ -2551,9 +2603,15 @@ body {
           <h1 class="content-title"><em>Sponsorship</em></h1>
           <div class="content-sub">Owner: Eli Watson · Sponsorship Director</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="sponsorCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="sponsorCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetSponsorship" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
       <div class="dept-header-note">
@@ -2623,9 +2681,15 @@ body {
           <h1 class="content-title">Marketing <em>&amp;</em> Social</h1>
           <div class="content-sub">Owner: Priya Nair · Marketing Director · With Social Media Lead and Design Team</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="mktCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="mktCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetMarketing" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
       <div class="dept-header-note">
@@ -2718,9 +2782,15 @@ body {
           <h1 class="content-title">Guest <em>Services</em></h1>
           <div class="content-sub">Owner: Zara Thompson · Guest Services Lead</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="gsCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="gsCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetGuestServices" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
       <div class="dept-header-note">
@@ -2802,9 +2872,15 @@ body {
           <h1 class="content-title">Action <em>Items</em></h1>
           <div class="content-sub" id="actionsOwnerLine">Owner: Maya Richards · Student Producer</div>
         </div>
-        <div class="countdown-display">
-          <div class="countdown-num" id="actionCountdown">38</div>
-          <div class="countdown-label">Days to Opening</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem;">
+          <div class="countdown-display">
+            <div class="countdown-num" id="actionCountdown">38</div>
+            <div class="countdown-label">Days to Opening</div>
+          </div>
+          <a class="edit-sheet-btn" id="editSheetActions" href="#" target="_blank" rel="noopener">
+            <span class="edit-sheet-btn-icon">↗</span>
+            Edit in Sheets
+          </a>
         </div>
       </div>
       <div class="dept-header-note">
@@ -4175,6 +4251,34 @@ renderDashboard(11);
     window.location.href = 'school-not-found.html?' + params.toString();
   }
 
+  // Wire each "Edit in Sheets" button to the school's workbook + tab GID.
+  // Buttons are optional — gracefully skip if workbookEditUrl is missing.
+  function wireEditSheetButtons(school) {
+    if (!school.workbookEditUrl || !school.gids) {
+      // Hide all buttons if no edit URL configured
+      document.querySelectorAll('.edit-sheet-btn').forEach(btn => {
+        btn.style.display = 'none';
+      });
+      return;
+    }
+    const baseUrl = school.workbookEditUrl;
+    const buttonMap = [
+      { id: 'editSheetFinance', tabKey: 'finance' },
+      { id: 'editSheetBoxOffice', tabKey: 'boxOffice' },
+      { id: 'editSheetSponsorship', tabKey: 'sponsorship' },
+      { id: 'editSheetMarketing', tabKey: 'mkPosts' },
+      { id: 'editSheetGuestServices', tabKey: 'guestServices' },
+      { id: 'editSheetActions', tabKey: 'actions' }
+    ];
+    buttonMap.forEach(({ id, tabKey }) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const gid = school.gids[tabKey];
+      if (!gid) { btn.style.display = 'none'; return; }
+      btn.href = baseUrl + '?gid=' + gid + '#gid=' + gid;
+    });
+  }
+
   // These will be populated after the school is resolved.
   let DASHBOARD_CSV, BOX_OFFICE_CSV, SPONSORSHIP_CSV, TEAM_CSV, FINANCE_CSV,
       ACTIONS_CSV, MK_POSTS_CSV, MK_CALENDAR_CSV, MK_DESIGN_CSV,
@@ -5355,6 +5459,7 @@ renderDashboard(11);
     }
     currentSchool = school;
     console.log('SP² Multi-tenant: Loaded school "' + slug + '" (' + school.schoolName + ')');
+    wireEditSheetButtons(school);
 
     // Step 3.5: Access code gate check
     // If the school has an accessCodeHash configured, verify the user has a matching
