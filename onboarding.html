@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Onboarding · SP² · The Student Producer Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#f5f0e6;--cream-deep:#ebe4d4;--paper:#fdfaf3;--ink:#1a1410;--soft:#3a3229;--mute:#6b5d4f;--red:#8b1a1a;--red-deep:#5e1010;--gold:#a8874a;--gold-light:#c9ac74;--green:#2d6a3f;--rule:#d4c9b2;--rule-soft:#e4dcc6;--shadow:0 24px 60px rgba(26,20,16,.22)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.site{min-height:100vh;background:var(--cream)}
+
+/* Header (matches index.html) */
+.header{height:88px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:space-between;padding:0 4.5rem;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(245,240,230,.1)}
+.brand{display:flex;align-items:center;gap:1rem}
+.brand-mark{font-family:Fraunces,serif;font-size:2.65rem;line-height:1;letter-spacing:-.045em;font-weight:500}
+.brand-mark sup{color:var(--gold);font-style:italic;font-size:.55em}
+.brand-name{font-size:.7rem;line-height:1.45;letter-spacing:.23em;text-transform:uppercase;font-weight:800;color:rgba(245,240,230,.82)}
+.header-cta{border:1px solid var(--gold);color:var(--gold-light);padding:.85rem 1.35rem;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800}
+.header-cta:hover{background:var(--gold);color:var(--ink)}
+
+/* Hero strip */
+.intro{padding:4rem 4.5rem 2.5rem;background:var(--paper);border-bottom:1px solid var(--rule)}
+.intro-inner{max-width:880px}
+.eyebrow{color:var(--red);font-size:.65rem;letter-spacing:.23em;text-transform:uppercase;font-weight:800;margin-bottom:.8rem}
+.intro h1{font-family:Fraunces,serif;font-size:clamp(2.3rem,3.6vw,3.6rem);line-height:1.02;letter-spacing:-.035em;font-weight:500;margin-bottom:1rem}
+.intro h1 span{color:var(--red)}
+.intro-lede{color:var(--soft);font-size:1.02rem;line-height:1.65;max-width:680px}
+.intro-meta{margin-top:1.6rem;padding:1rem 1.2rem;background:var(--cream);border-left:3px solid var(--gold);font-size:.86rem;color:var(--soft);max-width:680px}
+.intro-meta strong{color:var(--ink);font-weight:600}
+
+/* Form layout */
+.form-wrap{padding:3rem 4.5rem 4.5rem}
+form{max-width:880px;margin:0 auto}
+fieldset{border:none;margin-bottom:2.6rem;padding:0}
+legend{font-family:Fraunces,serif;font-size:1.55rem;font-weight:500;letter-spacing:-.02em;color:var(--ink);margin-bottom:.4rem;padding-bottom:.7rem;border-bottom:1px solid var(--rule);width:100%}
+.legend-note{font-size:.85rem;color:var(--mute);margin-top:-.2rem;margin-bottom:1.4rem;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 1.4rem}
+.grid-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:.4rem}
+.field-label{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--soft)}
+.field-label .req{color:var(--red);margin-left:.2rem}
+.field-help{font-size:.78rem;color:var(--mute);line-height:1.45;margin-top:-.15rem}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=url],select,textarea{
+  font-family:Inter,sans-serif;font-size:.95rem;color:var(--ink);
+  background:var(--paper);border:1px solid var(--rule);
+  padding:.72rem .85rem;border-radius:2px;
+  transition:border-color .15s ease, box-shadow .15s ease;
+  width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(139,26,26,.12)}
+textarea{resize:vertical;min-height:90px;font-family:Inter,sans-serif}
+select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path fill='%236b5d4f' d='M6 8L1 3h10z'/></svg>");background-repeat:no-repeat;background-position:right 1rem center;background-size:10px;padding-right:2.2rem}
+
+/* Conditional section (Senior pricing) */
+.conditional{margin-top:1rem;padding:1rem 1.2rem;background:var(--cream);border-left:3px solid var(--gold-light);display:none}
+.conditional.show{display:block}
+
+/* Team members repeater note */
+.team-extra{margin-top:1.4rem;padding:1rem 1.2rem;background:var(--cream);border-left:3px solid var(--gold-light);font-size:.86rem;color:var(--soft);line-height:1.55}
+.team-extra strong{color:var(--ink);font-weight:600}
+
+/* Submit */
+.submit-row{margin-top:2.8rem;padding-top:1.8rem;border-top:1px solid var(--rule);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.btn-submit{
+  background:var(--red);color:var(--cream);border:1px solid var(--red);
+  padding:1rem 2.2rem;font-family:Inter,sans-serif;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;font-weight:800;cursor:pointer;
+  transition:background .15s ease, border-color .15s ease;
+}
+.btn-submit:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.submit-note{font-size:.82rem;color:var(--mute);line-height:1.5;flex:1;min-width:220px}
+
+/* Success state */
+.success{display:none;max-width:680px;margin:0 auto;padding:3rem 2rem;text-align:center;background:var(--paper);border:1px solid var(--rule);border-radius:4px}
+.success.show{display:block}
+.success-icon{font-family:Fraunces,serif;color:var(--green);font-size:3.5rem;line-height:1;margin-bottom:1rem}
+.success h2{font-family:Fraunces,serif;font-size:2rem;font-weight:500;letter-spacing:-.02em;margin-bottom:.7rem}
+.success p{color:var(--soft);font-size:.98rem;line-height:1.65;margin-bottom:.6rem}
+.success a{color:var(--red);font-weight:600;border-bottom:1px solid var(--red-deep)}
+
+/* Footer */
+.footer{background:var(--ink);color:var(--cream);padding:2rem 4.5rem;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:2rem}
+.footer .brand-mark{font-size:2.3rem}
+.footer-note{color:rgba(245,240,230,.65);max-width:430px;font-size:.84rem}
+.footer-attribution{color:rgba(245,240,230,.55);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;font-family:Inter,sans-serif;white-space:nowrap}
+.footer-attribution em{color:var(--gold-light);font-style:italic;font-family:Fraunces,serif;text-transform:none;font-weight:500;letter-spacing:-.01em;font-size:1.05em}
+.footer-links{display:flex;gap:1.5rem;font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800;color:rgba(245,240,230,.75)}
+
+/* Responsive */
+@media(max-width:1180px){
+  .header{padding:0 2rem}
+  .intro,.form-wrap,.footer{padding-left:2rem;padding-right:2rem}
+}
+@media(max-width:760px){
+  .header{height:auto;padding:.8rem 1rem}
+  .brand-name{display:none}
+  .brand-mark{font-size:2rem}
+  .header-cta{padding:.7rem .8rem;font-size:.58rem}
+  .intro,.form-wrap,.footer{padding:2rem 1rem}
+  .grid{grid-template-columns:1fr}
+  .footer{grid-template-columns:1fr;text-align:center}
+  .footer-links{flex-wrap:wrap;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="site">
+
+<header class="header">
+  <a class="brand" href="/"><div class="brand-mark">SP<sup>2</sup></div><div class="brand-name">The Student<br>Producer Program</div></a>
+  <a class="header-cta" href="/">← Back to Home</a>
+</header>
+
+<main id="top">
+
+<!-- Intro -->
+<section class="intro">
+  <div class="intro-inner">
+    <div class="eyebrow">New School Onboarding</div>
+    <h1>Welcome to SP<sup>2</sup>. <span>Let's get your program set up.</span></h1>
+    <p class="intro-lede">This form gathers everything we need to provision your production dashboard and team workspace. Once you submit, we'll build your school's environment and email you a link with credentials — typically within one business day.</p>
+    <div class="intro-meta">
+      <strong>About this form.</strong> Takes about 10–15 minutes. If you don't have a number yet (like Sponsorship Goal), give us your best estimate — you can change anything later. Required fields are marked with <span style="color:var(--red)">*</span>.
+    </div>
+  </div>
+</section>
+
+<!-- Form -->
+<section class="form-wrap">
+
+<!-- Success message (hidden by default; shown via JS after submit) -->
+<div class="success" id="success">
+  <div class="success-icon">✓</div>
+  <h2>Thank you — we've received your submission.</h2>
+  <p>We'll review your information and have your SP<sup>2</sup> environment ready within one business day.</p>
+  <p>Watch for an email from <strong>kevin@solutionsfor3AM.com</strong> with your dashboard link and access code.</p>
+  <p style="margin-top:1.4rem"><a href="/">Return to the SP<sup>2</sup> homepage →</a></p>
+</div>
+
+<form name="onboarding" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="onboarding-form">
+  <!-- Netlify form name (required) -->
+  <input type="hidden" name="form-name" value="onboarding" />
+  <!-- Honeypot anti-spam -->
+  <p style="display:none"><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+
+  <!-- SECTION 1: About Your School -->
+  <fieldset>
+    <legend>1. About Your School</legend>
+    <p class="legend-note">Basics about your school and the person we'll communicate with during setup.</p>
+
+    <div class="grid">
+      <div class="field grid-full">
+        <label class="field-label" for="school_name">School Name <span class="req">*</span></label>
+        <input type="text" id="school_name" name="school_name" required placeholder="e.g., C. Milton Wright High School">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="city">City <span class="req">*</span></label>
+        <input type="text" id="city" name="city" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="state">State <span class="req">*</span></label>
+        <input type="text" id="state" name="state" required placeholder="e.g., GA">
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="main_contact_name">Main Contact — Name <span class="req">*</span></label>
+        <input type="text" id="main_contact_name" name="main_contact_name" required>
+        <p class="field-help">This is the person we'll email with questions during setup and going forward.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="main_contact_role">Main Contact — Role <span class="req">*</span></label>
+        <select id="main_contact_role" name="main_contact_role" required>
+          <option value="">— Select —</option>
+          <option>Faculty Advisor</option>
+          <option>Theater Director</option>
+          <option>Department Chair</option>
+          <option>Booster Parent</option>
+          <option>Student Producer</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="main_contact_email">Main Contact — Email <span class="req">*</span></label>
+        <input type="email" id="main_contact_email" name="main_contact_email" required>
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="main_contact_phone">Main Contact — Phone <span class="req">*</span></label>
+        <input type="tel" id="main_contact_phone" name="main_contact_phone" required placeholder="(404) 555-0123">
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- SECTION 2: About Your Production -->
+  <fieldset>
+    <legend>2. About Your Production</legend>
+    <p class="legend-note">Details about the specific show we're setting up. If you have multiple productions, please fill out one form per show.</p>
+
+    <div class="grid">
+      <div class="field grid-full">
+        <label class="field-label" for="production_title">Production Title <span class="req">*</span></label>
+        <input type="text" id="production_title" name="production_title" required placeholder="e.g., The Drowsy Chaperone">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="season">Season <span class="req">*</span></label>
+        <input type="text" id="season" name="season" required placeholder="e.g., Spring 2026">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="performances">Total Performances <span class="req">*</span></label>
+        <input type="number" id="performances" name="performances" required min="1" max="50" placeholder="e.g., 4">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="opening_date">Opening Date <span class="req">*</span></label>
+        <input type="date" id="opening_date" name="opening_date" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="closing_date">Closing Date <span class="req">*</span></label>
+        <input type="date" id="closing_date" name="closing_date" required>
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="house_capacity">House Capacity (seats per performance) <span class="req">*</span></label>
+        <input type="number" id="house_capacity" name="house_capacity" required min="1" placeholder="e.g., 800">
+        <p class="field-help">How many seats does your theater have? This is per performance, not the season total.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="ticket_goal">Ticket Goal <span class="req">*</span></label>
+        <input type="number" id="ticket_goal" name="ticket_goal" required min="0" placeholder="e.g., 2000">
+        <p class="field-help">Total tickets across all performances.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="revenue_goal">Revenue Goal ($) <span class="req">*</span></label>
+        <input type="number" id="revenue_goal" name="revenue_goal" required min="0" step="0.01" placeholder="e.g., 20000">
+        <p class="field-help">Target ticket revenue in dollars.</p>
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="sponsorship_goal">Sponsorship Goal ($) <span class="req">*</span></label>
+        <input type="number" id="sponsorship_goal" name="sponsorship_goal" required min="0" step="0.01" placeholder="e.g., 5000">
+        <p class="field-help">Total sponsorship dollars target for this production.</p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- SECTION 3: Ticket Pricing -->
+  <fieldset>
+    <legend>3. Ticket Pricing</legend>
+    <p class="legend-note">Your ticket prices. We support multiple tiers.</p>
+
+    <div class="grid">
+      <div class="field">
+        <label class="field-label" for="adult_price">Adult Ticket Price ($) <span class="req">*</span></label>
+        <input type="number" id="adult_price" name="adult_price" required min="0" step="0.01" placeholder="e.g., 12">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="student_price">Student Ticket Price ($) <span class="req">*</span></label>
+        <input type="number" id="student_price" name="student_price" required min="0" step="0.01" placeholder="e.g., 10">
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="offers_senior">Do you offer Senior pricing?</label>
+        <select id="offers_senior" name="offers_senior">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+        </select>
+      </div>
+
+      <div class="conditional grid-full" id="senior-section">
+        <div class="field">
+          <label class="field-label" for="senior_price">Senior Ticket Price ($)</label>
+          <input type="number" id="senior_price" name="senior_price" min="0" step="0.01" placeholder="e.g., 10">
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- SECTION 4: Ticketing System -->
+  <fieldset>
+    <legend>4. Ticketing System</legend>
+    <p class="legend-note">How patrons buy tickets to your shows.</p>
+
+    <div class="grid">
+      <div class="field">
+        <label class="field-label" for="ticketing_system">Ticketing System <span class="req">*</span></label>
+        <select id="ticketing_system" name="ticketing_system" required>
+          <option value="">— Select —</option>
+          <option>Seat Yourself</option>
+          <option>Ludus</option>
+          <option>GoFan</option>
+          <option>Eventbrite</option>
+          <option>Booktix</option>
+          <option>On the Stage</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="ticketing_system_other">If "Other," please specify</label>
+        <input type="text" id="ticketing_system_other" name="ticketing_system_other" placeholder="Name of ticketing platform">
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="ticketing_url">Public Ticketing URL <span class="req">*</span></label>
+        <input type="url" id="ticketing_url" name="ticketing_url" required placeholder="https://yourschool.seatyourself.biz">
+        <p class="field-help">The link your patrons use to buy tickets.</p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- SECTION 5: Your Team -->
+  <fieldset>
+    <legend>5. Your Team</legend>
+    <p class="legend-note">Who's running this production. We capture the core leadership now; the rest of your team can be added later in your workspace.</p>
+
+    <div class="grid">
+      <div class="field">
+        <label class="field-label" for="producer_name">Student Producer — Name <span class="req">*</span></label>
+        <input type="text" id="producer_name" name="producer_name" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="producer_email">Student Producer — Email <span class="req">*</span></label>
+        <input type="email" id="producer_email" name="producer_email" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="advisor_name">Faculty Advisor — Name <span class="req">*</span></label>
+        <input type="text" id="advisor_name" name="advisor_name" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="advisor_email">Faculty Advisor — Email <span class="req">*</span></label>
+        <input type="email" id="advisor_email" name="advisor_email" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="director_name">Theater Director — Name <span style="color:var(--mute);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="text" id="director_name" name="director_name" placeholder="If different from Faculty Advisor">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="director_email">Theater Director — Email <span style="color:var(--mute);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="email" id="director_email" name="director_email">
+      </div>
+
+      <div class="field grid-full">
+        <label class="field-label" for="other_team">Other Team Members <span style="color:var(--mute);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <textarea id="other_team" name="other_team" placeholder="Box Office Manager, Marketing Lead, Sponsorship Lead, etc. — one per line with name + role + email."></textarea>
+        <p class="field-help">List one per line. Example: "Jamie Lee — Marketing Lead — jamie@school.edu"</p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- SECTION 6: Anything Else -->
+  <fieldset>
+    <legend>6. Anything Else We Should Know?</legend>
+    <p class="legend-note">Optional. Anything special about your production, your timeline, your team, or how you want to use SP<sup>2</sup>.</p>
+    <div class="field">
+      <textarea id="notes" name="notes" placeholder="Tell us anything that would help us set you up well."></textarea>
+    </div>
+  </fieldset>
+
+  <!-- Submit -->
+  <div class="submit-row">
+    <button type="submit" class="btn-submit">Submit Onboarding Form</button>
+    <p class="submit-note">After submission, we'll review your info and email your dashboard link within one business day. Questions? <a href="mailto:kevin@solutionsfor3AM.com" style="color:var(--red);border-bottom:1px solid var(--red-deep)">kevin@solutionsfor3AM.com</a></p>
+  </div>
+</form>
+
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="brand"><div class="brand-mark">SP<sup>2</sup></div><div class="brand-name">The Student<br>Producer Program</div></div>
+  <p class="footer-note">Empowering students to produce impact on stage and in life.</p>
+  <p class="footer-attribution">A <em>3AM Solutions</em> Initiative</p>
+  <div class="footer-links"><a href="/">Home</a><a href="/dashboard">Dashboard</a><a href="mailto:kevin@solutionsfor3AM.com">Contact</a></div>
+</footer>
+
+</div>
+
+<script>
+// Conditional Senior pricing section
+document.getElementById('offers_senior').addEventListener('change', function(e) {
+  const seniorSection = document.getElementById('senior-section');
+  if (e.target.value === 'Yes') {
+    seniorSection.classList.add('show');
+    document.getElementById('senior_price').required = true;
+  } else {
+    seniorSection.classList.remove('show');
+    document.getElementById('senior_price').required = false;
+  }
+});
+
+// AJAX submit so the user stays on the page and sees the success message
+// (Netlify's default flow redirects to /thank-you, which works too,
+//  but inline success feels nicer and keeps the SP² branding visible)
+document.getElementById('onboarding-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(data).toString()
+  })
+  .then(function(response) {
+    if (response.ok) {
+      form.style.display = 'none';
+      const success = document.getElementById('success');
+      success.classList.add('show');
+      window.scrollTo({ top: success.offsetTop - 100, behavior: 'smooth' });
+    } else {
+      alert('Something went wrong — please try again, or email kevin@solutionsfor3AM.com.');
+    }
+  })
+  .catch(function() {
+    alert('Something went wrong — please try again, or email kevin@solutionsfor3AM.com.');
+  });
+});
+</script>
+
+</body>
+</html>
