@@ -1,1 +1,8 @@
-/cmw    /dashboard?school=cmw    200
+# Reserved paths — real pages, must be excluded from the wildcard
+/dashboard               /dashboard.html             200
+/gate                    /gate.html                  200
+/onboarding              /onboarding.html            200
+/school-not-found        /school-not-found.html      200
+
+# Wildcard: any single-segment path treated as a school slug
+/:slug                   /dashboard.html?school=:slug   200
