@@ -815,6 +815,137 @@ body {
   white-space: nowrap;
 }
 
+/* Clickable phase bars */
+.gantt-bar-clickable {
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  position: relative;
+}
+.gantt-bar-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(26, 20, 16, 0.18);
+  filter: brightness(1.06);
+}
+.gantt-bar-clickable:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.gantt-bar-clickable::after {
+  content: "›";
+  margin-left: auto;
+  padding-left: 0.4rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+/* ============ PHASE MODAL ============ */
+.phase-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 20, 16, 0.55);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.phase-modal-backdrop.is-open {
+  display: flex;
+  opacity: 1;
+}
+.phase-modal {
+  background: var(--paper);
+  color: var(--ink);
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  box-shadow: 0 12px 40px rgba(26, 20, 16, 0.35);
+  transform: translateY(8px);
+  transition: transform 0.18s ease;
+}
+.phase-modal-backdrop.is-open .phase-modal {
+  transform: translateY(0);
+}
+.phase-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.phase-modal-eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.phase-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.phase-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 2px;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+.phase-modal-close:hover {
+  color: var(--ink);
+  background: var(--cream-deep);
+}
+.phase-modal-body {
+  padding: 1rem 1.5rem 1.5rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.phase-modal-body p {
+  margin: 0 0 0.85rem;
+}
+.phase-modal-body p:last-child {
+  margin-bottom: 0;
+}
+.phase-modal-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.phase-modal-body ul {
+  margin: 0 0 0.85rem;
+  padding-left: 1.2rem;
+}
+.phase-modal-body li {
+  margin-bottom: 0.3rem;
+}
+.phase-modal-footer {
+  padding: 0.85rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+}
+.phase-modal-footer a {
+  color: var(--red);
+  text-decoration: none;
+  font-weight: 500;
+}
+.phase-modal-footer a:hover {
+  text-decoration: underline;
+}
+
 /* ============ CHARTS ============ */
 .chart-container {
   height: 200px;
@@ -2244,32 +2375,34 @@ body {
           <div class="gantt-row">
             <div class="gantt-label">Foundation</div>
             <div class="gantt-track">
-              <div class="gantt-bar foundation">Team build &amp; budget</div>
+              <div class="gantt-bar gantt-bar-clickable foundation" data-phase="foundation" role="button" tabindex="0" aria-label="Foundation phase, weeks 1 to 4. Click for guidance.">Team build &amp; budget</div>
               <div class="gantt-today" id="ganttToday" data-week="11" style="left: calc(100% * 10.5 / 16);"></div>
             </div>
           </div>
           <div class="gantt-row">
             <div class="gantt-label">Build</div>
-            <div class="gantt-track"><div class="gantt-bar build">Sponsorship &amp; soft launch</div></div>
+            <div class="gantt-track"><div class="gantt-bar gantt-bar-clickable build" data-phase="build" role="button" tabindex="0" aria-label="Build phase, weeks 5 to 8. Click for guidance.">Sponsorship &amp; soft launch</div></div>
           </div>
           <div class="gantt-row">
             <div class="gantt-label">Campaign</div>
-            <div class="gantt-track"><div class="gantt-bar campaign">Full marketing activation</div></div>
+            <div class="gantt-track"><div class="gantt-bar gantt-bar-clickable campaign" data-phase="campaign" role="button" tabindex="0" aria-label="Campaign phase, weeks 9 to 12. Click for guidance.">Full marketing activation</div></div>
           </div>
           <div class="gantt-row">
             <div class="gantt-label">Push</div>
-            <div class="gantt-track"><div class="gantt-bar push">Urgency &amp; close-out</div></div>
+            <div class="gantt-track"><div class="gantt-bar gantt-bar-clickable push" data-phase="push" role="button" tabindex="0" aria-label="Push phase, weeks 13 to 14. Click for guidance.">Urgency &amp; close-out</div></div>
           </div>
           <div class="gantt-row">
             <div class="gantt-label">Execute</div>
-            <div class="gantt-track"><div class="gantt-bar execute">Run</div></div>
+            <div class="gantt-track"><div class="gantt-bar gantt-bar-clickable execute" data-phase="execute" role="button" tabindex="0" aria-label="Execute phase, week 15. Click for guidance.">Run</div></div>
           </div>
-          <div class="gantt-row">
+         <div class="gantt-row">
             <div class="gantt-label">Close</div>
-            <div class="gantt-track"><div class="gantt-bar close">Report</div></div>
+            <div class="gantt-track"><div class="gantt-bar gantt-bar-clickable close" data-phase="close" role="button" tabindex="0" aria-label="Close phase, week 16. Click for guidance.">Report</div></div>
           </div>
         </div>
       </div>
+
+      <div style="height: 1.25rem;"></div>
 
       <div style="height: 1.25rem;"></div>
 
@@ -2510,43 +2643,14 @@ body {
   </div>
 </div>
 
-      <div class="dash-grid">
+     <div class="dash-grid">
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">Tickets Sold by Type</div>
-            <div class="dash-card-sub" id="ticketTypeSub">Adult · Student · Comp</div>
+            <div class="dash-card-sub" id="ticketTypeSub">Loading…</div>
           </div>
-          <div class="ticket-type-list">
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Adult</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill" id="adultBar" style="width: 0%"></div>
-                </div>
-              </div>
-              <div class="ticket-type-pct" id="adultPct">—</div>
-              <div class="ticket-type-count" id="adultCount">—</div>
-            </div>
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Student</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill gold" id="studentBar" style="width: 0%"></div>
-                </div>
-              </div>
-              <div class="ticket-type-pct" id="studentPct">—</div>
-              <div class="ticket-type-count" id="studentCount">—</div>
-            </div>
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Comp</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill green" id="compBar" style="width: 0%"></div>
-                </div>
-              </div>
-              <div class="ticket-type-pct" id="compPct">—</div>
-              <div class="ticket-type-count" id="compCount">—</div>
-            </div>
+          <div class="ticket-type-list" id="ticketTypeList">
+            <!-- Tier rows rendered from school.ticketTiers config in JS -->
             <div class="ticket-type-summary" id="ticketTypeSummary">—</div>
           </div>
         </div>
@@ -4377,38 +4481,53 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
     if (boxRows.length > 1) {
       const headers = boxRows[0];
       const idIdx = headers.indexOf('Performance_ID');
-      const adultIdx = headers.indexOf('Adult Tickets');
-      const studentIdx = headers.indexOf('Student Tickets');
-      const compIdx = headers.indexOf('Comp Tickets');
       const capacityIdx = headers.indexOf('Capacity');
       const totalRevIdx = headers.indexOf('Total Revenue');
 
-      let totalAdult = 0, totalStudent = 0, totalComp = 0;
+      // Resolve ticket tier config from the current school, with a sensible
+      // fallback to traditional Adult/Student/Comp for schools that haven't
+      // been migrated to per-school tier configs yet.
+      const tierConfig = (currentSchool && Array.isArray(currentSchool.ticketTiers) && currentSchool.ticketTiers.length > 0)
+        ? currentSchool.ticketTiers
+        : [
+            { key: 'adult',   label: 'Adult',   csvColumn: 'Adult Tickets',   paid: true,  color: '' },
+            { key: 'student', label: 'Student', csvColumn: 'Student Tickets', paid: true,  color: 'gold' },
+            { key: 'comp',    label: 'Comp',    csvColumn: 'Comp Tickets',    paid: false, color: 'green' }
+          ];
+
+      // Resolve each tier's column index once; tiers whose column isn't in
+      // the sheet are silently dropped (e.g. a school w/o a Senior column).
+      const tiers = tierConfig
+        .map(t => ({ ...t, columnIdx: headers.indexOf(t.csvColumn), total: 0 }))
+        .filter(t => t.columnIdx !== -1);
+
       let totalCapacity = 0, totalRevenue = 0;
       const performances = [];
 
       for (let i = 1; i < boxRows.length; i++) {
-        const adult = parseInt(boxRows[i][adultIdx], 10) || 0;
-        const student = parseInt(boxRows[i][studentIdx], 10) || 0;
-        const comp = parseInt(boxRows[i][compIdx], 10) || 0;
+        let rowSold = 0;
+        tiers.forEach(t => {
+          const val = parseInt(boxRows[i][t.columnIdx], 10) || 0;
+          t.total += val;
+          rowSold += val;
+        });
         const capacity = parseInt(boxRows[i][capacityIdx], 10) || 0;
         const revenue = parseMoney(boxRows[i][totalRevIdx]);
-        totalAdult += adult; totalStudent += student; totalComp += comp;
-        totalCapacity += capacity; totalRevenue += revenue;
-        const sold = adult + student + comp;
+        totalCapacity += capacity;
+        totalRevenue += revenue;
         performances.push({
           name: boxRows[i][idIdx] || ('Performance ' + i),
-          sold: sold, capacity: capacity,
-          remaining: Math.max(0, capacity - sold),
-          fill: capacity > 0 ? Math.round((sold / capacity) * 100) : 0
+          sold: rowSold, capacity: capacity,
+          remaining: Math.max(0, capacity - rowSold),
+          fill: capacity > 0 ? Math.round((rowSold / capacity) * 100) : 0
         });
       }
 
-      const totalTickets = totalAdult + totalStudent + totalComp;
-      const totalPaidTickets = totalAdult + totalStudent;
+      const totalTickets = tiers.reduce((sum, t) => sum + t.total, 0);
+      const totalPaidTickets = tiers.filter(t => t.paid).reduce((sum, t) => sum + t.total, 0);
+      const totalComp = tiers.filter(t => !t.paid).reduce((sum, t) => sum + t.total, 0);
       const ticketGoal = parseMoney(m['Ticket Goal']) || totalCapacity;
       const avgPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
-
       setText('kpiTickets', totalTickets.toLocaleString());
       setText('kpiRevenue', formatMoney(totalRevenue));
       setText('boxSold', totalTickets.toLocaleString());
@@ -4459,26 +4578,36 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
       setText('progPace', paceText);
       setText('progRemaining', remaining.toLocaleString() + ' seats remaining');
 
-      // ----- Tickets by Type widget -----
-      const totalPaid = totalAdult + totalStudent;
-      const adultShare = totalTickets > 0 ? Math.round((totalAdult / totalTickets) * 100) : 0;
-      const studentShare = totalTickets > 0 ? Math.round((totalStudent / totalTickets) * 100) : 0;
-      const compShare = totalTickets > 0 ? Math.round((totalComp / totalTickets) * 100) : 0;
-      const adultBarEl = document.getElementById('adultBar');
-      const studentBarEl = document.getElementById('studentBar');
-      const compBarEl = document.getElementById('compBar');
-      if (adultBarEl) adultBarEl.style.width = adultShare + '%';
-      if (studentBarEl) studentBarEl.style.width = studentShare + '%';
-      if (compBarEl) compBarEl.style.width = compShare + '%';
-      setText('adultPct', adultShare + '%');
-      setText('studentPct', studentShare + '%');
-      setText('compPct', compShare + '%');
-      setText('adultCount', totalAdult.toLocaleString() + ' tickets');
-      setText('studentCount', totalStudent.toLocaleString() + ' tickets');
-      setText('compCount', totalComp.toLocaleString() + ' tickets');
-      const avgPaidPrice = totalPaid > 0 ? totalRevenue / totalPaid : 0;
-      setText('ticketTypeSummary', formatMoney(Math.round(totalRevenue)) + ' revenue from paid tickets · Avg ' + formatMoneyDecimal(avgPaidPrice) + ' per paid');
-
+      // ----- Tickets by Type widget (config-driven) -----
+      // Renders one row per tier from the school's ticketTiers config.
+      // Each tier knows its own label, color, and CSV column.
+      const ticketTypeList = document.getElementById('ticketTypeList');
+      const ticketTypeSummary = document.getElementById('ticketTypeSummary');
+      if (ticketTypeList) {
+        const rowsHtml = tiers.map(t => {
+          const share = totalTickets > 0 ? Math.round((t.total / totalTickets) * 100) : 0;
+          return `
+            <div class="ticket-type-row">
+              <div class="ticket-type-label">${t.label}</div>
+              <div class="ticket-type-bar-wrap">
+                <div class="ticket-type-bar-track">
+                  <div class="ticket-type-bar-fill ${t.color || ''}" style="width: ${share}%"></div>
+                </div>
+              </div>
+              <div class="ticket-type-pct">${share}%</div>
+              <div class="ticket-type-count">${t.total.toLocaleString()} tickets</div>
+            </div>
+          `;
+        }).join('');
+        // Preserve the summary line at the bottom; rebuild rows above it.
+        ticketTypeList.innerHTML = rowsHtml + '<div class="ticket-type-summary" id="ticketTypeSummary">—</div>';
+      }
+      const avgPaidPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
+      setText('ticketTypeSummary',
+        formatMoney(Math.round(totalRevenue)) + ' revenue from paid tickets · Avg ' + formatMoneyDecimal(avgPaidPrice) + ' per paid'
+      );
+      // Update the card sub-label to list the active tiers
+      setText('ticketTypeSub', tiers.map(t => t.label).join(' · '));
       const perfTbody = document.getElementById('performanceTableBody');
       if (perfTbody && performances.length > 0) {
         perfTbody.innerHTML = performances.map(p => {
@@ -4491,7 +4620,7 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
 
       const channelTbody = document.getElementById('channelTableBody');
       if (channelTbody) {
-        const onlineTickets = totalAdult + totalStudent;
+        const onlineTickets = totalPaidTickets;
         const onlineRevenue = totalRevenue;
         const onlineAvg = onlineTickets > 0 ? onlineRevenue / onlineTickets : 0;
         const onlineShare = totalTickets > 0 ? Math.round((onlineTickets / totalTickets) * 100) : 0;
@@ -5528,6 +5657,173 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
   });
 
   loadAllData();
+})();
+</script>
+
+<!-- ============ PHASE GUIDANCE MODAL ============ -->
+<div class="phase-modal-backdrop" id="phaseModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="phaseModalTitle" aria-hidden="true">
+  <div class="phase-modal" role="document">
+    <div class="phase-modal-header">
+      <div>
+        <div class="phase-modal-eyebrow" id="phaseModalEyebrow">Phase</div>
+        <div class="phase-modal-title" id="phaseModalTitle">Phase Title</div>
+      </div>
+      <button type="button" class="phase-modal-close" id="phaseModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="phase-modal-body" id="phaseModalBody"></div>
+    <div class="phase-modal-footer">
+      For deeper detail, see the <a href="/SP2_Operations_Guide.pdf" target="_blank" rel="noopener">SP² Operations Guide</a>.
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ PHASE MODAL: content + behavior ============ */
+(function() {
+  const PHASE_CONTENT = {
+    foundation: {
+      eyebrow: "Weeks 1 – 4",
+      title: "Foundation Phase",
+      body: `
+        <p><strong>The set-up window.</strong> Nothing visible to the public happens here, but everything downstream depends on it. Skip this work and Weeks 9 – 14 turn into chaos.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>Lock the team — Producer, Box Office Lead, Sponsorship Lead, Marketing Lead, Guest Services Lead.</li>
+          <li>Build the budget. Set your ticket revenue target and your sponsorship target.</li>
+          <li>Schedule the season: opening night, soft launch (W5), sponsorship deadline (W11), final push (W13).</li>
+          <li>Stand up the Google Workbook — every tab populated with starter data.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> By end of W4, every team lead knows their role and can name the next milestone they own.</p>
+      `
+    },
+    build: {
+      eyebrow: "Weeks 5 – 8",
+      title: "Build Phase",
+      body: `
+        <p><strong>Tickets go on sale in Week 5 — this is your soft launch.</strong> Don't announce the show to the world yet. Sell quietly to families, faculty, and your warm list while you finish the sponsorship deck.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>W5: Tickets live. Email the cast/crew families first. Watch box office daily.</li>
+          <li>W5 – 7: Finalize the sponsorship deck. Get every Sponsorship Lead on a call to walk it.</li>
+          <li>W6 – 8: Start sponsorship outreach. Top 10 prospects first.</li>
+          <li>Lock the poster, the program template, and the social calendar — ready for Campaign in W9.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> Tickets selling, 5+ sponsor conversations in motion, all creative assets approved.</p>
+      `
+    },
+    campaign: {
+      eyebrow: "Weeks 9 – 12",
+      title: "Campaign Phase",
+      body: `
+        <p><strong>Go loud.</strong> The full marketing engine turns on. Every channel, every week.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>Poster goes up at school, downtown, partner businesses.</li>
+          <li>Social posts ship on calendar — 2 – 3 per week minimum.</li>
+          <li>Press release to local outlets. Pitch a feature story.</li>
+          <li>Sponsorship close-out by <strong>W11</strong> — anyone past W11 is unlikely to land in time for program print.</li>
+          <li>Program goes to design.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> Ticket sales accelerating week over week, sponsorship goal hit or within reach, program at the printer.</p>
+      `
+    },
+    push: {
+      eyebrow: "Weeks 13 – 14",
+      title: "Push Phase",
+      body: `
+        <p><strong>The final two weeks before opening.</strong> Urgency creative, last-call emails, comp ticket distribution, every channel one more time.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>"Final week to buy" messaging across social and email.</li>
+          <li>Distribute comp tickets to sponsors, faculty, VIPs.</li>
+          <li>Confirm Guest Services schedule — ushers, will-call, concessions.</li>
+          <li>Print program lands. Final walkthrough with house manager.</li>
+          <li>Box office on standby for day-of-show sales.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> All pre-show logistics confirmed. House team briefed. You can sleep the night before opening.</p>
+      `
+    },
+    execute: {
+      eyebrow: "Week 15",
+      title: "Execute · Show Running",
+      body: `
+        <p><strong>The show runs.</strong> Your job this week is to stay out of the cast's way, run a clean front-of-house, and capture everything for the close-out.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>Guest Services lead runs each performance — ushers, programs, concessions, will-call.</li>
+          <li>Box Office reconciles after every show.</li>
+          <li>Photographer at one performance minimum. You'll want photos for sponsor thank-yous.</li>
+          <li>Thank sponsors in lobby signage and in the program.</li>
+          <li>Log issues as they happen — these become next year's improvements.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> Every performance ran. Tickets reconciled. Photos in hand.</p>
+      `
+    },
+    close: {
+      eyebrow: "Week 16",
+      title: "Close · Post-Show Reporting",
+      body: `
+        <p><strong>Don't skip this week.</strong> The close-out is what makes <em>next</em> season easier. It's also what turns sponsors into repeat sponsors.</p>
+        <p><strong>Do this:</strong></p>
+        <ul>
+          <li>Final box office report — total revenue, total tickets, comp count.</li>
+          <li>Sponsor thank-you packets — photos, program copy, audience numbers.</li>
+          <li>Team debrief: what worked, what didn't, what to change next year.</li>
+          <li>Archive the workbook. Tag this production in your records.</li>
+          <li>Send the producer's note to admin/board with year-over-year context if available.</li>
+        </ul>
+        <p><strong>Exit criteria:</strong> Books closed, sponsors thanked, lessons logged. Now you've earned the off-season.</p>
+      `
+    }
+  };
+
+  const backdrop = document.getElementById('phaseModalBackdrop');
+  const eyebrowEl = document.getElementById('phaseModalEyebrow');
+  const titleEl = document.getElementById('phaseModalTitle');
+  const bodyEl = document.getElementById('phaseModalBody');
+  const closeBtn = document.getElementById('phaseModalClose');
+  let lastFocusedBar = null;
+
+  function openModal(phaseKey) {
+    const content = PHASE_CONTENT[phaseKey];
+    if (!content) return;
+    eyebrowEl.textContent = content.eyebrow;
+    titleEl.textContent = content.title;
+    bodyEl.innerHTML = content.body;
+    backdrop.classList.add('is-open');
+    backdrop.setAttribute('aria-hidden', 'false');
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('is-open');
+    backdrop.setAttribute('aria-hidden', 'true');
+    if (lastFocusedBar) lastFocusedBar.focus();
+  }
+
+  document.querySelectorAll('.gantt-bar-clickable').forEach(function(bar) {
+    bar.addEventListener('click', function() {
+      lastFocusedBar = bar;
+      openModal(bar.getAttribute('data-phase'));
+    });
+    bar.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        lastFocusedBar = bar;
+        openModal(bar.getAttribute('data-phase'));
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && backdrop.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
 })();
 </script>
 </body>
