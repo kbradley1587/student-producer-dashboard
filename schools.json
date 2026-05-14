@@ -19,7 +19,13 @@
       "guestServices": "562042141",
       "vips": "1420058282",
       "hoursLog": "1397576231"
-    }
+    },
+    "ticketTiers": [
+      { "key": "adult",   "label": "Adult",   "csvColumn": "Adult Tickets",   "paid": true,  "color": "" },
+      { "key": "student", "label": "Student", "csvColumn": "Student Tickets", "paid": true,  "color": "gold" },
+      { "key": "senior",  "label": "Senior",  "csvColumn": "Senior Tickets",  "paid": true,  "color": "gold" },
+      { "key": "comp",    "label": "Comp",    "csvColumn": "Comp Tickets",    "paid": false, "color": "green" }
+    ]
   },
   "firefly-matilda": {
     "schoolName": "Firefly Theatrical",
@@ -41,7 +47,12 @@
       "guestServices": "2021717031",
       "vips": "692453096",
       "hoursLog": "615860526"
-    }
+    },
+    "ticketTiers": [
+      { "key": "premium", "label": "Premium",           "csvColumn": "Adult Tickets",   "paid": true,  "color": "" },
+      { "key": "general", "label": "General Admission", "csvColumn": "Student Tickets", "paid": true,  "color": "gold" },
+      { "key": "comp",    "label": "Comp",              "csvColumn": "Comp Tickets",    "paid": false, "color": "green" }
+    ]
   },
   "firefly-monsters": {
     "schoolName": "Firefly Theatrical",
@@ -63,7 +74,12 @@
       "guestServices": "2021717031",
       "vips": "692453096",
       "hoursLog": "615860526"
-    }
+    },
+    "ticketTiers": [
+      { "key": "premium", "label": "Premium",           "csvColumn": "Adult Tickets",   "paid": true,  "color": "" },
+      { "key": "general", "label": "General Admission", "csvColumn": "Student Tickets", "paid": true,  "color": "gold" },
+      { "key": "comp",    "label": "Comp",              "csvColumn": "Comp Tickets",    "paid": false, "color": "green" }
+    ]
   }
 }
 
