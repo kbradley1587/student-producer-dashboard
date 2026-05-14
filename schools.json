@@ -19,6 +19,49 @@
       "hoursLog": "1397576231"
     }
   }
-}
-
+},
+"firefly-matilda": {
+    "schoolName": "Firefly Theatrical",
+    "shortName": "Firefly Theatrical",
+    "productionTitle": "Matilda Jr",
+    "publishedUrlBase": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSei5ZjsvTCgIToGuY56AfMcotGECxXCRFTGDKBIe962vZxdCRIrluhisu4EA3A4ElCtrMo2bqs8Ems/pub",
+    "workbookEditUrl": "https://docs.google.com/spreadsheets/d/1bVFSbC9qeNFN2c9qEMY2U9JyKHWUCx86nRJpC8Y0sVs/edit",
+    "accessCodeHash": "d7266b9ad896b687e398d824d890757fefa1f3215c195041c4bbf6ff6fff0e38",
+    "gids": {
+      "dashboard": "0",
+      "boxOffice": "681111476",
+      "sponsorship": "1179065102",
+      "team": "443902479",
+      "finance": "8202333",
+      "actions": "2135019067",
+      "mkPosts": "1904302580",
+      "mkCalendar": "1059629897",
+      "mkDesign": "286292288",
+      "guestServices": "2021717031",
+      "vips": "692453096",
+      "hoursLog": "615860526"
+    }
+  },
+  "firefly-monsters": {
+    "schoolName": "Firefly Theatrical",
+    "shortName": "Firefly Theatrical",
+    "productionTitle": "She Kills Monsters",
+    "publishedUrlBase": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbLQjWrI-wXLHC-sj-lS-376gC3lP6w4kdv4ymziUgN_PZCOSLT8YCSVYrtcfpeuFFZx8ZuAcUyPfE/pub",
+    "workbookEditUrl": "https://docs.google.com/spreadsheets/d/1eULEItwyO3EYo_0sUaBRWPt1hsxqfRApOY23JZrFQIs/edit",
+    "accessCodeHash": "9da6fffed08990e2cfa066c8eb7ba25033ac2e6f6a0d222dfa7a2b1c4a6792b8",
+    "gids": {
+      "dashboard": "0",
+      "boxOffice": "681111476",
+      "sponsorship": "1179065102",
+      "team": "443902479",
+      "finance": "8202333",
+      "actions": "2135019067",
+      "mkPosts": "1904302580",
+      "mkCalendar": "1059629897",
+      "mkDesign": "286292288",
+      "guestServices": "2021717031",
+      "vips": "692453096",
+      "hoursLog": "615860526"
+    }
+  }
 
