@@ -2278,7 +2278,7 @@ body {
           <div class="dash-card-header">
             <div>
               <div class="dash-card-title">Tickets Sold to Goal</div>
-              <div class="dash-card-sub" id="ticketSub">Tracking against capacity</div>
+              <div class="dash-card-sub" id="ticketSub">Tracking against ticket goal</div>
             </div>
             <a class="card-link" data-goto="boxoffice">Open Report →</a>
           </div>
@@ -4424,9 +4424,12 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
       setText('boxInventoryCtx', 'Across ' + performances.length + ' performances');
 
       // ----- Progress to Goal widget (Tickets Sold to Goal) -----
+      // Use the school's ticket goal from Dashboard metadata, falling back to
+      // total capacity only if Ticket Goal isn't set. (ticketGoal is computed
+      // above in the same scope.)
       setText('progSold', totalTickets.toLocaleString());
-      setText('progGoal', totalCapacity.toLocaleString());
-      const progPct = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
+      setText('progGoal', ticketGoal.toLocaleString());
+      const progPct = ticketGoal > 0 ? Math.round((totalTickets / ticketGoal) * 100) : 0;
       const progFillEl = document.getElementById('progFill');
       if (progFillEl) progFillEl.style.width = Math.min(progPct, 100) + '%';
       setText('progPct', progPct + '%');
