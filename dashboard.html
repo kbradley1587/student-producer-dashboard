@@ -4657,6 +4657,18 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
       setText('sponTarget', formatMoney(sponsorshipGoal));
       const subEl = document.getElementById('sponsorSub');
       if (subEl) subEl.textContent = '$0 closed · $0 in proposal · $0 in outreach';
+
+      // Clear any placeholder HTML in the recognition + pipeline tables.
+      // The conditional block below will overwrite these with real data
+      // if the school has sponsor rows beyond the header.
+      const recogTbodyReset = document.getElementById('recognitionTableBody');
+      if (recogTbodyReset) {
+        recogTbodyReset.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No closed sponsors yet</td></tr>';
+      }
+      const fullKanbanReset = document.getElementById('fullKanban');
+      if (fullKanbanReset) fullKanbanReset.innerHTML = '';
+      const execKanbanReset = document.getElementById('kanbanBoard');
+      if (execKanbanReset) execKanbanReset.innerHTML = '';
     }
     if (sponsorRows.length > 1) {
       const headers = sponsorRows[0];
