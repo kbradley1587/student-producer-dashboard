@@ -2643,36 +2643,13 @@ body {
         <div class="dash-card">
           <div class="dash-card-header">
             <div class="dash-card-title">Tickets Sold by Type</div>
-            <div class="dash-card-sub" id="ticketTypeSub">Adult · Student · Comp</div>
+            <div class="dash-card-sub" id="ticketTypeSub">Loading…</div>
           </div>
-          <div class="ticket-type-list">
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Adult</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill" id="adultBar" style="width: 0%"></div>
-                </div>
-              </div>
-              <div class="ticket-type-pct" id="adultPct">—</div>
-              <div class="ticket-type-count" id="adultCount">—</div>
-            </div>
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Student</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill gold" id="studentBar" style="width: 0%"></div>
-                </div>
-              </div>
-              <div class="ticket-type-pct" id="studentPct">—</div>
-              <div class="ticket-type-count" id="studentCount">—</div>
-            </div>
-            <div class="ticket-type-row">
-              <div class="ticket-type-label">Comp</div>
-              <div class="ticket-type-bar-wrap">
-                <div class="ticket-type-bar-track">
-                  <div class="ticket-type-bar-fill green" id="compBar" style="width: 0%"></div>
-                </div>
-              </div>
+          <div class="ticket-type-list" id="ticketTypeList">
+            <!-- Tier rows rendered from school.ticketTiers config in JS -->
+            <div class="ticket-type-summary" id="ticketTypeSummary">—</div>
+          </div>
+        </div>
               <div class="ticket-type-pct" id="compPct">—</div>
               <div class="ticket-type-count" id="compCount">—</div>
             </div>
@@ -4506,38 +4483,53 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
     if (boxRows.length > 1) {
       const headers = boxRows[0];
       const idIdx = headers.indexOf('Performance_ID');
-      const adultIdx = headers.indexOf('Adult Tickets');
-      const studentIdx = headers.indexOf('Student Tickets');
-      const compIdx = headers.indexOf('Comp Tickets');
       const capacityIdx = headers.indexOf('Capacity');
       const totalRevIdx = headers.indexOf('Total Revenue');
 
-      let totalAdult = 0, totalStudent = 0, totalComp = 0;
+      // Resolve ticket tier config from the current school, with a sensible
+      // fallback to traditional Adult/Student/Comp for schools that haven't
+      // been migrated to per-school tier configs yet.
+      const tierConfig = (currentSchool && Array.isArray(currentSchool.ticketTiers) && currentSchool.ticketTiers.length > 0)
+        ? currentSchool.ticketTiers
+        : [
+            { key: 'adult',   label: 'Adult',   csvColumn: 'Adult Tickets',   paid: true,  color: '' },
+            { key: 'student', label: 'Student', csvColumn: 'Student Tickets', paid: true,  color: 'gold' },
+            { key: 'comp',    label: 'Comp',    csvColumn: 'Comp Tickets',    paid: false, color: 'green' }
+          ];
+
+      // Resolve each tier's column index once; tiers whose column isn't in
+      // the sheet are silently dropped (e.g. a school w/o a Senior column).
+      const tiers = tierConfig
+        .map(t => ({ ...t, columnIdx: headers.indexOf(t.csvColumn), total: 0 }))
+        .filter(t => t.columnIdx !== -1);
+
       let totalCapacity = 0, totalRevenue = 0;
       const performances = [];
 
       for (let i = 1; i < boxRows.length; i++) {
-        const adult = parseInt(boxRows[i][adultIdx], 10) || 0;
-        const student = parseInt(boxRows[i][studentIdx], 10) || 0;
-        const comp = parseInt(boxRows[i][compIdx], 10) || 0;
+        let rowSold = 0;
+        tiers.forEach(t => {
+          const val = parseInt(boxRows[i][t.columnIdx], 10) || 0;
+          t.total += val;
+          rowSold += val;
+        });
         const capacity = parseInt(boxRows[i][capacityIdx], 10) || 0;
         const revenue = parseMoney(boxRows[i][totalRevIdx]);
-        totalAdult += adult; totalStudent += student; totalComp += comp;
-        totalCapacity += capacity; totalRevenue += revenue;
-        const sold = adult + student + comp;
+        totalCapacity += capacity;
+        totalRevenue += revenue;
         performances.push({
           name: boxRows[i][idIdx] || ('Performance ' + i),
-          sold: sold, capacity: capacity,
-          remaining: Math.max(0, capacity - sold),
-          fill: capacity > 0 ? Math.round((sold / capacity) * 100) : 0
+          sold: rowSold, capacity: capacity,
+          remaining: Math.max(0, capacity - rowSold),
+          fill: capacity > 0 ? Math.round((rowSold / capacity) * 100) : 0
         });
       }
 
-      const totalTickets = totalAdult + totalStudent + totalComp;
-      const totalPaidTickets = totalAdult + totalStudent;
+      const totalTickets = tiers.reduce((sum, t) => sum + t.total, 0);
+      const totalPaidTickets = tiers.filter(t => t.paid).reduce((sum, t) => sum + t.total, 0);
+      const totalComp = tiers.filter(t => !t.paid).reduce((sum, t) => sum + t.total, 0);
       const ticketGoal = parseMoney(m['Ticket Goal']) || totalCapacity;
       const avgPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
-
       setText('kpiTickets', totalTickets.toLocaleString());
       setText('kpiRevenue', formatMoney(totalRevenue));
       setText('boxSold', totalTickets.toLocaleString());
@@ -4588,26 +4580,36 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
       setText('progPace', paceText);
       setText('progRemaining', remaining.toLocaleString() + ' seats remaining');
 
-      // ----- Tickets by Type widget -----
-      const totalPaid = totalAdult + totalStudent;
-      const adultShare = totalTickets > 0 ? Math.round((totalAdult / totalTickets) * 100) : 0;
-      const studentShare = totalTickets > 0 ? Math.round((totalStudent / totalTickets) * 100) : 0;
-      const compShare = totalTickets > 0 ? Math.round((totalComp / totalTickets) * 100) : 0;
-      const adultBarEl = document.getElementById('adultBar');
-      const studentBarEl = document.getElementById('studentBar');
-      const compBarEl = document.getElementById('compBar');
-      if (adultBarEl) adultBarEl.style.width = adultShare + '%';
-      if (studentBarEl) studentBarEl.style.width = studentShare + '%';
-      if (compBarEl) compBarEl.style.width = compShare + '%';
-      setText('adultPct', adultShare + '%');
-      setText('studentPct', studentShare + '%');
-      setText('compPct', compShare + '%');
-      setText('adultCount', totalAdult.toLocaleString() + ' tickets');
-      setText('studentCount', totalStudent.toLocaleString() + ' tickets');
-      setText('compCount', totalComp.toLocaleString() + ' tickets');
-      const avgPaidPrice = totalPaid > 0 ? totalRevenue / totalPaid : 0;
-      setText('ticketTypeSummary', formatMoney(Math.round(totalRevenue)) + ' revenue from paid tickets · Avg ' + formatMoneyDecimal(avgPaidPrice) + ' per paid');
-
+      // ----- Tickets by Type widget (config-driven) -----
+      // Renders one row per tier from the school's ticketTiers config.
+      // Each tier knows its own label, color, and CSV column.
+      const ticketTypeList = document.getElementById('ticketTypeList');
+      const ticketTypeSummary = document.getElementById('ticketTypeSummary');
+      if (ticketTypeList) {
+        const rowsHtml = tiers.map(t => {
+          const share = totalTickets > 0 ? Math.round((t.total / totalTickets) * 100) : 0;
+          return `
+            <div class="ticket-type-row">
+              <div class="ticket-type-label">${t.label}</div>
+              <div class="ticket-type-bar-wrap">
+                <div class="ticket-type-bar-track">
+                  <div class="ticket-type-bar-fill ${t.color || ''}" style="width: ${share}%"></div>
+                </div>
+              </div>
+              <div class="ticket-type-pct">${share}%</div>
+              <div class="ticket-type-count">${t.total.toLocaleString()} tickets</div>
+            </div>
+          `;
+        }).join('');
+        // Preserve the summary line at the bottom; rebuild rows above it.
+        ticketTypeList.innerHTML = rowsHtml + '<div class="ticket-type-summary" id="ticketTypeSummary">—</div>';
+      }
+      const avgPaidPrice = totalPaidTickets > 0 ? totalRevenue / totalPaidTickets : 0;
+      setText('ticketTypeSummary',
+        formatMoney(Math.round(totalRevenue)) + ' revenue from paid tickets · Avg ' + formatMoneyDecimal(avgPaidPrice) + ' per paid'
+      );
+      // Update the card sub-label to list the active tiers
+      setText('ticketTypeSub', tiers.map(t => t.label).join(' · '));
       const perfTbody = document.getElementById('performanceTableBody');
       if (perfTbody && performances.length > 0) {
         perfTbody.innerHTML = performances.map(p => {
@@ -4620,7 +4622,7 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
 
       const channelTbody = document.getElementById('channelTableBody');
       if (channelTbody) {
-        const onlineTickets = totalAdult + totalStudent;
+        const onlineTickets = totalPaidTickets;
         const onlineRevenue = totalRevenue;
         const onlineAvg = onlineTickets > 0 ? onlineRevenue / onlineTickets : 0;
         const onlineShare = totalTickets > 0 ? Math.round((onlineTickets / totalTickets) * 100) : 0;
