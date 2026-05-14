@@ -1,11 +1,13 @@
 {
   "cmw": {
     "schoolName": "C. Milton Wright High School",
-    "shortName": "CMW",
-    "accessCodeHash": "919bd70b4d003d95261f76ed44bb0a1a67cb6943684484126b47699aa892a194",
+    "shortName": "C. Milton Wright",
+    "productionTitle": "The Drowsy Chaperone",
     "publishedUrlBase": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2hrL98hBfN4WdMppF57r4TtwNygsyYhiVqfWxNSuMfUWXqtmb1rjRMFVso-SEopX41NJfibdZo8FW/pub",
+    "workbookEditUrl": "https://docs.google.com/spreadsheets/d/1UQ6swuF53UpqIH5KJ8VR3f_NcFijvH868Y7J4b3LmVU/edit",
+    "accessCodeHash": "919bd70b4d003d95261f76ed44bb0a1a67cb6943684484126b47699aa892a194",
     "gids": {
-      "dashboard": "0",
+      "dashboard": "364927621",
       "boxOffice": "6357353",
       "sponsorship": "1179065102",
       "team": "1253836572",
@@ -18,8 +20,8 @@
       "vips": "1420058282",
       "hoursLog": "1397576231"
     }
-},
-"firefly-matilda": {
+  },
+  "firefly-matilda": {
     "schoolName": "Firefly Theatrical",
     "shortName": "Firefly Theatrical",
     "productionTitle": "Matilda Jr",
@@ -63,4 +65,4 @@
       "hoursLog": "615860526"
     }
   }
-
+}
