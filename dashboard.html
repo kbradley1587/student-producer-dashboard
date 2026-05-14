@@ -4870,6 +4870,27 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
     }
 
     // ===== ACTION ITEMS DATA =====
+    // Always run — zero out hardcoded HTML defaults. The conditional block below
+    // overwrites with real data only if the school has action rows beyond the header.
+    {
+      setText('actComplete', '0');
+      setText('actCompleteCtx', 'No completions this week');
+      setText('actInProgress', '0');
+      setText('actInProgressCtx', 'No items in progress');
+      setText('actOverdue', '0');
+      setText('actOverdueCtx', 'Clean week');
+      setText('actOwners', '0');
+      setText('actOwnersCtx', 'No active owners');
+
+      const logTbodyReset = document.getElementById('actionLogTableBody');
+      if (logTbodyReset) {
+        logTbodyReset.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b6557;padding:1rem;">No action items yet</td></tr>';
+      }
+      const execActionListReset = document.getElementById('actionList');
+      if (execActionListReset) execActionListReset.innerHTML = '';
+      const actionsSubReset = document.getElementById('actionsSub');
+      if (actionsSubReset) actionsSubReset.textContent = 'No action items yet';
+    }
     if (actRows.length > 1) {
       const headers = actRows[0];
       const idIdx = headers.indexOf('Action_ID');
