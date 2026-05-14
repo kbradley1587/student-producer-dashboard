@@ -4444,6 +4444,30 @@ renderDashboard(11);
       setText('userAvatar', getInitials(m['Student Producer']));
     }
 
+    // ===== GANTT TODAY MARKER & WEEK DISPLAY =====
+    // Move the gantt "today" indicator to the current week.
+    // Also update the subtitle on the executive dashboard.
+    const currentWeek = parseInt(m['Current Week'], 10);
+    if (currentWeek && currentWeek >= 1 && currentWeek <= 16) {
+      const ganttToday = document.getElementById('ganttToday');
+      if (ganttToday) {
+        ganttToday.style.left = `calc(100% * ${currentWeek - 0.5} / 16)`;
+        ganttToday.setAttribute('data-week', currentWeek);
+      }
+      // Phase label based on week
+      let phase = 'Foundation Phase';
+      if (currentWeek > 4 && currentWeek <= 8) phase = 'Build Phase';
+      else if (currentWeek > 8 && currentWeek <= 12) phase = 'Campaign Phase';
+      else if (currentWeek > 12 && currentWeek <= 14) phase = 'Push Phase';
+      else if (currentWeek === 15) phase = 'Execute · Show Running';
+      else if (currentWeek === 16) phase = 'Close · Post-Show Reporting';
+      // Update subtitle on executive dashboard
+      const dashSubtitle = document.getElementById('dashSubtitle');
+      if (dashSubtitle) dashSubtitle.textContent = `Week ${currentWeek} of 16 · ${phase}`;
+      // Update gantt sub
+      const ganttSub = document.getElementById('ganttSub');
+      if (ganttSub) ganttSub.textContent = `16-week cycle · Week ${currentWeek} of 16`;
+    }
     if (m['Opening Date']) {
       const openingDate = parseDate(m['Opening Date']);
       if (openingDate) {
