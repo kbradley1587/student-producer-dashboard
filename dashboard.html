@@ -4505,6 +4505,27 @@ document.querySelectorAll(".training-filter-btn").forEach(btn => {
     }
 
     // ===== SPONSORSHIP DATA =====
+    // Always run — zero out hardcoded HTML defaults and pull goal from Dashboard metadata.
+    // The actual sponsor row processing only runs if there are rows beyond the header.
+    {
+      const sponsorshipGoal = parseMoney(m['Sponsorship Goal']) || 0;
+      setText('kpiSponsor', '$0');
+      const ctx = document.getElementById('kpiSponsorCtx');
+      if (ctx) {
+        ctx.textContent = sponsorshipGoal > 0
+          ? '0% of ' + formatMoney(sponsorshipGoal) + ' target'
+          : 'No sponsorship goal set';
+      }
+      setText('sponClosed', '$0');
+      setText('sponClosedCtx', '0 sponsors · 0% of target');
+      setText('sponProposal', '$0');
+      setText('sponProposalCtx', '0 active proposals');
+      setText('sponOutreach', '$0');
+      setText('sponOutreachCtx', '0 prospects engaged');
+      setText('sponTarget', formatMoney(sponsorshipGoal));
+      const subEl = document.getElementById('sponsorSub');
+      if (subEl) subEl.textContent = '$0 closed · $0 in proposal · $0 in outreach';
+    }
     if (sponsorRows.length > 1) {
       const headers = sponsorRows[0];
       const businessIdx = headers.indexOf('Business Name');
